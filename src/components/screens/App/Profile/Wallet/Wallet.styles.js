@@ -9,34 +9,35 @@ export default styles = StyleSheet.create({
     },
     transferOptionContainer: {
         backgroundColor: '#5a98fb',
-        width: 65,
-        height: 65,
+        width: PixelRatio.roundToNearestPixel(60*global.scaleFactor),
+        height: PixelRatio.roundToNearestPixel(60*global.scaleFactor),
+        margin:PixelRatio.roundToNearestPixel(2*global.moderateScaleFactor),
         borderRadius: 5,
         alignItems: 'center',
         justifyContent: 'center'
     },
     optionText: {
-        fontSize: 11,
+        fontSize: PixelRatio.roundToNearestPixel(11*global.scaleFactor),
         color: 'white',
     },
     transferText: {
         color: 'white',
-        fontSize: 15
+        fontSize: PixelRatio.roundToNearestPixel(15*global.scaleFactor)
     },
     scrollBar: {
-        padding: 10,
+        padding: PixelRatio.roundToNearestPixel(10*global.moderateScaleFactor)
     },
     scrollBarItem: {
         flexDirection: 'column',
         justifyContent: 'space-between',
-        height: 110,
-        width: 110,
-        borderRadius: 5,
+        height: PixelRatio.roundToNearestPixel(110*global.scaleFactor),
+        width: PixelRatio.roundToNearestPixel(110*global.scaleFactor),
+        borderRadius: PixelRatio.roundToNearestPixel(5*global.scaleFactor),
         backgroundColor: color.darkcolor3,
-        padding: 8
+        padding: PixelRatio.roundToNearestPixel(8*global.moderateScaleFactor)
     },
     itemText: {
-        fontSize: 18,
+        fontSize: 18*global.scaleFactor,
         color: 'white',
         fontWeight: '600'
     },
@@ -44,21 +45,21 @@ export default styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 30
+        padding: PixelRatio.roundToNearestPixel(30*global.moderateScaleFactor)
     },
     addMoneyText: {
-        paddingHorizontal: 30,
+        paddingHorizontal: PixelRatio.roundToNearestPixel(30*global.moderateScaleFactor),
         color: 'white',
         fontWeight: 'bold'
     },
     MoneyText: {
         color: 'white',
-        fontSize: 24,
+        fontSize: PixelRatio.roundToNearestPixel(24*global.scaleFactor),
         fontWeight: 'bold'
     },
     transferMoneyContainer: {
         backgroundColor: color.darkcolor3,
-        padding: 10,
+        padding: PixelRatio.roundToNearestPixel(10*global.moderateScaleFactor),
         flexDirection: 'row'
     },
     transferTextContainer: {
@@ -80,7 +81,7 @@ export default styles = StyleSheet.create({
     },
     buyText: {
         color: 'grey',
-        fontSize: 13
+        fontSize: PixelRatio.roundToNearestPixel(13*global.scaleFactor),
     },
     itemOne: {
         flexDirection: 'row',

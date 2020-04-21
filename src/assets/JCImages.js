@@ -4,5 +4,6 @@ export default {
     trophy: require('./trophy.png'),
     wallet: require('./wallet.png'),
     setting: require('./setting.png'),
-    share: require('./share.png')
+    share: require('./share.png'),
+    colorGrad: require('./ColorGrad.jpg')
 }

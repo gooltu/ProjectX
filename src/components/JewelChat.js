@@ -22,7 +22,11 @@ import EnterDetails from "./screens/Auth/EnterDetails";
 
 
 import ChatList from "./screens/App/ChatList";
-import Game from "./screens/App/Game";
+import Game from "./screens/App/Game/Game";
+import TaskDetail from "./screens/App/Game/TaskDetail/TaskDetail"
+import GiftTaskDetail from "./screens/App/Game/GiftTaskDetail/GiftTaskDetail"
+import SuccessFullGiftRedeem from './screens/App/Game/SuccessFullGiftRedeem'
+
 import Profile from "./screens/App/Profile/Profile";
 import LeaderBoard from './screens/App/Profile/LeaderBoard/LeaderBoard'
 import Wallet from './screens/App/Profile/Wallet/WalletScreen'
@@ -160,8 +164,34 @@ const AppMainStack = createStackNavigator({
                 header: <CustomHeader navigation={navigation} />
             };
         }
+    },
+    TaskDetail: {
+        screen: TaskDetail,
+        navigationOptions: ({ navigation }) => {
+            return {
+                header: <CustomHeader navigation={navigation} />
+            };
+        }
+    },
+    GiftTaskDetail: {
+        screen: GiftTaskDetail,
+        navigationOptions: {
+            headerBackTitle: null,
+            headerStyle: {
+                backgroundColor: colors.darkcolor1,
+                shadowOpacity: 0,
+              },
+          }
+        // ({ navigation }) => {
+        //     return {
+        //         header: <CustomHeader navigation={navigation} />
+        //     };
+        //}
+    },
+    SuccessFullGiftRedeem:{
+        screen: SuccessFullGiftRedeem,
+       
     }
-
 
 }, {
     headerMode: 'screen'
@@ -247,7 +277,7 @@ class JewelChat extends React.Component {
         })
         */
         if (!this.props.mytoken.isLoading && this.props.mytoken.token !== null && this.props.network.networkIsConnected)
-            this.props.openRealtimeConnection();
+            this.props.realtimeConnect();
 
     }
 
@@ -297,7 +327,8 @@ function mapDispatchToProps(dispatch) {
     return {
         tokenLoad: (myTokens) => dispatch({ type: 'USER_TOKEN_LOADED', myTokens }),
         appstateChange: (appstate) => dispatch({ type: 'APP_STATE_CHANGE', payload: appstate }),
-        networkstateChange: (network) => dispatch({ type: 'NETWORK_STATE_CHANGE', payload: network })
+        networkstateChange: (network) => dispatch({ type: 'NETWORK_STATE_CHANGE', payload: network }),
+        realtimeConnect:() => dispatch(realtimeConnect())
     }
 }
 

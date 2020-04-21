@@ -24,6 +24,8 @@ import JCTextInput from "../../../utilities/JCTextInput/JCTextInput" ;
 import colors from "../../shared_styles/colors";
 
 import J6 from '../../svg_components/J6';
+import J3 from '../../svg_components/J6';
+
 
 import { connect } from 'react-redux';
 
@@ -81,7 +83,6 @@ class ChatPage extends React.Component {
 
     if(!this.state.chatboxempty && value.length<1)  
       this.setState({chatboxempty: true});
-
   }
 
   updateChatTextboxHeight = (h) => {
@@ -222,13 +223,17 @@ class ChatPage extends React.Component {
         }  
         
         { !mychat &&
-          <View style={{flex:1, flexDirection:'row', justifyContent: 'flex-start', marginBottom: 10}}>
+          <View style={{flex:1, flexDirection:'row', justifyContent: 'flex-start',alignItems:'center', marginBottom: 10}}>
             <TouchableOpacity style={{width:32, height:32}} onPress={onjewelpress}>
-              <J6 height="75%" width="75%" style={{ margin : 10, width: '100%', height: '100%',  alignSelf: 'center', overflow:'hidden'  }} /> 
+              <J3 height="75%" width="75%" style={{ marginHorizontal : 10, width: '100%', height: '100%',  alignSelf: 'center', overflow:'hidden'  }} /> 
             </TouchableOpacity>
-            <View style={{ flex:1, flexDirection:'column',backgroundColor:'blue', maxWidth:200}}>
+            {/* <View style={{ flex:1, flexDirection:'column',backgroundColor:'blue', maxWidth:200}}>
               <Text>{item.MSG_TEXT}</Text>
               <Text style={{ alignSelf:'flex-end'}}>{item.CREATED_TIME}</Text>
+            </View> */}
+             <View style={{ flex:1, flexDirection:'column',   maxWidth:200}}>
+              <Text style={{padding:5, backgroundColor: 'blue', color:'white', borderWidth:StyleSheet.hairlineWidth, borderColor: colors.lightcolor2, borderRadius: 5 }}>{item.MSG_TEXT}</Text>
+              <Text style={{ alignSelf:'flex-end', color:'white', fontSize: 10 }}>{item.CREATED_TIME}</Text>
             </View>
           </View>
         }
@@ -236,7 +241,7 @@ class ChatPage extends React.Component {
         { mychat &&
           <View style={{ flex:1, flexDirection:'row', justifyContent: 'flex-end' , marginBottom: 10}}>            
             <View style={{ flex:1, flexDirection:'column',   maxWidth:200}}>
-              <Text style={{padding:5, backgroundColor: colors.lightcolor2, color:'white', borderWidth:StyleSheet.hairlineWidth, borderColor: colors.lightcolor2, borderRadius: 5 }}>{item.MSG_TEXT}</Text>
+              <Text style={{padding:5, backgroundColor: colors.lightcolor2, color:'white', borderWidth:StyleSheet.hairlineWidth, borderColor: colors.lightcolor2, borderRadius: 5}}>{item.MSG_TEXT}</Text>
               <Text style={{ alignSelf:'flex-end', color:'white', fontSize: 10 }}>{item.CREATED_TIME}</Text>
             </View>
           </View>

@@ -2,7 +2,7 @@
 let initialState = {
 
     score :{
-        level: 1,
+        level: 2,
         points: 5,
         max_level_points:55
     },

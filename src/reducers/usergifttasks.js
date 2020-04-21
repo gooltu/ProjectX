@@ -3,7 +3,7 @@ let initialState = {
     
     usergifttasks : 
         {
-            1 : {
+            11 : {
                 cycle: 201949,
                 done: 0,
                 expiration_at: "2019-12-14T23:59:59.000Z",
@@ -14,7 +14,7 @@ let initialState = {
                 user_id: 2
             },
             
-            2 : {
+            12 : {
                 cycle: 201949,
                 done: 0,
                 expiration_at: "2019-12-14T23:59:59.000Z",
@@ -25,7 +25,7 @@ let initialState = {
                 user_id: 2
             },
 
-            3: {
+            13: {
                 cycle: 201949,
                 done: 0,
                 expiration_at: "2019-12-14T23:59:59.000Z",

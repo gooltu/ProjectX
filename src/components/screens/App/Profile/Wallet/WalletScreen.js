@@ -19,6 +19,8 @@ import { Button } from 'native-base'
 import color from '../../../../shared_styles/colors'
 import styles from './Wallet.styles'
 import Logo from '../../../../svg_components/Logo';
+import Diamond from '../../../../svg_components/Diamond';
+import Coin from '../../../../svg_components/Coin';
 
 const scrollBarData = [
   {
@@ -38,8 +40,6 @@ const scrollBarData = [
     'text': 'SHARE'
   }
 ]
-
-const TransferOptions = ['PAYTM', 'PHONEPAY', 'UPI', 'GPAY']
 
 
 export default class WalletScreen extends React.Component {
@@ -96,7 +96,7 @@ export default class WalletScreen extends React.Component {
                   <TouchableOpacity style={styles.scrollBarItem}>
                     <View style={styles.itemOne}>
                       <Text style={styles.itemText}>100</Text>
-                      <Logo height="40" width="40" />
+                      <Diamond height="55" width="55" />
                     </View>
                     <View style={styles.itemTwo}>
                       <Text></Text>
@@ -119,7 +119,7 @@ export default class WalletScreen extends React.Component {
                   <TouchableOpacity style={styles.scrollBarItem}>
                     <View style={styles.itemOne}>
                       <Text style={styles.itemText}>100</Text>
-                      <Logo height="40" width="40" />
+                      <Coin height="55" width="55" />
                     </View>
                     <View style={styles.itemTwo}>
                       <Text></Text>
