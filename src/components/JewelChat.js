@@ -21,7 +21,7 @@ import EnterOTP from "./screens/Auth/EnterOTP";
 import EnterDetails from "./screens/Auth/EnterDetails";
 
 
-import ChatList from "./screens/App/ChatList";
+import ChatList from "./screens/App/Chat/ChatList/ChatList";
 import Game from "./screens/App/Game/Game";
 import TaskDetail from "./screens/App/Game/TaskDetail/TaskDetail"
 import GiftTaskDetail from "./screens/App/Game/GiftTaskDetail/GiftTaskDetail"
@@ -32,7 +32,7 @@ import LeaderBoard from './screens/App/Profile/LeaderBoard/LeaderBoard'
 import Wallet from './screens/App/Profile/Wallet/WalletScreen'
 
 import Contacts from "./screens/App/Contacts";
-import ChatPage from "./screens/App/ChatPage";
+import ChatPage from "./screens/App/Chat/ChatPage/ChatPage";
 import NewGroup from "./screens/App/NewGroup";
 import JewelFactory from "./screens/App/JewelFactory";
 

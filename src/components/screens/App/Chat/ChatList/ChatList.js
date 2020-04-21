@@ -15,16 +15,16 @@ import {
 import { connect } from 'react-redux';  
 
 import { FAB, Portal, Provider } from 'react-native-paper';
+import styles from './ChatList.styles'
+import Logo from '../../../../svg_components/Logo';
+import Coin from '../../../../svg_components/Coin';
+import Diamond from '../../../../svg_components/Diamond';
+import J3 from '../../../../svg_components/J3';
+import J6 from '../../../../svg_components/J6';
+import TabIcon from "../../../../svg_components/TabIcons";
 
-import Logo from '../../svg_components/Logo';
-import Coin from '../../svg_components/Coin';
-import Diamond from '../../svg_components/Diamond';
-import J3 from '../../svg_components/J3';
-import J6 from '../../svg_components/J6';
-import TabIcon from "../../svg_components/TabIcons";
 
-
-import colors from "../../shared_styles/colors";
+import colors from "../../../../shared_styles/colors";
 
 
 
@@ -38,7 +38,7 @@ function Item({ item , onpressitem, onlongpressitem }) {
     <TouchableOpacity
       onPress={() => onpressitem(item)}
       onLongPress={() => onlongpressitem(item._ID)}
-      style={{ flexDirection: "row", width:'100%', height: 64, borderBottomWidth: 1,  borderColor: colors.darkcolor2, backgroundColor: colors.darkcolor1}}
+      style={styles.mainConatiner}
     >
       <View
         style={{
@@ -48,34 +48,23 @@ function Item({ item , onpressitem, onlongpressitem }) {
             height: '100%'                                    
         }}
       >
-        <View style={{height:64, width: 8, marginLeft: 4 }}/>
+        <View style={styles.marginStyle}/>
         <View 
-            style={{
-                height: 48,
-                width: 48,
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderColor: 'white',
-                borderRadius: 24,
-                marginTop: 8,   
-                marginRight:8,             
-                borderWidth:StyleSheet.hairlineWidth,
-                overflow:'hidden'
-            }}
+            style={styles.chatBox}
           >
             { item.SMALL_IMAGE && item.JEWELCHAT_ID != 1 &&
               <ImageBackground 
                 source={{ uri: item.SMALL_IMAGE }}
-                style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', overflow:'hidden'}}></ImageBackground>
+                style={styles.imgBackground}></ImageBackground>
             } 
 
             {
-              item.JEWELCHAT_ID == 1 && <Logo height="75%" width="75%" style={{ margin : 10, width: '100%', height: '100%',  alignItems: 'center', overflow:'hidden'  }} />
+              item.JEWELCHAT_ID == 1 && <Logo height="75%" width="75%" style={styles.jewelStyle} />
             }
             
 
             { 
-              !item.SMALL_IMAGE && item.JEWELCHAT_ID != 1 && <J6 height="75%" width="75%" style={{ margin : 10, width: '100%', height: '100%',  alignItems: 'center', overflow:'hidden'  }} />
+              !item.SMALL_IMAGE && item.JEWELCHAT_ID != 1 && <J6 height="75%" width="75%" style={styles.jewelStyle} />
               
             } 
 
@@ -87,42 +76,32 @@ function Item({ item , onpressitem, onlongpressitem }) {
                         marginLeft:8
                       }}
         >
-          <Text style={{color:'white', fontSize:12, fontWeight:'600', padding: 4}}>{ item.PHONEBOOK_CONTACT_NAME ? item.PHONEBOOK_CONTACT_NAME : (item.JEWELCHAT_ID == 1 ? 'Team JewelChat': '+'+item.CONTACT_NUMBER ) }</Text> 
-          <Text style={{color:colors.jcgray, fontSize:10, fontWeight:'normal', padding:4}}>{item.MSG_TEXT.substring(0, 25) + (item.MSG_TEXT.length >25 ? '...': '')}</Text>           
+          <Text style={styles.name}>{ item.PHONEBOOK_CONTACT_NAME ? item.PHONEBOOK_CONTACT_NAME : (item.JEWELCHAT_ID == 1 ? 'Team JewelChat': '+'+item.CONTACT_NUMBER ) }</Text> 
+          <Text style={styles.msgText}>{item.MSG_TEXT.substring(0, 25) + (item.MSG_TEXT.length >25 ? '...': '')}</Text>           
         </View>
 
                                 
       </View>
       <View
-        style={{
-            flex:1,
-            flexDirection: "row",
-            justifyContent: "flex-end",            
-            height: '100%'
-        }}
+        style={styles.itemLeftConatiner}
       >
         
         <View
-                style={{
-                        height: 64,                        
-                        marginTop: 8,
-                        marginLeft:8,
-                        alignItems:'center'
-                      }}
+                style={styles.itemLeftSubContainer}
         >
 
-          <Text style={{ color:colors.jcgray, fontSize:10, fontWeight:'normal', padding:4 }}>{relativeDateSting(item.LAST_MSG_CREATED_TIME)}</Text>
+          <Text style={styles.msgCreateTime}>{relativeDateSting(item.LAST_MSG_CREATED_TIME)}</Text>
 
          {item.UNREAD_COUNT > 0 &&
-          <View style = {{ minWidth: 22 , minHeight: 22, backgroundColor:colors.lightcolor2, borderRadius:11, padding:4, borderWidth:1, overflow:'hidden', borderColor:colors.lightcolor2, justifyContent: 'center', alignItems: 'center' }}>
+          <View style = {styles.unreadCount}>
             <Text 
-              style={{ fontSize:10, color:'white' }} >
+              style={styles.countText} >
               {item.UNREAD_COUNT}  
             </Text>
           </View> 
          }           
         </View>
-        <View style={{height:64, width: 8, marginLeft: 4 }}/>
+        <View style={styles.marginStyleLeft}/>
 
       </View>
 
@@ -199,39 +178,6 @@ class ChatList extends React.Component {
 }
 
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 30,
-    alignItems: "center",
-    backgroundColor: colors.darkcolor1
-  },
-  button: {
-    height: 50,
-    width: 250,
-    alignItems: "center",    
-    marginRight:40,
-    marginLeft:40,
-    marginTop:100,
-    /*
-    paddingTop: 7,
-    paddingBottom: 7,
-    paddingLeft: 10,
-    paddingRight: 10,
-    */
-    backgroundColor: colors.lightcolor1,
-    borderRadius:10,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: '#00000000',
-    overflow:'hidden'    
-  },
-  buttontext: {
-    color: 'white',
-    textAlign:'center',
-    fontSize: 18,
-    fontWeight: "600"
-  }
-});
 
 
 function relativeDateSting(last_msg_time){

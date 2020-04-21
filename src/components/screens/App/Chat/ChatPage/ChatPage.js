@@ -19,12 +19,12 @@ import {
     TouchableOpacity
   } from 'react-native';
 
-import JCTextInput from "../../../utilities/JCTextInput/JCTextInput" ; 
+import JCTextInput from "../../../../../utilities/JCTextInput/JCTextInput" ; 
 
-import colors from "../../shared_styles/colors";
+import colors from "../../../../shared_styles/colors";
 
-import J6 from '../../svg_components/J6';
-import J3 from '../../svg_components/J6';
+import J6 from '../../../../svg_components/J6';
+import J3 from '../../../../svg_components/J6';
 
 
 import { connect } from 'react-redux';
