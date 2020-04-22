@@ -286,7 +286,6 @@ class JewelChat extends React.Component {
         console.log('UNMOUNT APP')
         AppState.removeEventListener('change', this._handleAppStateChange);
         this.unsubscribe();
-
     }
 
     _handleAppStateChange = (nextAppState) => {
@@ -300,6 +299,8 @@ class JewelChat extends React.Component {
         console.log("Connection type", state.type);
         console.log("Is connected?", state.isConnected);
         this.props.networkstateChange(state);
+        if (!this.props.mytoken.isLoading && this.props.mytoken.token !== null && this.props.network.networkIsConnected)
+            this.props.realtimeConnect();
     }
 
 

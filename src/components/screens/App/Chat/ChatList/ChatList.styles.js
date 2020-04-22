@@ -115,7 +115,23 @@ export default styles = StyleSheet.create({
     },
     marginStyleLeft: {
         height: 64,
-    width: 8,
+        width: 8,
         marginLeft: 4
-    }
+    },
+    rootContainer: {
+        backgroundColor: colors.darkcolor1,
+        height: '100%',
+        width: '100%'
+    },
+    subContainer: {
+        flex: 1,
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        height: '100%'
+    },
+    chatboxLeftContainer:{
+        height: 64,
+        marginTop: 8,
+        marginLeft: 8
+      }
 })

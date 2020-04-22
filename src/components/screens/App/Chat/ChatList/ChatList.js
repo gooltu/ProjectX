@@ -1,19 +1,17 @@
 import React from "react";
 import {
   ActivityIndicator,
-  AsyncStorage,  
+  AsyncStorage,
   StatusBar,
   StyleSheet,
-  View,  
+  View,
   Image,
   TouchableOpacity,
   ImageBackground,
   FlatList,
   Text
 } from "react-native";
-
-import { connect } from 'react-redux';  
-
+import { connect } from 'react-redux';
 import { FAB, Portal, Provider } from 'react-native-paper';
 import styles from './ChatList.styles'
 import Logo from '../../../../svg_components/Logo';
@@ -22,98 +20,59 @@ import Diamond from '../../../../svg_components/Diamond';
 import J3 from '../../../../svg_components/J3';
 import J6 from '../../../../svg_components/J6';
 import TabIcon from "../../../../svg_components/TabIcons";
-
-
 import colors from "../../../../shared_styles/colors";
 
+function Item({ item, onpressitem, onlongpressitem }) {
 
 
-
-
-
-function Item({ item , onpressitem, onlongpressitem }) { 
-  
-  
   return (
     <TouchableOpacity
       onPress={() => onpressitem(item)}
       onLongPress={() => onlongpressitem(item._ID)}
       style={styles.mainConatiner}
     >
-      <View
-        style={{
-            flex:1,
-            flexDirection: "row",
-            justifyContent: "flex-start",            
-            height: '100%'                                    
-        }}
-      >
-        <View style={styles.marginStyle}/>
-        <View 
-            style={styles.chatBox}
-          >
-            { item.SMALL_IMAGE && item.JEWELCHAT_ID != 1 &&
-              <ImageBackground 
-                source={{ uri: item.SMALL_IMAGE }}
-                style={styles.imgBackground}></ImageBackground>
-            } 
-
-            {
-              item.JEWELCHAT_ID == 1 && <Logo height="75%" width="75%" style={styles.jewelStyle} />
-            }
-            
-
-            { 
-              !item.SMALL_IMAGE && item.JEWELCHAT_ID != 1 && <J6 height="75%" width="75%" style={styles.jewelStyle} />
-              
-            } 
-
+      <View style={styles.subContainer}>
+        <View style={styles.marginstyle} />
+        <View style={styles.chatBox}>
+          {item.SMALL_IMAGE && item.JEWELCHAT_ID != 1 &&
+            <ImageBackground
+              source={{ uri: item.SMALL_IMAGE }}
+              style={styles.imgBackground}></ImageBackground>
+          }
+          {
+            item.JEWELCHAT_ID == 1 && <Logo height="75%" width="75%" style={styles.jewelStyle} />
+          }
+          {
+            !item.SMALL_IMAGE && item.JEWELCHAT_ID != 1 && <J6 height="75%" width="75%" style={styles.jewelStyle} />
+          }
         </View>
-        <View
-                style={{
-                        height: 64,                        
-                        marginTop: 8,
-                        marginLeft:8
-                      }}
-        >
-          <Text style={styles.name}>{ item.PHONEBOOK_CONTACT_NAME ? item.PHONEBOOK_CONTACT_NAME : (item.JEWELCHAT_ID == 1 ? 'Team JewelChat': '+'+item.CONTACT_NUMBER ) }</Text> 
-          <Text style={styles.msgText}>{item.MSG_TEXT.substring(0, 25) + (item.MSG_TEXT.length >25 ? '...': '')}</Text>           
+        <View style={styles.chatboxLeftContainer} >
+          <Text style={styles.name}>{item.PHONEBOOK_CONTACT_NAME ? item.PHONEBOOK_CONTACT_NAME : (item.JEWELCHAT_ID == 1 ? 'Team JewelChat' : '+' + item.CONTACT_NUMBER)}</Text>
+          <Text style={styles.msgText}>{item.MSG_TEXT.substring(0, 25) + (item.MSG_TEXT.length > 25 ? '...' : '')}</Text>
         </View>
-
-                                
       </View>
-      <View
-        style={styles.itemLeftConatiner}
-      >
-        
-        <View
-                style={styles.itemLeftSubContainer}
-        >
-
+      <View style={styles.itemLeftConatiner} >
+        <View style={styles.itemLeftSubContainer}>
           <Text style={styles.msgCreateTime}>{relativeDateSting(item.LAST_MSG_CREATED_TIME)}</Text>
-
-         {item.UNREAD_COUNT > 0 &&
-          <View style = {styles.unreadCount}>
-            <Text 
-              style={styles.countText} >
-              {item.UNREAD_COUNT}  
-            </Text>
-          </View> 
-         }           
+          {item.UNREAD_COUNT > 0 &&
+            <View style={styles.unreadCount}>
+              <Text
+                style={styles.countText} >
+                {item.UNREAD_COUNT}
+              </Text>
+            </View>
+          }
         </View>
-        <View style={styles.marginStyleLeft}/>
-
+        <View style={styles.marginStyleLeft} />
       </View>
-
-      
     </TouchableOpacity>
   );
 }
 
 
 class ChatList extends React.Component {
-   
-  
+
+
   state = {
     open: false
   }
@@ -126,38 +85,38 @@ class ChatList extends React.Component {
     console.log('ChatList Mount');
   }
 
-  componentWillUnmount() {    
+  componentWillUnmount() {
     console.log('ChatList UnMount');
   }
 
   render() {
     return (
-      <View style={{backgroundColor:colors.darkcolor1, height:'100%', width: '100%'}}>       
-        
+      <View style={styles.rootContainer}>
+
         <Provider>
-          <Portal>  
+          <Portal>
 
 
             <FlatList
-              data= {this.props.chatslist}
-              renderItem={ ( {item} ) => (
-                <Item item = {item}                  
-                  onpressitem = { (item) => {this.props.navigation.navigate('ChatPage', item )}} 
-                  onlongpressitem = { (id) => {this.props.navigation.navigate('MyModal', { modal_name: 'chatlist_longpress', item } )}}
-                />           
+              data={this.props.chatslist}
+              renderItem={({ item }) => (
+                <Item item={item}
+                  onpressitem={(item) => { this.props.navigation.navigate('ChatPage', item) }}
+                  onlongpressitem={(id) => { this.props.navigation.navigate('MyModal', { modal_name: 'chatlist_longpress', item }) }}
+                />
               )}
-              keyExtractor={item => item._ID+''}
-            />          
+              keyExtractor={item => item._ID + ''}
+            />
 
             <FAB.Group
               style={{ paddingBottom: 30 }}
-              fabStyle={{backgroundColor: colors.lightcolor2}}
+              fabStyle={{ backgroundColor: colors.lightcolor2 }}
               color={'white'}
               open={this.state.open}
               icon={this.state.open ? 'today' : 'add'}
-              actions={[                                
-                { icon: 'email', label: 'New Group', color: 'white' ,style: { backgroundColor: colors.lightcolor2 } , onPress: () => console.log('Pressed email') },
-                { icon: 'notifications', label: 'Contacts', color: 'white' ,style: { backgroundColor: colors.lightcolor2 }, onPress: () => console.log('Pressed notifications') },
+              actions={[
+                { icon: 'email', label: 'New Group', color: 'white', style: { backgroundColor: colors.lightcolor2 }, onPress: () => console.log('Pressed email') },
+                { icon: 'notifications', label: 'Contacts', color: 'white', style: { backgroundColor: colors.lightcolor2 }, onPress: () => console.log('Pressed notifications') },
               ]}
               onStateChange={({ open }) => this.setState({ open })}
               onPress={() => {
@@ -166,11 +125,11 @@ class ChatList extends React.Component {
                 }
               }}
             />
-            
-          </Portal>
-        </Provider>      
 
-              
+          </Portal>
+        </Provider>
+
+
 
       </View>
     );
@@ -180,61 +139,61 @@ class ChatList extends React.Component {
 
 
 
-function relativeDateSting(last_msg_time){
+function relativeDateSting(last_msg_time) {
 
-  let date  = new Date(Number(last_msg_time)); 
+  let date = new Date(Number(last_msg_time));
 
   let delta = Math.round((+new Date - date) / 1000);
 
   let minute = 60,
-      hour = minute * 60,
-      day = hour * 24;
+    hour = minute * 60,
+    day = hour * 24;
 
   let fuzzy;
 
   if (delta < 30) {
-      fuzzy = 'just now';
+    fuzzy = 'just now';
   } else if (delta < minute) {
-      fuzzy = delta + ' seconds ago';
+    fuzzy = delta + ' seconds ago';
   } else if (delta < 2 * minute) {
-      fuzzy = 'a minute ago'
+    fuzzy = 'a minute ago'
   } else if (delta < hour) {
-      fuzzy = Math.floor(delta / minute) + ' minutes ago';
+    fuzzy = Math.floor(delta / minute) + ' minutes ago';
   } else if (Math.floor(delta / hour) == 1) {
-      fuzzy = '1 hour ago.'
+    fuzzy = '1 hour ago.'
   } else if (delta < day) {
-      fuzzy = Math.floor(delta / hour) + ' hours ago.';
+    fuzzy = Math.floor(delta / hour) + ' hours ago.';
   } else if (delta < day * 2) {
-      fuzzy = 'yesterday';
-  }else{
-      let dd = date.getDate(); 
-      let mm = date.getMonth() + 1; 
-      let yyyy = date.getFullYear();
-      if (dd < 10) { 
-        dd = '0' + dd; 
-      } 
-      if (mm < 10) { 
-          mm = '0' + mm; 
-      } 
-      fuzzy = dd + '/' + mm + '/' + yyyy; 
+    fuzzy = 'yesterday';
+  } else {
+    let dd = date.getDate();
+    let mm = date.getMonth() + 1;
+    let yyyy = date.getFullYear();
+    if (dd < 10) {
+      dd = '0' + dd;
+    }
+    if (mm < 10) {
+      mm = '0' + mm;
+    }
+    fuzzy = dd + '/' + mm + '/' + yyyy;
   }
 
   return fuzzy;
 
 }
 
-function mapStateToProps(state) {  
-	return {		
-        chatslist: state.chatslist        
-	}
+function mapStateToProps(state) {
+  return {
+    chatslist: state.chatslist
+  }
 }
 
 
 function mapDispatchToProps(dispatch) {
-	return {    
-                       
-	}
+  return {
+
+  }
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps )(ChatList);
+export default connect(mapStateToProps, mapDispatchToProps)(ChatList);

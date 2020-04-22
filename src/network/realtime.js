@@ -13,7 +13,8 @@ export const realtimeConnect = () => {
 		
 		console.log('REALTIME CONNECT');
 		console.log(getState());
-
+// console.log(getState().mytoken.myphone + '@jewelchat')
+// console.log(getState().mytoken.token)
 		connection.connect(getState().mytoken.myphone + '@jewelchat', getState().mytoken.token, (status, err) => {
 
 			if(err){
