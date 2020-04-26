@@ -13,7 +13,7 @@ import {
   CameraRoll
 } from "react-native";
 
-import CustomHeader from "../../../../shared_components/CustomHeader";
+import CustomHeader from "../../../../shared_components/customHeader/CustomHeader";
 import JCImages from '../../../../../assets/JCImages'
 import styles from './LeaderBoard.styles'
 

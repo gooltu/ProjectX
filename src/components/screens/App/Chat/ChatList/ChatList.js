@@ -21,7 +21,7 @@ import J3 from '../../../../svg_components/J3';
 import J6 from '../../../../svg_components/J6';
 import TabIcon from "../../../../svg_components/TabIcons";
 import colors from "../../../../shared_styles/colors";
-
+import {setActiveDispatch} from '../../../../../actions/chatListActions'
 function Item({ item, onpressitem, onlongpressitem }) {
 
 
@@ -101,7 +101,10 @@ class ChatList extends React.Component {
               data={this.props.chatslist}
               renderItem={({ item }) => (
                 <Item item={item}
-                  onpressitem={(item) => { this.props.navigation.navigate('ChatPage', item) }}
+                  onpressitem={(item) => {
+                    this.props.setActiveDispatch(item)  
+                    this.props.navigation.navigate('ChatPage', item)
+                  }}
                   onlongpressitem={(id) => { this.props.navigation.navigate('MyModal', { modal_name: 'chatlist_longpress', item }) }}
                 />
               )}
@@ -184,14 +187,14 @@ function relativeDateSting(last_msg_time) {
 
 function mapStateToProps(state) {
   return {
-    chatslist: state.chatslist
+    chatslist: state.chatslist.chatList
   }
 }
 
 
 function mapDispatchToProps(dispatch) {
   return {
-
+    setActiveDispatch: (activeChat) => dispatch(setActiveDispatch(activeChat))
   }
 }
 

@@ -31,12 +31,14 @@ import Profile from "./screens/App/Profile/Profile";
 import LeaderBoard from './screens/App/Profile/LeaderBoard/LeaderBoard'
 import Wallet from './screens/App/Profile/Wallet/WalletScreen'
 
+import FriendProfile from './screens/App/FriendProfile/FriendProfile'
+
 import Contacts from "./screens/App/Contacts";
 import ChatPage from "./screens/App/Chat/ChatPage/ChatPage";
 import NewGroup from "./screens/App/NewGroup";
 import JewelFactory from "./screens/App/JewelFactory";
 
-import CustomHeader from "./shared_components/CustomHeader";
+import CustomHeader from "./shared_components/customHeader/CustomHeader";
 import JCModal from "./shared_components/JCModal";
 
 import colors from "./shared_styles/colors";
@@ -180,17 +182,24 @@ const AppMainStack = createStackNavigator({
             headerStyle: {
                 backgroundColor: colors.darkcolor1,
                 shadowOpacity: 0,
-              },
-          }
+            },
+        }
         // ({ navigation }) => {
         //     return {
         //         header: <CustomHeader navigation={navigation} />
         //     };
         //}
     },
-    SuccessFullGiftRedeem:{
+    SuccessFullGiftRedeem: {
         screen: SuccessFullGiftRedeem,
-       
+    },
+    FriendProfile: {
+        screen: FriendProfile,
+        navigationOptions: ({ navigation }) => {
+            return {
+                header: <CustomHeader navigation={navigation} />
+            };
+        }
     }
 
 }, {
@@ -276,9 +285,10 @@ class JewelChat extends React.Component {
             console.log(err)
         })
         */
-        if (!this.props.mytoken.isLoading && this.props.mytoken.token !== null && this.props.network.networkIsConnected)
-            this.props.realtimeConnect();
-
+        // if (!this.props.mytoken.isLoading && this.props.mytoken.token !== null && this.props.network.networkIsConnected){
+        console.log('Came to real time connect')
+        this.props.realtimeConnect();
+        //     }
     }
 
     componentWillUnmount() {
@@ -329,7 +339,7 @@ function mapDispatchToProps(dispatch) {
         tokenLoad: (myTokens) => dispatch({ type: 'USER_TOKEN_LOADED', myTokens }),
         appstateChange: (appstate) => dispatch({ type: 'APP_STATE_CHANGE', payload: appstate }),
         networkstateChange: (network) => dispatch({ type: 'NETWORK_STATE_CHANGE', payload: network }),
-        realtimeConnect:() => dispatch(realtimeConnect())
+        realtimeConnect: () => dispatch(realtimeConnect())
     }
 }
 

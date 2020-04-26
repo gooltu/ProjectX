@@ -97,10 +97,10 @@ export default styles = StyleSheet.create({
     },
     friendMsgText: {
         padding: 5,
-        backgroundColor: 'blue',
+        backgroundColor: '#4287f5',
         color: 'white',
         borderWidth: StyleSheet.hairlineWidth,
-        borderColor: colors.lightcolor2,
+        borderColor: '#4287f5',
         borderRadius: 5
     },
     myMsgText: {

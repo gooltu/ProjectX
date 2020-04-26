@@ -40,7 +40,7 @@ export const xmppConnect = (userToken) => {
 							console.log('Strophe is disconnected.');        
 						} else if (status == Strophe.Status.CONNECTED) {
 							dispatch({ type: 'XMPP_CONNECTED' });
-
+							console.log('Strophe is connected.');     
 							connection.addHandler((msg)=>{
 
 

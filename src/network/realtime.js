@@ -1,24 +1,23 @@
 import XMPP from "../utilities/xmpp/strophe";
 
-const URL = 'ws://13.233.85.150:5280/ws-xmpp';
+const URL = 'ws://15.206.122.245:5280/ws-xmpp';
 
-let connection = new XMPP.Strophe.Connection(URL);				
+let connection = new XMPP.Strophe.Connection(URL);
 connection.registerSASLMechanism = XMPP.Strophe.SASLXOAuth2;
 
 
 export const realtimeConnect = () => {
 
 	return (dispatch, getState) => {
-
-		
-		console.log('REALTIME CONNECT');
+		console.log('REALTIME CONNECT1');
 		console.log(getState());
-// console.log(getState().mytoken.myphone + '@jewelchat')
-// console.log(getState().mytoken.token)
-		connection.connect(getState().mytoken.myphone + '@jewelchat', getState().mytoken.token, (status, err) => {
-
-			if(err){
-				console.log('Error:'+err);
+		console.log('REALTIME CONNECT2');
+		// console.log(getState().mytoken.myphone + '@jewelchat')
+		// console.log(getState().mytoken.token)
+//		connection.connect(getState().mytoken.myphone + '@jewelchat', getState().mytoken.token, (status, err) => {
+	connection.connect('xyz@jewelchat.net','pass', (status, err) => {
+			if (err) {
+				console.log('Error:' + err);
 				//dispatch({ type: 'XMPP_ERROR' });
 			}
 
@@ -26,8 +25,8 @@ export const realtimeConnect = () => {
 				console.log('Strophe is connecting.');
 				dispatch({ type: 'XMPP_CONNECTING' });
 			} else if (status == Strophe.Status.CONNFAIL) {
-				console.log('Strophe failed to connect.');  
-				dispatch({ type: 'XMPP_CONNECTION_FAIL' });      
+				console.log('Strophe failed to connect.');
+				dispatch({ type: 'XMPP_CONNECTION_FAIL' });
 			} else if (status == Strophe.Status.AUTHENTICATING) {
 				console.log('Strophe is authenticating.');
 				dispatch({ type: 'XMPP_AUTHENTICATING' });
@@ -39,12 +38,23 @@ export const realtimeConnect = () => {
 				console.log('Strophe is disconnecting.');
 			} else if (status == Strophe.Status.DISCONNECTED) {
 				dispatch({ type: 'XMPP_DISCONNECTED' });
-				console.log('Strophe is disconnected.');        
+				console.log('Strophe is disconnected.');
 			} else if (status == Strophe.Status.CONNECTED) {
-				dispatch({ type: 'XMPP_CONNECTED' });
-			}	
+				console.log('Strophe is connected.');
+			// 	dispatch({ type: 'XMPP_CONNECTED' });
+			// 	connection.addHandler((msg) => {
+			// 		console.log('came to test')
+			// 	}, null, 'message', null, null, null);
 
-		});	
+			// 	connection.send($pres().tree());
+			// 	connection.roster.init(connection);
+
+			// 	console.log('Strophe is connected.');
+
+			 }
+
+
+		});
 
 	}
 
@@ -55,8 +65,8 @@ export const realtimeDisconnect = () => {
 
 	return (dispatch, getState) => {
 
-		
-		console.log('REALTIME DISCONNECT');		
+
+		console.log('REALTIME DISCONNECT');
 
 		connection.disconnect();
 
@@ -78,9 +88,9 @@ export const xmppConnect = (userToken) => {
     return (dispatch, getState) => {
 
 				dispatch({ type: 'XMPP_START_CONNECTING' });
-				
+
 				connection = new XMPP.Strophe.Connection(this.WEBSOCKET_SERVICE);
-				
+
 				connection.registerSASLMechanism = XMPP.Strophe.SASLXOAuth2;
 
 				connection.connect('user1@jewelchat', userToken, () => {
@@ -94,8 +104,8 @@ export const xmppConnect = (userToken) => {
 							console.log('Strophe is connecting.');
 							dispatch({ type: 'XMPP_CONNECTING' });
 						} else if (status == Strophe.Status.CONNFAIL) {
-							console.log('Strophe failed to connect.');  
-							dispatch({ type: 'XMPP_CONNECTIOn_FAIL' });      
+							console.log('Strophe failed to connect.');
+							dispatch({ type: 'XMPP_CONNECTIOn_FAIL' });
 						} else if (status == Strophe.Status.AUTHENTICATING) {
 							console.log('Strophe is authenticating.');
 							dispatch({ type: 'XMPP_AUTHENTICATING' });
@@ -107,25 +117,25 @@ export const xmppConnect = (userToken) => {
 							console.log('Strophe is disconnecting.');
 						} else if (status == Strophe.Status.DISCONNECTED) {
 							dispatch({ type: 'XMPP_DISCONNECTED' });
-							console.log('Strophe is disconnected.');        
+							console.log('Strophe is disconnected.');
 						} else if (status == Strophe.Status.CONNECTED) {
 							dispatch({ type: 'XMPP_CONNECTED' });
 
 							connection.addHandler((msg)=>{
 
 
-								
+
 
 							}, null, 'message', null, null,  null);
 
-							connection.send($pres().tree());						
+							connection.send($pres().tree());
 							connection.roster.init(connection);
 
-							console.log('Strophe is connected.');							
+							console.log('Strophe is connected.');
 						}
 
 				});
-       
+
     }
 
 }

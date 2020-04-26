@@ -14,7 +14,7 @@ import {
   PixelRatio
 } from "react-native";
 
-import CustomHeader from "../../../shared_components/CustomHeader";
+import CustomHeader from "../../../shared_components/customHeader/CustomHeader";
 import styles from './Profile.styles'
 import strings from './Profiles.strings'
 import color from '../../../shared_styles/colors'

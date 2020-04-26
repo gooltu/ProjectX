@@ -24,7 +24,6 @@ import colors from "../../../../shared_styles/colors";
 import J6 from '../../../../svg_components/J6';
 import J3 from '../../../../svg_components/J6';
 import { connect } from 'react-redux';
-
 class ChatPage extends React.Component {
   constructor(props) {
     super(props);

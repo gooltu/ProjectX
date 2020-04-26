@@ -1,14 +1,16 @@
 //let initialState = [];
+import {SET_ACTIVE_CHAT} from '../actions/ActionTypes'
 
-
-let initialState = [
+let initialState = {
+    activeChat:{},
+    chatList : [
     {
         _ID: 1,
         JEWELCHAT_ID: 1,
         JID: '910000000000@jewelchat.net',
         CONTACT_NUMBER: 910000000000,
         CONTACT_NAME: 'Team JewelChat',
-        PHONEBOOK_CONTACT_NAME: null,
+        PHONEBOOK_CONTACT_NAME: 'Team JewelChat',
         IS_GROUP: 0,
         STATUS_MSG: 'Keep Collecting',
         IS_REGIS: 1,
@@ -18,7 +20,7 @@ let initialState = [
         IS_PHONEBOOK_CONTACT: 0,
         UNREAD_COUNT: 2,
         SMALL_IMAGE:null,
-        IMAGE_PATH: null,
+        IMAGE_PATH: 'https://parthaprofiles.s3.ap-south-1.amazonaws.com/9005835708_pic.png',
         LAST_MSG_CREATED_TIME : '1569819266669',
         MSG_TYPE: 1,
         MSG_TEXT: 'Hello World'
@@ -29,7 +31,7 @@ let initialState = [
         JID: '919005835708@jewelchat.net',
         CONTACT_NUMBER: 919005835708,
         CONTACT_NAME: 'Mayukh',
-        PHONEBOOK_CONTACT_NAME: 'Dodo',
+        PHONEBOOK_CONTACT_NAME: 'Mayukh Chakraborty',
         IS_GROUP: 0,
         STATUS_MSG: 'Keep Collecting',
         IS_REGIS: 1,
@@ -50,7 +52,7 @@ let initialState = [
         JID: '919005835708@jewelchat.net',
         CONTACT_NUMBER: 919005835709,
         CONTACT_NAME: 'Mayukh',
-        PHONEBOOK_CONTACT_NAME: null,
+        PHONEBOOK_CONTACT_NAME: '919005835709',
         IS_GROUP: 0,
         STATUS_MSG: 'Keep Collecting',
         IS_REGIS: 1,
@@ -60,21 +62,25 @@ let initialState = [
         IS_PHONEBOOK_CONTACT: 0,				
         UNREAD_COUNT: 0,
         SMALL_IMAGE: null,
-        IMAGE_PATH: null,
+        IMAGE_PATH: 'https://parthaprofiles.s3.ap-south-1.amazonaws.com/9005835708_pic.png',
         LAST_MSG_CREATED_TIME : '1569819266669',
         MSG_TYPE: 1,
         MSG_TEXT: 'Hello World Hello World Hello World Hello World Hello World '
-    }
+    }]
 
 
-];
+};
     
     
 
         
 const chatslist = (state = initialState, action) => {
     switch (action.type) {
-             
+        case SET_ACTIVE_CHAT:
+            return{
+                ...state,
+                activeChat: action.activeChat
+            }
         default:            
             return state      
 
