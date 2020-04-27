@@ -122,10 +122,10 @@ class FriendProfile extends Component {
                             <Icon active name="search" />
                         </Button>
                     </Left>
-                    <Body noBorder>
+                    <Body style={{borderBottomWidth:null}}>
                         <Text style={styles.rowText}>Chat Search</Text>
                     </Body>
-                    <Right noBorder>
+                    <Right style={{borderBottomWidth:null}}>
                         <Text style={styles.number}>On</Text>
                         <Icon active name="ios-arrow-forward" />
                     </Right>
@@ -179,17 +179,17 @@ class FriendProfile extends Component {
                         <Icon active name="ios-arrow-forward" />
                     </Right>
                 </ListItem>
-                <ListItem icon>
+                <ListItem icon style={{borderBottomWidth:0}}>
                     <Left>
                         <Button style={{ backgroundColor: "#007AFF" }}>
                             <Icon active name="lock" />
                         </Button>
                     </Left>
-                    <Body style={{ paddingVertical: 10 }} noBorder>
+                    <Body style={{borderBottomWidth:null}}>
                         <Text style={styles.rowText}>Encryption</Text>
                         <Text style={{ fontSize: 10, color: 'white' }}>Messages to this chat are secured with end to end encryption.</Text>
                     </Body>
-                    <Right noBorder>
+                    <Right style={{borderBottomWidth:null}}>
                         <Text style={styles.number}>On</Text>
                         <Icon active name="ios-arrow-forward" />
                     </Right>
@@ -201,16 +201,16 @@ class FriendProfile extends Component {
     groupsInCommon = () => {
         return (
             <View>
-                <ListItem icon>
+                <ListItem icon noBorder>
                     <Left>
                         <Button style={{ backgroundColor: "#007AFF" }}>
                             <Icon active name="people" />
                         </Button>
                     </Left>
-                    <Body style={{ paddingVertical: 10 }} noBorder>
+                    <Body style={{borderBottomWidth:null }}>
                         <Text style={styles.rowText}>Groups In Common</Text>
                     </Body>
-                    <Right noBorder>
+                    <Right style={{ borderBottomWidth:null }}>
                         <Text style={styles.number}>3</Text>
                         <Icon active name="ios-arrow-forward" />
                     </Right>
@@ -227,10 +227,10 @@ class FriendProfile extends Component {
                             <Icon active name="contact" />
                         </Button>
                     </Left>
-                    <Body style={{ paddingVertical: 10 }} noBorder>
+                    <Body style={{ borderBottomWidth:null}} noBorder>
                         <Text style={styles.rowText}>Contact Details</Text>
                     </Body>
-                    <Right noBorder>
+                    <Right style={{ borderBottomWidth:null }}>
                         <Icon active name="ios-arrow-forward" />
                     </Right>
                 </ListItem>
@@ -249,6 +249,7 @@ class FriendProfile extends Component {
             outputRange: [0, -HEADER_SCROLL_DISTANCE],
             extrapolate: 'clamp',
         });
+
 
         const imageOpacity = scrollY.interpolate({
             inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],

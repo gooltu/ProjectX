@@ -87,7 +87,7 @@ class CustomHeader extends React.Component {
         let factoryView
         this.props.navigation.state.routeName == 'ChatPage' ?
             factoryView =
-            <TouchableOpacity onPress={() => console.log('Chatlist dots Press')} style={styles.jewelBox}>
+            <TouchableOpacity  onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'ChatPageOptions' })} style={styles.jewelBox}>
                 <ImageBackground source={require('../../../assets/dots.png')} style={{
                     width: '100%', height: '100%', justifyContent: 'center',
                     alignItems: 'center'

@@ -20,7 +20,7 @@ export default  styles = StyleSheet.create({
         top: 0,
         left: 0,
         right: 0,
-        backgroundColor: colors.darkcolor2,
+        backgroundColor: colors.darkcolor1,
         overflow: 'hidden',
         height: HEADER_MAX_HEIGHT
     },

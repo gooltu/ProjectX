@@ -15,6 +15,7 @@ import ChatList_LongPress from './modals/ChatList_LongPress';
 import ChatPage_ShareOptions from './modals/ChatPage_ShareOptions';
 import ChatPage_Giphy from './modals/ChatPage_Giphy';
 import JewelStore from './modals/JewelStore';
+import ChatPageOptions from './modals/ChatPageOptions'
 
 
 
@@ -57,6 +58,10 @@ export default class JCModal extends React.Component {
             return ( <ChatPage_Giphy modalprops = {this.props} />);
 
         }     
+
+        else if(this.state.type==='ChatPageOptions'){
+            return (<ChatPageOptions modalprops = {this.props}/>)
+        }
 
     }
 
