@@ -22,6 +22,7 @@ import J6 from '../../../../svg_components/J6';
 import TabIcon from "../../../../svg_components/TabIcons";
 import colors from "../../../../shared_styles/colors";
 import {setActiveDispatch} from '../../../../../actions/chatListActions'
+
 function Item({ item, onpressitem, onlongpressitem }) {
 
 
@@ -48,7 +49,7 @@ function Item({ item, onpressitem, onlongpressitem }) {
         </View>
         <View style={styles.chatboxLeftContainer} >
           <Text style={styles.name}>{item.PHONEBOOK_CONTACT_NAME ? item.PHONEBOOK_CONTACT_NAME : (item.JEWELCHAT_ID == 1 ? 'Team JewelChat' : '+' + item.CONTACT_NUMBER)}</Text>
-          <Text style={styles.msgText}>{item.MSG_TEXT.substring(0, 25) + (item.MSG_TEXT.length > 25 ? '...' : '')}</Text>
+          <Text style={styles.msgText}>{item.MSG_TEXT!=null?item.MSG_TEXT.substring(0, 25) + (item.MSG_TEXT.length > 25 ? '...' : ''):''}</Text>
         </View>
       </View>
       <View style={styles.itemLeftConatiner} >
@@ -119,7 +120,7 @@ class ChatList extends React.Component {
               icon={this.state.open ? 'today' : 'add'}
               actions={[
                 { icon: 'email', label: 'New Group', color: 'white', style: { backgroundColor: colors.lightcolor2 }, onPress: () => console.log('Pressed email') },
-                { icon: 'notifications', label: 'Contacts', color: 'white', style: { backgroundColor: colors.lightcolor2 }, onPress: () => console.log('Pressed notifications') },
+                { icon: 'notifications', label: 'Contacts', color: 'white', style: { backgroundColor: colors.lightcolor2 }, onPress: () => this.props.navigation.navigate('Contacts') },
               ]}
               onStateChange={({ open }) => this.setState({ open })}
               onPress={() => {

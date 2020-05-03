@@ -20,7 +20,6 @@ import RegisterPhone from "./screens/Auth/RegisterPhone";
 import EnterOTP from "./screens/Auth/EnterOTP";
 import EnterDetails from "./screens/Auth/EnterDetails";
 
-
 import ChatList from "./screens/App/Chat/ChatList/ChatList";
 import Game from "./screens/App/Game/Game";
 import TaskDetail from "./screens/App/Game/TaskDetail/TaskDetail"
@@ -33,7 +32,6 @@ import Wallet from './screens/App/Profile/Wallet/WalletScreen'
 
 import FriendProfile from './screens/App/FriendProfile/FriendProfile'
 
-import Contacts from "./screens/App/Contacts";
 import ChatPage from "./screens/App/Chat/ChatPage/ChatPage";
 import NewGroup from "./screens/App/NewGroup";
 import JewelFactory from "./screens/App/JewelFactory";
@@ -43,10 +41,10 @@ import JCModal from "./shared_components/JCModal";
 
 import colors from "./shared_styles/colors";
 import TabIcon from "./svg_components/TabIcons";
-
 import db from "../db/localdatabase";
 import { realtimeConnect, realtimeDisconnect } from "../network/realtime"
-
+import actions from '../actions'
+import Contacts from '../components/screens/App/Contacts/Contacts'
 import RNRestart from 'react-native-restart';
 
 
@@ -200,6 +198,14 @@ const AppMainStack = createStackNavigator({
                 header: <CustomHeader navigation={navigation} />
             };
         }
+    },
+    Contacts:{
+        screen: Contacts,
+        navigationOptions: ({ navigation }) => {
+            return {
+                header: <CustomHeader navigation={navigation} />
+            };
+        }
     }
 
 }, {
@@ -258,41 +264,57 @@ let AppContainer = createAppContainer(
 
 
 class JewelChat extends React.Component {
-
-
     componentDidUpdate(prevProps, prevState) {
-
         console.log('CURRENT STATE');
-        console.log(this.props);
-
-
+        console.log(this.props)
     }
 
 
     componentDidMount() {
-
         console.log('MOUNT APP');
+        console.log(db)
         AppState.addEventListener('change', this._handleAppStateChange);
         this.unsubscribe = NetInfo.addEventListener(this._handleNetworkChange);
-        /*
+        console.log(actions)
+    //   db.insertChatData()
+    //    db.insertContactList()
+    //   db.insertPhoneContactData(global.Contacts)
         db.getChats()
         .then(results => {
             console.log('FROM JEWELCHAT COMPONENT GETCHAT SUCCESS')
-            console.log(results)
+            console.log(results.rows.length)
+            let chatroom = []
+            for(let i=0;i<results.rows.length;i++){
+                chatroom.push(results.rows.item(i))
+            }
+            this.props.setChatData(chatroom)
+
         })
         .catch(err => {
             console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
             console.log(err)
         })
-        */
-        // if (!this.props.mytoken.isLoading && this.props.mytoken.token !== null && this.props.network.networkIsConnected){
+        db.getChatList().then(results => {
+            console.log('FROM JEWELCHAT COMPONENT GETCHAT SUCCESS')
+            console.log(results.rows.length)
+            let chatList = []
+            for(let i=0;i<results.rows.length;i++){
+                chatList.push(results.rows.item(i))
+            }
+            this.props.setChatListData(chatList)
+        })
+        .catch(err => {
+            console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
+            console.log(err)
+        })
+        
+     if (!this.props.mytoken.isLoading && this.props.mytoken.token !== null && this.props.network.networkIsConnected){
         console.log('Came to real time connect')
         this.props.realtimeConnect();
-        //     }
+        }
     }
 
     componentWillUnmount() {
-
         console.log('UNMOUNT APP')
         AppState.removeEventListener('change', this._handleAppStateChange);
         this.unsubscribe();
@@ -339,7 +361,9 @@ function mapDispatchToProps(dispatch) {
         tokenLoad: (myTokens) => dispatch({ type: 'USER_TOKEN_LOADED', myTokens }),
         appstateChange: (appstate) => dispatch({ type: 'APP_STATE_CHANGE', payload: appstate }),
         networkstateChange: (network) => dispatch({ type: 'NETWORK_STATE_CHANGE', payload: network }),
-        realtimeConnect: () => dispatch(realtimeConnect())
+        realtimeConnect: () => dispatch(realtimeConnect()),
+        setChatListData: (chatList) => dispatch(actions.setChatListData(chatList)),
+        setChatData: (chatData) => dispatch(actions.setChatData(chatData))
     }
 }
 

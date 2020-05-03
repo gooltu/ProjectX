@@ -16,6 +16,7 @@ import colors from "../../../shared_styles/colors";
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 import styles from './FriendProfile.styles'
 import { Container, Header, Content, Button, ListItem, Icon, Left, Body, Right, Switch } from 'native-base';
+import Logo from '../../../svg_components/Logo';
 
 const HEADER_MAX_HEIGHT = 300;
 const HEADER_MIN_HEIGHT = 0;
@@ -245,8 +246,8 @@ class FriendProfile extends Component {
             Platform.OS === 'ios' ? HEADER_MAX_HEIGHT : 0,
         );
         const headerTranslate = scrollY.interpolate({
-            inputRange: [0, HEADER_SCROLL_DISTANCE],
-            outputRange: [0, -HEADER_SCROLL_DISTANCE],
+            inputRange: [-HEADER_SCROLL_DISTANCE,0, HEADER_SCROLL_DISTANCE],
+            outputRange: [HEADER_SCROLL_DISTANCE,0, -HEADER_SCROLL_DISTANCE],
             extrapolate: 'clamp',
         });
 
@@ -295,7 +296,7 @@ class FriendProfile extends Component {
                                 transform: [{ translateY: imageTranslate }],
                             },
                         ]}
-                        source={{ uri: this.props.activeChat.IMAGE_PATH }}
+                        source={this.props.activeChat.IMAGE_PATH?{ uri: this.props.activeChat.IMAGE_PATH }:require('../../../../assets/placeholder_img.png')}
                     />
 
                 </Animated.View>

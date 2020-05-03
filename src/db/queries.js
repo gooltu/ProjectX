@@ -13,6 +13,9 @@ const Create_Contact = "CREATE TABLE if not exists Contact (" +
 "IS_BLOCKED" + "  INTEGER DEFAULT 0 , " +//11
 "IS_PHONEBOOK_CONTACT" + "  INTEGER , " +//12					
 "UNREAD_COUNT" + "  INTEGER DEFAULT 0  , " +//13
+"LAST_MSG_CREATED_TIME  TEXT, " +
+"MSG_TYPE   INTEGER ," +
+"MSG_TEXT   TEXT ," +
 "SMALL_IMAGE" + " TEXT ," +
 "IMAGE_PATH" + "  TEXT , unique ( " + "JID" + " ), unique ( "+ "CONTACT_NUMBER" + " ) )"; 
 
@@ -22,6 +25,7 @@ const Create_ChatMessage = "CREATE TABLE if not exists ChatMessage (" +
 "_ID  integer PRIMARY KEY autoincrement ," +
 "IS_GROUP_MSG   INTEGER DEFAULT 0 ," +
 "MSG_TYPE   INTEGER ," +
+"CREATED_DATE  TEXT ," +
 "CREATED_TIME  INTEGER ," +
 "CHAT_ROOM_JID	  TEXT ," +
 "CREATOR_JID	  TEXT ," +

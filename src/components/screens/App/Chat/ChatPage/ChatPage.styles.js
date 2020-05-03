@@ -97,16 +97,20 @@ export default styles = StyleSheet.create({
     },
     friendMsgText: {
         padding: 5,
-        backgroundColor: '#4287f5',
-        color: 'white',
+        color: 'white'
+    },
+    friendMsgTextContainer:{
         borderWidth: StyleSheet.hairlineWidth,
         borderColor: '#4287f5',
+        backgroundColor: '#4287f5',
         borderRadius: 5
     },
     myMsgText: {
         padding: 5,
+        color: 'white'
+    },
+    myMsgTextConatiner:{
         backgroundColor: colors.lightcolor2,
-        color: 'white',
         borderWidth: StyleSheet.hairlineWidth,
         borderColor: colors.lightcolor2,
         borderRadius: 5

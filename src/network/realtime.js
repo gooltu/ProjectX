@@ -10,17 +10,15 @@ export const realtimeConnect = () => {
 
 	return (dispatch, getState) => {
 		console.log('REALTIME CONNECT1');
-		console.log(getState());
-		console.log('REALTIME CONNECT2');
+		console.log(getState())
 		// console.log(getState().mytoken.myphone + '@jewelchat')
 		// console.log(getState().mytoken.token)
 //		connection.connect(getState().mytoken.myphone + '@jewelchat', getState().mytoken.token, (status, err) => {
 	connection.connect('xyz@jewelchat.net','pass', (status, err) => {
 			if (err) {
-				console.log('Error:' + err);
+				console.log(' XMPP Error:' + err);
 				//dispatch({ type: 'XMPP_ERROR' });
 			}
-
 			if (status == Strophe.Status.CONNECTING) {
 				console.log('Strophe is connecting.');
 				dispatch({ type: 'XMPP_CONNECTING' });

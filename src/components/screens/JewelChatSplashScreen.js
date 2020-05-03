@@ -74,8 +74,9 @@ class JewelChatSplashScreen extends React.Component {
             
           }, {})
           
-          myTokens.isLoading = false;
-          //myTokens.token = 'token';
+         // myTokens.isLoading = false;
+          myTokens.token = 'token';
+          myTokens.isLoading = false
         
           this.props.tokenLoad(myTokens)
           
@@ -111,13 +112,12 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
 	return {    
     tokenLoad: (myTokens) => dispatch({ type:'USER_TOKEN_LOADED', myTokens }),
-    //initDatabase: () => dispatch(jcdb.initLocalDatabase()),
+    initDatabase: () => dispatch(jcdb.initLocalDatabase()),
     //gameDataLoad: () => dispatch(game.gameDataLoad())
     //chatListDataLoad: () => dispatch(jcdb.chatListDataLoad()),
     //taskDataLoad: () => dispatch(jcdb.taskDataLoad()),
     //achievmentLoad: () => dispatch(jcdb.achievmentLoad()),
     //xmppConnect: () => dispatch(realtime.xmppConnect),
-           
 	}
 }
 
