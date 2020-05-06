@@ -30,6 +30,10 @@ import J6 from '../../../../svg_components/J6';
 import J3 from '../../../../svg_components/J6';
 import { connect } from 'react-redux';
 import { CheckBox } from 'native-base'
+import { sendReply } from '../../../../../network/realtime'
+import actions from '../../../../../actions'
+
+
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
 class ChatPage extends React.Component {
@@ -200,7 +204,19 @@ class ChatPage extends React.Component {
         />}
         {this.state.chatboxempty && <TouchableOpacity style={styles.secondItem}></TouchableOpacity>}
         {this.state.chatboxempty && <TouchableOpacity style={styles.thirdItem}></TouchableOpacity>}
-        {!this.state.chatboxempty && <TouchableOpacity style={styles.fourthItem}></TouchableOpacity>}
+        {!this.state.chatboxempty && <TouchableOpacity onPress={() => {
+          var mesageToSent = {
+            CHAT_ROOM_JID: this.props.activeChat.JID,
+            MSG_TEXT: this.state.chatboxtext,
+            CREATOR_JID: '1@jewelchat.net',
+            JEWEL_TYPE: null,
+            CREATED_DATE: '2020-01-14',
+            CREATED_TIME: '16:00:00',
+            MSG_TYPE: 0
+          }
+          this.props.sendReply(mesageToSent)
+          this.props.addChatMessage(mesageToSent)
+        }} style={styles.fourthItem}></TouchableOpacity>}
       </View>)
   }
 
@@ -228,7 +244,7 @@ class ChatPage extends React.Component {
             {this.selectedMessageBottomBar()}
             <FlatList
               style={styles.chatroom}
-              inverted
+                inverted
               data={this.props.chatroom}
               renderItem={({ item, index }) => (
                 <ChatItem item={item} index={index}
@@ -278,7 +294,7 @@ class ChatItem extends React.Component {
         }
         else
           position.setValue({ x: gesture.dx, y: 0 })
-      }, 
+      },
       onPanResponderRelease: (event, gesture) => {
         let triggerstate
         if (this.myChat) {
@@ -286,7 +302,7 @@ class ChatItem extends React.Component {
         }
         else
           triggerstate = 150
-        console.log(triggerstate, this.myChat,gesture.dx)
+        console.log(triggerstate, this.myChat, gesture.dx)
         if (gesture.dx > triggerstate) {
           Animated.timing(position, {
             toValue: { x: 0, y: 0 },
@@ -346,8 +362,8 @@ class ChatItem extends React.Component {
               </AnimatedTouchable>
               <Text style={styles.msgTime}>{item.CREATED_TIME}</Text>
             </Animated.View>
-            <View style={{marginBottom:10 }}>
-              <CheckBox checked={true} color='#4287f5'/>
+            <View style={{ marginBottom: 10 }}>
+              <CheckBox checked={true} color='#4287f5' />
             </View>
           </View>
         }
@@ -360,8 +376,8 @@ class ChatItem extends React.Component {
               </AnimatedTouchable>
               <Text style={styles.msgTime}>{item.CREATED_TIME}</Text>
             </Animated.View>
-            <View style={{marginTop:5, marginRight:10 }}>
-              <CheckBox checked={true} color='#4287f5'/>
+            <View style={{ marginTop: 5, marginRight: 10 }}>
+              <CheckBox checked={true} color='#4287f5' />
             </View>
           </View>
         }
@@ -378,14 +394,16 @@ class ChatItem extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    chatroom: state.chatroom.chatroom
+    chatroom: state.chatroom.chatroom,
+    activeChat: state.chatslist.activeChat
   }
 }
 
 
 function mapDispatchToProps(dispatch) {
   return {
-
+    sendReply: (message) => dispatch(sendReply(message)),
+    addChatMessage: (chatData) => dispatch(actions.addChatMessage(chatData))
   }
 }
 

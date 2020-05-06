@@ -53,9 +53,6 @@ const Create_ChatMessage = "CREATE TABLE if not exists ChatMessage (" +
 "VIDEO_PATH_CLOUD   TEXT )";  
 
 
-
-
-
 export default {
     Create_Contact,
     Create_ChatMessage

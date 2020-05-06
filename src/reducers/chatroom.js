@@ -1,20 +1,25 @@
 //let initialState = [];
-import { SET_CHAT_DATA} from '../actions/ActionTypes'
+import { SET_CHAT_DATA, ADD_CHAT_MESSAGE } from '../actions/ActionTypes'
 
 let initialState = {
     chatroom: []
-}  
+}
 const chatroom = (state = initialState, action) => {
     switch (action.type) {
         case SET_CHAT_DATA:
-            return{
+            return {
                 ...state,
                 chatroom: action.chatData
             }
-             
-        default:            
-            return state      
-              
+        case ADD_CHAT_MESSAGE:
+            return {
+                ...state,
+                chatroom: [action.message,...state.chatroom]
+            }
+
+        default:
+            return state
+
     }
 }
 

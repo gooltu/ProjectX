@@ -9,7 +9,7 @@ SQLite.enablePromise(true);
 let _jcdb
 
 export default {
-	getChats, insertInitialData, insertContactList, insertChatData, getChatList, insertPhoneContactData
+	getChats, insertInitialData, insertContactList, insertChatData, getChatList, insertPhoneContactData, insertStropheChatData
 };
 
 SQLite.openDatabase({
@@ -61,14 +61,14 @@ function _initDb() {
 	})
 }
 
-function getChats() {
+function getChats(JID) {
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
-				txn.executeSql('Select * from ChatMessage')
+				txn.executeSql('Select * from ChatMessage  Where CHAT_ROOM_JID ="' + JID +'"')
 					.then((results) => {
-						console.log('QUERY COMPLETED');
+						console.log('QUERY COMPLETED for Chat room', JID);
 						console.log(results[1])
 						resolve(results[1])
 					})
@@ -90,7 +90,7 @@ function getChatList() {
 			jcdb.transaction((txn) => {
 				txn.executeSql('Select * from Contact')
 					.then((results) => {
-						console.log('Contact query COMPLETED');
+						console.log('Contact query COMPLETED for');
 						console.log(results[1])
 						resolve(results[1])
 					})
@@ -223,6 +223,38 @@ function insertChatData() {
 	//	})
 }
 
+function insertStropheChatData(data) {
+	//return new Promise((resolve, reject) => {
+	_initDb().then(instance => {
+		jcdb = instance;
+		jcdb.transaction((txn) => {
+			let queries = [];
+			let sql;
+			let q;
+			// for (let i = 0; i < chatList.length; i++) {
+			// 	let data = chatList[i]
+				sql = "INSERT INTO ChatMessage " +
+					" ( MSG_TYPE, CREATED_DATE, CREATED_TIME, CHAT_ROOM_JID, CREATOR_JID, JEWEL_TYPE, MSG_TEXT) " +
+					" VALUES (" + data.MSG_TYPE + ",'" + data.CREATED_DATE + "','" + data.CREATED_TIME + "','" + data.CHAT_ROOM_JID + "','" + data.CREATOR_JID + "'," + data.JEWEL_TYPE + ",'" + data.MSG_TEXT + "')"
+				console.log(sql)
+				q = txn.executeSql(sql);
+			 	queries.push(q);
+			// }
+			Promise.all(queries).then(val => {
+				console.log('INSERT Strpphe Chat Data DATA PROMISE Successful')
+				console.log(val)
+			}).catch(err => {
+				console.log('INSERT Strophe CHAT DATA PROMISE error')
+				throw err;
+			})
+		})
+	}).then(result => {
+	}).catch(err => {
+		//	reject(err)
+	})
+	//	})
+}
+
 
 function insertPhoneContactData(phoneContactData){
 //	 return new Promise((resolve, reject) => {
@@ -264,7 +296,7 @@ const contactData = [
 	{
 		_ID: 1,
 		JEWELCHAT_ID: 1,
-		JID: '919700000000@jewelchat.net',
+		JID: '2@jewelchat.net',
 		CONTACT_NUMBER: 919700000000,
 		CONTACT_NAME: 'Team JewelChat',
 		PHONEBOOK_CONTACT_NAME: 'Team JewelChat',
@@ -282,48 +314,49 @@ const contactData = [
 		MSG_TYPE: 1,
 		MSG_TEXT: 'Hello World'
 	},
-	{
-		_ID: 2,
-		JEWELCHAT_ID: 2,
-		JID: '919005835708@jewelchat.net',
-		CONTACT_NUMBER: 919005835708,
-		CONTACT_NAME: 'Mayukh',
-		PHONEBOOK_CONTACT_NAME: 'Mayukh Chakraborty',
-		IS_GROUP: 0,
-		STATUS_MSG: 'Keep Collecting',
-		IS_REGIS: 1,
-		IS_GROUP_ADMIN: 0,
-		IS_INVITED: null,
-		IS_BLOCKED: 0,
-		IS_PHONEBOOK_CONTACT: 0,
-		UNREAD_COUNT: 999,
-		SMALL_IMAGE: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAACXBIWXMAAAsTAAALEwEAmpwYAAAG0mlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDUgNzkuMTYzNDk5LCAyMDE4LzA4LzEzLTE2OjQwOjIyICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxOSAoTWFjaW50b3NoKSIgeG1wOkNyZWF0ZURhdGU9IjIwMTgtMTAtMjNUMTU6MTk6NDMrMDU6MzAiIHhtcDpNb2RpZnlEYXRlPSIyMDE5LTEwLTAxVDIxOjA2OjQ1KzA1OjMwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDE5LTEwLTAxVDIxOjA2OjQ1KzA1OjMwIiBkYzpmb3JtYXQ9ImltYWdlL3BuZyIgcGhvdG9zaG9wOkNvbG9yTW9kZT0iMyIgcGhvdG9zaG9wOklDQ1Byb2ZpbGU9InNSR0IgSUVDNjE5NjYtMi4xIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOmYzZjg2ZTIyLWQ2ODAtNGQzNi05MjM3LWUzNmYxMTQzMWZiMyIgeG1wTU06RG9jdW1lbnRJRD0iYWRvYmU6ZG9jaWQ6cGhvdG9zaG9wOjcxNmFiZDc5LTc0NDQtMjA0OC1hZDZlLTYzMThmOTc0N2NkYiIgeG1wTU06T3JpZ2luYWxEb2N1bWVudElEPSJ4bXAuZGlkOmFmNDMxMzJjLTMzOTMtNDU2NS04NWZkLWQ2M2Y4Njg2N2FjOCI+IDx4bXBNTTpIaXN0b3J5PiA8cmRmOlNlcT4gPHJkZjpsaSBzdEV2dDphY3Rpb249ImNyZWF0ZWQiIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6YWY0MzEzMmMtMzM5My00NTY1LTg1ZmQtZDYzZjg2ODY3YWM4IiBzdEV2dDp3aGVuPSIyMDE4LTEwLTIzVDE1OjE5OjQzKzA1OjMwIiBzdEV2dDpzb2Z0d2FyZUFnZW50PSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxOSAoTWFjaW50b3NoKSIvPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0ic2F2ZWQiIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6MDA3M2Q3YmItNjMzMy00ZTgwLWEwNjAtYWQ5YzVlZTVkNGQ4IiBzdEV2dDp3aGVuPSIyMDE5LTEwLTAxVDIxOjA0OjQyKzA1OjMwIiBzdEV2dDpzb2Z0d2FyZUFnZW50PSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxOSAoTWFjaW50b3NoKSIgc3RFdnQ6Y2hhbmdlZD0iLyIvPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0ic2F2ZWQiIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6ZjNmODZlMjItZDY4MC00ZDM2LTkyMzctZTM2ZjExNDMxZmIzIiBzdEV2dDp3aGVuPSIyMDE5LTEwLTAxVDIxOjA2OjQ1KzA1OjMwIiBzdEV2dDpzb2Z0d2FyZUFnZW50PSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxOSAoTWFjaW50b3NoKSIgc3RFdnQ6Y2hhbmdlZD0iLyIvPiA8L3JkZjpTZXE+IDwveG1wTU06SGlzdG9yeT4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBl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',
-		IMAGE_PATH: 'https://parthaprofiles.s3.ap-south-1.amazonaws.com/9005835708_pic.png',
-		LAST_MSG_CREATED_TIME: '1578758539267',
-		MSG_TYPE: 1,
-		MSG_TEXT: 'Hello World'
-	},
-	{
-		_ID: 3,
-		JEWELCHAT_ID: 3,
-		JID: '919905835708@jewelchat.net',
-		CONTACT_NUMBER: 919905835709,
-		CONTACT_NAME: 'Mayukh',
-		PHONEBOOK_CONTACT_NAME: '919005835709',
-		IS_GROUP: 0,
-		STATUS_MSG: 'Keep Collecting',
-		IS_REGIS: 1,
-		IS_GROUP_ADMIN: 0,
-		IS_INVITED: null,
-		IS_BLOCKED: 0,
-		IS_PHONEBOOK_CONTACT: 0,
-		UNREAD_COUNT: 0,
-		SMALL_IMAGE: null,
-		IMAGE_PATH: 'https://parthaprofiles.s3.ap-south-1.amazonaws.com/9005835708_pic.png',
-		LAST_MSG_CREATED_TIME: '1569819266669',
-		MSG_TYPE: 1,
-		MSG_TEXT: 'Hello World Hello World Hello World Hello World Hello World '
-	}]
+	// {
+	// 	_ID: 2,
+	// 	JEWELCHAT_ID: 2,
+	// 	JID: '919005835708@jewelchat.net',
+	// 	CONTACT_NUMBER: 919005835708,
+	// 	CONTACT_NAME: 'Mayukh',
+	// 	PHONEBOOK_CONTACT_NAME: 'Mayukh Chakraborty',
+	// 	IS_GROUP: 0,
+	// 	STATUS_MSG: 'Keep Collecting',
+	// 	IS_REGIS: 1,
+	// 	IS_GROUP_ADMIN: 0,
+	// 	IS_INVITED: null,
+	// 	IS_BLOCKED: 0,
+	// 	IS_PHONEBOOK_CONTACT: 0,
+	// 	UNREAD_COUNT: 999,
+	// 	SMALL_IMAGE: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAACXBIWXMAAAsTAAALEwEAmpwYAAAG0mlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDUgNzkuMTYzNDk5LCAyMDE4LzA4LzEzLTE2OjQwOjIyICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxOSAoTWFjaW50b3NoKSIgeG1wOkNyZWF0ZURhdGU9IjIwMTgtMTAtMjNUMTU6MTk6NDMrMDU6MzAiIHhtcDpNb2RpZnlEYXRlPSIyMDE5LTEwLTAxVDIxOjA2OjQ1KzA1OjMwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDE5LTEwLTAxVDIxOjA2OjQ1KzA1OjMwIiBkYzpmb3JtYXQ9ImltYWdlL3BuZyIgcGhvdG9zaG9wOkNvbG9yTW9kZT0iMyIgcGhvdG9zaG9wOklDQ1Byb2ZpbGU9InNSR0IgSUVDNjE5NjYtMi4xIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOmYzZjg2ZTIyLWQ2ODAtNGQzNi05MjM3LWUzNmYxMTQzMWZiMyIgeG1wTU06RG9jdW1lbnRJRD0iYWRvYmU6ZG9jaWQ6cGhvdG9zaG9wOjcxNmFiZDc5LTc0NDQtMjA0OC1hZDZlLTYzMThmOTc0N2NkYiIgeG1wTU06T3JpZ2luYWxEb2N1bWVudElEPSJ4bXAuZGlkOmFmNDMxMzJjLTMzOTMtNDU2NS04NWZkLWQ2M2Y4Njg2N2FjOCI+IDx4bXBNTTpIaXN0b3J5PiA8cmRmOlNlcT4gPHJkZjpsaSBzdEV2dDphY3Rpb249ImNyZWF0ZWQiIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6YWY0MzEzMmMtMzM5My00NTY1LTg1ZmQtZDYzZjg2ODY3YWM4IiBzdEV2dDp3aGVuPSIyMDE4LTEwLTIzVDE1OjE5OjQzKzA1OjMwIiBzdEV2dDpzb2Z0d2FyZUFnZW50PSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxOSAoTWFjaW50b3NoKSIvPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0ic2F2ZWQiIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6MDA3M2Q3YmItNjMzMy00ZTgwLWEwNjAtYWQ5YzVlZTVkNGQ4IiBzdEV2dDp3aGVuPSIyMDE5LTEwLTAxVDIxOjA0OjQyKzA1OjMwIiBzdEV2dDpzb2Z0d2FyZUFnZW50PSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxOSAoTWFjaW50b3NoKSIgc3RFdnQ6Y2hhbmdlZD0iLyIvPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0ic2F2ZWQiIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6ZjNmODZlMjItZDY4MC00ZDM2LTkyMzctZTM2ZjExNDMxZmIzIiBzdEV2dDp3aGVuPSIyMDE5LTEwLTAxVDIxOjA2OjQ1KzA1OjMwIiBzdEV2dDpzb2Z0d2FyZUFnZW50PSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxOSAoTWFjaW50b3NoKSIgc3RFdnQ6Y2hhbmdlZD0iLyIvPiA8L3JkZjpTZXE+IDwveG1wTU06SGlzdG9yeT4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBl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',
+	// 	IMAGE_PATH: 'https://parthaprofiles.s3.ap-south-1.amazonaws.com/9005835708_pic.png',
+	// 	LAST_MSG_CREATED_TIME: '1578758539267',
+	// 	MSG_TYPE: 1,
+	// 	MSG_TEXT: 'Hello World'
+	// },
+	// {
+	// 	_ID: 3,
+	// 	JEWELCHAT_ID: 3,
+	// 	JID: '919905835708@jewelchat.net',
+	// 	CONTACT_NUMBER: 919905835709,
+	// 	CONTACT_NAME: 'Mayukh',
+	// 	PHONEBOOK_CONTACT_NAME: '919005835709',
+	// 	IS_GROUP: 0,
+	// 	STATUS_MSG: 'Keep Collecting',
+	// 	IS_REGIS: 1,
+	// 	IS_GROUP_ADMIN: 0,
+	// 	IS_INVITED: null,
+	// 	IS_BLOCKED: 0,
+	// 	IS_PHONEBOOK_CONTACT: 0,
+	// 	UNREAD_COUNT: 0,
+	// 	SMALL_IMAGE: null,
+	// 	IMAGE_PATH: 'https://parthaprofiles.s3.ap-south-1.amazonaws.com/9005835708_pic.png',
+	// 	LAST_MSG_CREATED_TIME: '1569819266669',
+	// 	MSG_TYPE: 1,
+	// 	MSG_TEXT: 'Hello World Hello World Hello World Hello World Hello World '
+	// }
+]
 
 const chatList = [
 	{

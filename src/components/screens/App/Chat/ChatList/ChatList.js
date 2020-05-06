@@ -21,7 +21,9 @@ import J3 from '../../../../svg_components/J3';
 import J6 from '../../../../svg_components/J6';
 import TabIcon from "../../../../svg_components/TabIcons";
 import colors from "../../../../shared_styles/colors";
-import {setActiveDispatch} from '../../../../../actions/chatListActions'
+import db from '../../../../../db/localdatabase'
+import actions from '../../../../../actions'
+import { setActiveDispatch } from '../../../../../actions/chatListActions'
 
 function Item({ item, onpressitem, onlongpressitem }) {
 
@@ -49,7 +51,7 @@ function Item({ item, onpressitem, onlongpressitem }) {
         </View>
         <View style={styles.chatboxLeftContainer} >
           <Text style={styles.name}>{item.PHONEBOOK_CONTACT_NAME ? item.PHONEBOOK_CONTACT_NAME : (item.JEWELCHAT_ID == 1 ? 'Team JewelChat' : '+' + item.CONTACT_NUMBER)}</Text>
-          <Text style={styles.msgText}>{item.MSG_TEXT!=null?item.MSG_TEXT.substring(0, 25) + (item.MSG_TEXT.length > 25 ? '...' : ''):''}</Text>
+          <Text style={styles.msgText}>{item.MSG_TEXT != null ? item.MSG_TEXT.substring(0, 25) + (item.MSG_TEXT.length > 25 ? '...' : '') : ''}</Text>
         </View>
       </View>
       <View style={styles.itemLeftConatiner} >
@@ -103,7 +105,22 @@ class ChatList extends React.Component {
               renderItem={({ item }) => (
                 <Item item={item}
                   onpressitem={(item) => {
-                    this.props.setActiveDispatch(item)  
+                    this.props.setActiveDispatch(item)
+                    db.getChats(item.JID)
+                      .then(results => {
+                        console.log('FROM JEWELCHAT COMPONENT GETCHAT SUCCESS')
+                        console.log(results.rows.length)
+                        let chatroom = []
+                        for (let i = results.rows.length-1; i >=0; i--) {
+                          chatroom.push(results.rows.item(i))
+                        }
+                        this.props.setChatData(chatroom)
+
+                      })
+                      .catch(err => {
+                        console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
+                        console.log(err)
+                      })
                     this.props.navigation.navigate('ChatPage', item)
                   }}
                   onlongpressitem={(id) => { this.props.navigation.navigate('MyModal', { modal_name: 'chatlist_longpress', item }) }}
@@ -195,7 +212,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    setActiveDispatch: (activeChat) => dispatch(setActiveDispatch(activeChat))
+    setActiveDispatch: (activeChat) => dispatch(setActiveDispatch(activeChat)),
+    setChatData: (chatData) => dispatch(actions.setChatData(chatData))
   }
 }
 

@@ -1,6 +1,7 @@
 import XMPP from "../utilities/xmpp/strophe";
-
-const URL = 'ws://15.206.122.245:5280/ws-xmpp';
+import {store} from '../store'
+import actions from '../actions'
+const URL = 'ws://13.127.197.210:5280/ws-xmpp';
 
 let connection = new XMPP.Strophe.Connection(URL);
 connection.registerSASLMechanism = XMPP.Strophe.SASLXOAuth2;
@@ -13,8 +14,8 @@ export const realtimeConnect = () => {
 		console.log(getState())
 		// console.log(getState().mytoken.myphone + '@jewelchat')
 		// console.log(getState().mytoken.token)
-//		connection.connect(getState().mytoken.myphone + '@jewelchat', getState().mytoken.token, (status, err) => {
-	connection.connect('xyz@jewelchat.net','pass', (status, err) => {
+		//		connection.connect(getState().mytoken.myphone + '@jewelchat', getState().mytoken.token, (status, err) => {
+		connection.connect('1@jewelchat.net', 'pass', (status, err) => {
 			if (err) {
 				console.log(' XMPP Error:' + err);
 				//dispatch({ type: 'XMPP_ERROR' });
@@ -39,24 +40,72 @@ export const realtimeConnect = () => {
 				console.log('Strophe is disconnected.');
 			} else if (status == Strophe.Status.CONNECTED) {
 				console.log('Strophe is connected.');
-			// 	dispatch({ type: 'XMPP_CONNECTED' });
-			// 	connection.addHandler((msg) => {
-			// 		console.log('came to test')
-			// 	}, null, 'message', null, null, null);
-
-			// 	connection.send($pres().tree());
-			// 	connection.roster.init(connection);
-
-			// 	console.log('Strophe is connected.');
-
-			 }
-
-
+				console.log(connection)
+				connection.addHandler(onMessage, null, 'message', null, null, null);
+				connection.addHandler(onPresence, null, 'presence', null, null, null);
+				connection.send($pres().tree());
+			}
 		});
-
 	}
+}
+
+function onPresence(msg) {
+	console.log(msg.toString());
+	return true;
+}
+
+const onMessage = (msg) => {
+	console.log(store)
+	console.log('test')
+	console.log(msg.toString());
+	console.log(msg.getAttribute('to'))
+	console.log(msg.getAttribute('from'))
+	console.log(msg.getAttribute('type'))
+	var jewel = msg.getElementsByTagName('jewel')
+	var jewelType = jewel[0].getAttribute('number')
+	var body = msg.getElementsByTagName('body')
+	var message = Strophe.getText(body[0]);
+	//console.log(message)
+
+	var received = $msg({ to: '2@jewelchat.net', from: '1@jewelchat.net' })
+		.c('received', { xmlns: 'urn:xmpp:chat-markers:0', id: 'received_msg_id' })
+	connection.send(received.tree(), () => {
+		//database single tick
+	});
+	var IncomingMessage = {
+		CHAT_ROOM_JID: msg.getAttribute('from').split('/')[0],
+		MSG_TEXT: message,
+		CREATOR_JID: msg.getAttribute('from').split('/')[0],
+		JEWEL_TYPE: parseInt(jewelType),
+		CREATED_DATE: '2020-01-14',
+		CREATED_TIME: '16:00:00',
+		MSG_TYPE: 0
+	}
+	store.dispatch(insertMessageToDb(IncomingMessage))
+
+	return true
 
 }
+
+export const sendReply = (message) => {
+	return (dispatch, getState) => {
+		var reply = $msg({ to: message.CHAT_ROOM_JID, from: '1@jewelchat.net', type: 'chat' })
+			.cnode(Strophe.xmlElement('body', message.MSG_TEXT))
+			.up()
+			.c('active', { xmlns: "http://jabber.org/protocol/chatstates" });
+		connection.send(reply.tree());
+	}
+}
+
+export const insertMessageToDb = (message) => {
+	console.log(";came to")
+	console.log(message)
+	return (dispatch, getState) => {
+		console.log(message)
+		dispatch(actions.addChatMessage(message))
+	}
+}
+
 
 
 export const realtimeDisconnect = () => {
@@ -76,7 +125,8 @@ export const realtimeDisconnect = () => {
 
 export default {
 	realtimeConnect,
-	realtimeDisconnect
+	realtimeDisconnect,
+	sendReply
 }
 
 /*

@@ -16,7 +16,6 @@ import { PersistGate } from 'redux-persist/integration/react';
 import messaging from '@react-native-firebase/messaging';
 import Contacts from 'react-native-contacts';
 
-
 export default class App extends React.Component {
   constructor(props) {
     super(props)
@@ -30,7 +29,7 @@ export default class App extends React.Component {
       );
       //navigation.navigate(remoteMessage.data.type);
     });
-    this.BackgropundMessageHandler = messaging().setBackgroundMessageHandler(async remoteMessage => {
+    this.setBackgroundMessageHandler = messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.log('Message handled in the background!', remoteMessage);
     });
 
