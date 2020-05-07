@@ -205,17 +205,8 @@ class ChatPage extends React.Component {
         {this.state.chatboxempty && <TouchableOpacity style={styles.secondItem}></TouchableOpacity>}
         {this.state.chatboxempty && <TouchableOpacity style={styles.thirdItem}></TouchableOpacity>}
         {!this.state.chatboxempty && <TouchableOpacity onPress={() => {
-          var mesageToSent = {
-            CHAT_ROOM_JID: this.props.activeChat.JID,
-            MSG_TEXT: this.state.chatboxtext,
-            CREATOR_JID: '1@jewelchat.net',
-            JEWEL_TYPE: null,
-            CREATED_DATE: '2020-01-14',
-            CREATED_TIME: '16:00:00',
-            MSG_TYPE: 0
-          }
-          this.props.sendReply(mesageToSent)
-          this.props.addChatMessage(mesageToSent)
+          console.log(this.props.activeChat.JID)
+          this.props.sendReply(this.state.chatboxtext, this.props.activeChat.JID)
         }} style={styles.fourthItem}></TouchableOpacity>}
       </View>)
   }
@@ -244,7 +235,7 @@ class ChatPage extends React.Component {
             {this.selectedMessageBottomBar()}
             <FlatList
               style={styles.chatroom}
-                inverted
+              inverted
               data={this.props.chatroom}
               renderItem={({ item, index }) => (
                 <ChatItem item={item} index={index}
@@ -402,7 +393,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    sendReply: (message) => dispatch(sendReply(message)),
+    sendReply: (message, JID) => dispatch(sendReply(message, JID)),
     addChatMessage: (chatData) => dispatch(actions.addChatMessage(chatData))
   }
 }

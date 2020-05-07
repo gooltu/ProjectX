@@ -269,7 +269,6 @@ class JewelChat extends React.Component {
         console.log(this.props)
     }
 
-
     componentDidMount() {
         console.log('MOUNT APP');
         console.log(db)
@@ -277,23 +276,8 @@ class JewelChat extends React.Component {
         this.unsubscribe = NetInfo.addEventListener(this._handleNetworkChange);
         console.log(actions)
     //   db.insertChatData()
-       // db.insertContactList()
+       //db.insertContactList()
     //   db.insertPhoneContactData(global.Contacts)
-        // db.getChats()
-        // .then(results => {
-        //     console.log('FROM JEWELCHAT COMPONENT GETCHAT SUCCESS')
-        //     console.log(results.rows.length)
-        //     let chatroom = []
-        //     for(let i=0;i<results.rows.length;i++){
-        //         chatroom.push(results.rows.item(i))
-        //     }
-        //     this.props.setChatData(chatroom)
-
-        // })
-        // .catch(err => {
-        //     console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
-        //     console.log(err)
-        // })
         db.getChatList().then(results => {
             console.log('FROM JEWELCHAT COMPONENT GETCHAT SUCCESS')
             console.log(results.rows.length)

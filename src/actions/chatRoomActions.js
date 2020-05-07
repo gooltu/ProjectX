@@ -8,9 +8,6 @@ export const setChatData = (chatData) => {
 }
 
 export const addChatMessage = (message) => {
-    console.log('called')
-    console.log(message)
-    db.insertStropheChatData(message)
     return{
         type: ADD_CHAT_MESSAGE,
         message: message

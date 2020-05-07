@@ -98,10 +98,9 @@ class ChatList extends React.Component {
 
         <Provider>
           <Portal>
-
-
             <FlatList
               data={this.props.chatslist}
+              extraData={this.props}
               renderItem={({ item }) => (
                 <Item item={item}
                   onpressitem={(item) => {
@@ -111,7 +110,7 @@ class ChatList extends React.Component {
                         console.log('FROM JEWELCHAT COMPONENT GETCHAT SUCCESS')
                         console.log(results.rows.length)
                         let chatroom = []
-                        for (let i = results.rows.length-1; i >=0; i--) {
+                        for (let i = results.rows.length - 1; i >= 0; i--) {
                           chatroom.push(results.rows.item(i))
                         }
                         this.props.setChatData(chatroom)

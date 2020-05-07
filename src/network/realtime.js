@@ -1,6 +1,7 @@
 import XMPP from "../utilities/xmpp/strophe";
-import {store} from '../store'
+import { store } from '../store'
 import actions from '../actions'
+import db from '../db/localdatabase'
 const URL = 'ws://13.127.197.210:5280/ws-xmpp';
 
 let connection = new XMPP.Strophe.Connection(URL);
@@ -55,57 +56,125 @@ function onPresence(msg) {
 }
 
 const onMessage = (msg) => {
-	console.log(store)
-	console.log('test')
-	console.log(msg.toString());
-	console.log(msg.getAttribute('to'))
-	console.log(msg.getAttribute('from'))
-	console.log(msg.getAttribute('type'))
+	store.dispatch(insertIncomingMessage(msg))
+	return true
+}
+export const sendReply = (messageText, chatroom) => {
+	var createdDateTime = (new Date()).getTime()
+	var date = dateToYMD(createdDateTime);
+	var message = {
+		CHAT_ROOM_JID: chatroom,
+		MSG_TEXT: messageText,
+		CREATOR_JID: '1@jewelchat.net',
+		JEWEL_TYPE: null,
+		CREATED_DATE: date.date,
+		CREATED_TIME: date.time,
+		MSG_TYPE: 0,
+		SENDER_MSG_ID: null
+	}
+	return (dispatch, getState) => {
+		db.insertStropheChatData(message).then((result) => {
+			message['_ID'] = result
+			message['SENDER_MSG_ID'] = result
+			dispatch(actions.addChatMessage(message))
+
+			var reply = $msg({ to: message.CHAT_ROOM_JID, from: message.CREATOR_JID, type: 'chat', id: message._ID, createdDate: createdDateTime })
+				.cnode(Strophe.xmlElement('body', message.MSG_TEXT))
+				.up()
+				.c('active', { xmlns: "http://jabber.org/protocol/chatstates" });
+			dispatch(updateChatlist(message,createdDateTime))
+			connection.send(reply.tree(), () => {
+				dispatch(updateChatlist(message))
+				console.log('reply triggered')
+			});
+		}).catch(err => {
+
+		})
+	}
+}
+
+
+function dateToYMD(createdDateTime) {
+
+	var d = new Date(parseInt(createdDateTime));
+	var date = d.toLocaleString().split(', ')[0].split('/').reverse().join("-")
+	var time = d.toLocaleString().split(', ')[1]
+	return { date: date, time: time };
+}
+
+export const insertIncomingMessage = (msg) => {
+
 	var jewel = msg.getElementsByTagName('jewel')
 	var jewelType = jewel[0].getAttribute('number')
 	var body = msg.getElementsByTagName('body')
 	var message = Strophe.getText(body[0]);
-	//console.log(message)
-
-	var received = $msg({ to: '2@jewelchat.net', from: '1@jewelchat.net' })
-		.c('received', { xmlns: 'urn:xmpp:chat-markers:0', id: 'received_msg_id' })
-	connection.send(received.tree(), () => {
-		//database single tick
-	});
-	var IncomingMessage = {
+	var createdDateTime = msg.getAttribute('createdDate')
+	var date = dateToYMD(createdDateTime)
+	var incomingMessage = {
 		CHAT_ROOM_JID: msg.getAttribute('from').split('/')[0],
 		MSG_TEXT: message,
 		CREATOR_JID: msg.getAttribute('from').split('/')[0],
 		JEWEL_TYPE: parseInt(jewelType),
-		CREATED_DATE: '2020-01-14',
-		CREATED_TIME: '16:00:00',
+		CREATED_DATE: date.date,
+		CREATED_TIME: date.time,
+		SENDER_MSG_ID: msg.getAttribute('id'),
 		MSG_TYPE: 0
 	}
-	store.dispatch(insertMessageToDb(IncomingMessage))
 
-	return true
-
-}
-
-export const sendReply = (message) => {
 	return (dispatch, getState) => {
-		var reply = $msg({ to: message.CHAT_ROOM_JID, from: '1@jewelchat.net', type: 'chat' })
-			.cnode(Strophe.xmlElement('body', message.MSG_TEXT))
-			.up()
-			.c('active', { xmlns: "http://jabber.org/protocol/chatstates" });
-		connection.send(reply.tree());
+		db.insertStropheChatData(incomingMessage).then((result) => {
+			incomingMessage['_ID'] = result
+			var dateTime = dateToYMD()
+			//send read reciept if activechat
+			if (getState().chatslist.activeChat.JID == incomingMessage.CHAT_ROOM_JID) {
+				dispatch(actions.addChatMessage(incomingMessage))
+
+				var read = $msg({ to: incomingMessage.CHAT_ROOM_JID, from: '1@jewelchat.net' })
+					.c('read', { xmlns: 'urn:xmpp:chat-markers:0', id: incomingMessage.SENDER_MSG_ID, time: dateTime.time })
+
+				connection.send(read.tree(), () => {
+					//database single ticks
+				});
+			}
+			//otherwise send delivery recipt
+			else {
+				dispatch(updateChatlist(incomingMessage, createdDateTime))
+				var received = $msg({ to: incomingMessage.CHAT_ROOM_JID, from: '1@jewelchat.net' })
+					.c('received', { xmlns: 'urn:xmpp:chat-markers:0', id: incomingMessage.SENDER_MSG_ID, time: dateTime.time })
+
+				connection.send(received.tree(), () => {
+					//database single ticks
+				});
+			}
+
+		}).catch(err => {
+
+		})
 	}
 }
 
-export const insertMessageToDb = (message) => {
-	console.log(";came to")
+
+export const updateChatlist = (message, createdDateTime) => {
+	console.log('test came')
 	console.log(message)
 	return (dispatch, getState) => {
-		console.log(message)
-		dispatch(actions.addChatMessage(message))
+		db.updateLastMessageAndText(message).then(result => {
+			if (result == 'success') {
+				let chatList = JSON.parse(JSON.stringify(getState().chatslist.chatList))
+				chatList.map((chatItem, index) => {
+					if (chatItem.JID == message.CHAT_ROOM_JID) {
+						chatList[index]['LAST_MSG_CREATED_TIME'] = createdDateTime
+						chatList[index]['MSG_TEXT'] = message.MSG_TEXT
+						chatList[index]['MSG_TYPE'] = message.MSG_TYPE
+					}
+				})
+				dispatch(actions.setChatListData(chatList))
+			}
+		}).catch(err => {
+
+		})
 	}
 }
-
 
 
 export const realtimeDisconnect = () => {
