@@ -2,7 +2,7 @@
 
 let initialState = {
     myid: null,
-    myphone: null,
+    myphone: 1,
     token: null,
     cookie: null,
     isLoading: true    

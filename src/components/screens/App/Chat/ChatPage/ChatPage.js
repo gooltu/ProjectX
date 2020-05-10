@@ -29,9 +29,11 @@ import colors from "../../../../shared_styles/colors";
 import J6 from '../../../../svg_components/J6';
 import J3 from '../../../../svg_components/J6';
 import { connect } from 'react-redux';
-import { CheckBox } from 'native-base'
-import { sendReply } from '../../../../../network/realtime'
+import { CheckBox, Item } from 'native-base'
+import { sendReply, sendReadReceipt } from '../../../../../network/realtime'
 import actions from '../../../../../actions'
+import Icon from 'react-native-vector-icons/FontAwesome5'
+import Icon1 from 'react-native-vector-icons/MaterialIcons'
 
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
@@ -42,8 +44,10 @@ class ChatPage extends React.Component {
   }
 
   componentDidMount() {
+    console.log('came to did mount')
     //console.log(this.props.navigation.state.routes[this.props.navigation.state.index]);
     console.log(this.props.navigation.setParams({ otherParam: 'Updated!' }));
+    this.props.sendReadReceipt(this.props.activeChat.JID)
     //console.log(this.props);
     //console.log(this.props.navigation.state.routeName);
   }
@@ -207,7 +211,7 @@ class ChatPage extends React.Component {
         {!this.state.chatboxempty && <TouchableOpacity onPress={() => {
           console.log(this.props.activeChat.JID)
           this.props.sendReply(this.state.chatboxtext, this.props.activeChat.JID)
-        }} style={styles.fourthItem}></TouchableOpacity>}
+        }} style={styles.fourthItem}><Icon1 name='send' size={25} color='white'/></TouchableOpacity>}
       </View>)
   }
 
@@ -234,6 +238,7 @@ class ChatPage extends React.Component {
             {this.repliesBar()}
             {this.selectedMessageBottomBar()}
             <FlatList
+              //   removeClippedSubviews={true}
               style={styles.chatroom}
               inverted
               data={this.props.chatroom}
@@ -340,22 +345,20 @@ class ChatItem extends React.Component {
 
         {!mychat &&
           <View style={styles.friendMsgContainer}>
+            {item.MAX_SEQUENCE - item.SEQUENCE <5?
             <TouchableOpacity style={styles.jewelContainer} onPress={onjewelpress}>
               <J3 height="75%" width="75%" style={styles.jewelStyle} />
-            </TouchableOpacity>
-            {/* <View style={{ flex:1, flexDirection:'column',backgroundColor:'blue', maxWidth:200}}>
-              <Text>{item.MSG_TEXT}</Text>
-              <Text style={{ alignSelf:'flex-end'}}>{item.CREATED_TIME}</Text>
-            </View> */}
+            </TouchableOpacity>:null}
+    
             <Animated.View style={[styles.msgContainer, this.state.position.getLayout()]} {...this.state.panResponder.panHandlers}>
               <AnimatedTouchable style={styles.friendMsgTextContainer} onLongPress={() => onLongPress()}>
                 <Text style={styles.friendMsgText}>{item.MSG_TEXT}</Text>
               </AnimatedTouchable>
               <Text style={styles.msgTime}>{item.CREATED_TIME}</Text>
             </Animated.View>
-            <View style={{ marginBottom: 10 }}>
+            {/* <View style={{ marginBottom: 10 }}>
               <CheckBox checked={true} color='#4287f5' />
-            </View>
+            </View> */}
           </View>
         }
 
@@ -365,11 +368,19 @@ class ChatItem extends React.Component {
               <AnimatedTouchable style={styles.myMsgTextConatiner} onLongPress={() => onLongPress()}>
                 <Text style={styles.myMsgText}>{item.MSG_TEXT}</Text>
               </AnimatedTouchable>
-              <Text style={styles.msgTime}>{item.CREATED_TIME}</Text>
+              <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                <Text style={styles.msgTime}>{item.CREATED_TIME}</Text>
+                { item.IS_READ || item.IS_DELIVERED?
+                <Icon name='check-double' size={10} color={item.IS_READ?colors.lightcolor1:'white'} />:
+                item.IS_SUBMITTED?
+                <Icon name='check' size={10} color={'white'}/>:
+                <Icon name='clock' size={10} color={'white'}/>
+                }
+              </View>
             </Animated.View>
-            <View style={{ marginTop: 5, marginRight: 10 }}>
+            {/* <View style={{ marginTop: 5, marginRight: 10 }}>
               <CheckBox checked={true} color='#4287f5' />
-            </View>
+            </View> */}
           </View>
         }
 
@@ -394,7 +405,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     sendReply: (message, JID) => dispatch(sendReply(message, JID)),
-    addChatMessage: (chatData) => dispatch(actions.addChatMessage(chatData))
+    addChatMessage: (chatData) => dispatch(actions.addChatMessage(chatData)),
+    sendReadReceipt: (JID) => dispatch(sendReadReceipt(JID))
   }
 }
 

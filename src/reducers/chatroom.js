@@ -19,7 +19,6 @@ const chatroom = (state = initialState, action) => {
 
         default:
             return state
-
     }
 }
 

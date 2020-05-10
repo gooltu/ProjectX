@@ -258,7 +258,6 @@ let AppContainer = createAppContainer(
             initialRouteName: "AuthLoading"
         }
     )
-
 );
 
 
@@ -304,9 +303,19 @@ class JewelChat extends React.Component {
         this.unsubscribe();
     }
 
-    _handleAppStateChange = (nextAppState) => {
+     _handleAppStateChange = (nextAppState) => {
 
         console.log(nextAppState);
+        if(nextAppState == 'inactive' || nextAppState == 'background'){
+            try {
+                 AsyncStorage.setItem(
+                  'logOutTime',
+                  new Date().getTime().toString()
+                );
+              } catch (error) {
+                // Error saving data
+              }
+        }
         this.props.appstateChange(nextAppState);
 
     };

@@ -60,9 +60,7 @@ export default styles = StyleSheet.create({
         marginRight: 8
     },
     fourthItem: {
-        height: 24,
-        width: 24,
-        backgroundColor: 'blue',
+      //  backgroundColor: 'blue',
         marginLeft: 4,
         marginRight: 8
     },
@@ -118,6 +116,7 @@ export default styles = StyleSheet.create({
     msgTime: {
         alignSelf: 'flex-end',
         color: 'white',
-        fontSize: 10
+        fontSize: 10,
+        paddingRight: 5
     }
 })

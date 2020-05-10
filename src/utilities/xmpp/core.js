@@ -2013,7 +2013,7 @@ Strophe.Connection.prototype = {
      *     [XMLElement] |
      *     Strophe.Builder) elem - The stanza to send.
      */
-    send: function (elem) {
+    send: function (elem, callback = ()=>{}) {
         if (elem === null) { return ; }
         if (typeof(elem.sort) === "function") {
             for (let i=0; i < elem.length; i++) {
@@ -2025,6 +2025,7 @@ Strophe.Connection.prototype = {
             this._queueData(elem);
         }
         this._proto._send();
+        callback()
     },
 
     /** Function: flush

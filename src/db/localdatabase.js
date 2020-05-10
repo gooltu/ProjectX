@@ -10,7 +10,7 @@ let _jcdb
 
 export default {
 	getChats, insertInitialData, insertContactList, insertChatData, getChatList, insertPhoneContactData, insertStropheChatData, updateDeliveryAndReadRecipt,
-	updateLastMessageAndText
+	updateLastMessageAndText, selectUnreadMessages, selectUnsendMessages
 };
 
 SQLite.openDatabase({
@@ -27,7 +27,10 @@ SQLite.openDatabase({
 		let q = txn.executeSql(SQL.Create_Contact);
 		queries.push(q);
 
-		q = txn.executeSql(SQL.Create_ChatMessage);
+		q = txn.executeSql(SQL.Create_ChatMessage)
+		queries.push(q);
+
+		q = txn.executeSql(SQL.Sequence_Trigger)
 		queries.push(q);
 		return Promise.all(queries);
 	})
@@ -67,7 +70,7 @@ function getChats(JID) {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
-				txn.executeSql('Select * from ChatMessage  Where CHAT_ROOM_JID ="' + JID + '"')
+				txn.executeSql('select * FROM ChatMessage JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) where CHAT_ROOM_JID ="' + JID + '"')
 					.then((results) => {
 						console.log('QUERY COMPLETED for Chat room', JID);
 						console.log(results[1])
@@ -105,7 +108,6 @@ function getChatList() {
 		})
 	});
 }
-
 
 function insertInitialData() {
 	console.log('INSERT ROWS START');
@@ -250,14 +252,14 @@ function insertStropheChatData(data) {
 	})
 }
 
-function updateDeliveryAndReadRecipt(type, id) {
+function updateDeliveryAndReadRecipt(type, id, time) {
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 				let sql;
 				if (type == 'Delivery') {
-					sql = "UPDATE ChatMessage SET IS_DELIVERED = 1 WHERE _ID = " + id
+					sql = "UPDATE ChatMessage SET IS_DELIVERED = 1, TIME_DELIVERED = " + time + " WHERE _ID =  " + id 
 					txn.executeSql(sql).then((results) => {
 						console.log('ChatMessage Delivered Query COMPLETED for id, ', id);
 						resolve('success')
@@ -265,10 +267,28 @@ function updateDeliveryAndReadRecipt(type, id) {
 						reject(err)
 					})
 				}
-				else if (type == 'Read') {
-					sql = "UPDATE ChatMessage SET IS_READ = 1 WHERE _ID = " + id
+				else if (type == 'Both') {
+					sql = "UPDATE ChatMessage SET IS_READ = 1,TIME_READ=" + time + ", IS_DELIVERED = 1, TIME_DELIVERED = " + time + "  WHERE _ID =  " + id 
 					txn.executeSql(sql).then((results) => {
 						console.log('ChatMessage Read Query COMPLETED for id, ', id);
+						resolve('success')
+					}).catch(err => {
+						reject(err)
+					})
+				}
+				else if (type == 'Read') {
+					sql = "UPDATE ChatMessage SET IS_READ = 1,TIME_READ=" + time + " WHERE _ID = " + id 
+					txn.executeSql(sql).then((results) => {
+						console.log('ChatMessage Delivered Query COMPLETED for id, ', id);
+						resolve('success')
+					}).catch(err => {
+						reject(err)
+					})
+				}
+				else if (type == 'Submit') {
+					sql = "UPDATE ChatMessage SET IS_SUBMITTED = 1,TIME_SUBMITTED=" + time + " WHERE _ID = " + id 
+					txn.executeSql(sql).then((results) => {
+						console.log('ChatMessage Delivered Query COMPLETED for id, ', id);
 						resolve('success')
 					}).catch(err => {
 						reject(err)
@@ -283,26 +303,77 @@ function updateDeliveryAndReadRecipt(type, id) {
 	})
 }
 
-function updateLastMessageAndText(message) {
+function selectUnreadMessages(JID) {
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 				let sql;
-					sql = "UPDATE Contact SET LAST_MSG_CREATED_TIME ='"+ message.CREATED_TIME +"', MSG_TEXT = '"+ message.MSG_TEXT +"', MSG_TYPE= "+ message.MSG_TYPE +" WHERE JID = '" + message.CHAT_ROOM_JID +"'"
-					txn.executeSql(sql).then((results) => {
-						console.log('ChatMessage Delivered Query COMPLETED for id, ');
-						resolve('success')
-					}).catch(err => {
-						reject(err)
-					})
+				sql = "SELECT * FROM ChatMessage WHERE CHAT_ROOM_JID ='" + JID + "' AND CREATOR_JID='" + JID + "' AND IS_READ = 0"
+				console.log(sql)
+				txn.executeSql(sql).then((results) => {
+					console.log('Unread messages Query COMPLETED for');
+					console.log(results[1])
+					resolve(results[1])
+				}).catch(err => {
+					reject(err)
 				})
-			}).then(result => {
-
-			}).catch(error => {
-				reject(error)
 			})
+		}).then(result => {
+		}).catch(error => {
+			reject(error)
 		})
+	})
+}
+
+function selectUnsendMessages(JID){
+	return new Promise((resolve, reject) => {
+		_initDb().then(instance => {
+			jcdb = instance;
+			jcdb.transaction((txn) => {
+				let sql;
+				sql = "SELECT * FROM ChatMessage WHERE CREATOR_JID='" + JID + "' AND IS_SUBMITTED = 0"
+				console.log(sql)
+				txn.executeSql(sql).then((results) => {
+					console.log('Unsend messages Query COMPLETED for');
+					console.log(results[1])
+					resolve(results[1])
+				}).catch(err => {
+					reject(err)
+				})
+			})
+		}).then(result => {
+		}).catch(error => {
+			reject(error)
+		})
+	})
+}
+
+function updateLastMessageAndText(message, createdDateTime, messageType) {
+	return new Promise((resolve, reject) => {
+		_initDb().then(instance => {
+			jcdb = instance;
+			jcdb.transaction((txn) => {
+				let sql;
+				if (messageType == 'Active') {
+					sql = "UPDATE Contact SET LAST_MSG_CREATED_TIME ='" + createdDateTime + "', MSG_TEXT = '" + message.MSG_TEXT + "', MSG_TYPE= " + message.MSG_TYPE + ", UNREAD_COUNT = " + 0 + " WHERE JID = '" + message.CHAT_ROOM_JID + "'"
+				}
+				else {
+					sql = "UPDATE Contact SET LAST_MSG_CREATED_TIME ='" + createdDateTime + "', MSG_TEXT = '" + message.MSG_TEXT + "', MSG_TYPE= " + message.MSG_TYPE + ", UNREAD_COUNT = UNREAD_COUNT +" + 1 + " WHERE JID = '" + message.CHAT_ROOM_JID + "'"
+				}
+				txn.executeSql(sql).then((results) => {
+					console.log('ChatMessage contact update Query COMPLETED for id, ');
+					resolve('success')
+				}).catch(err => {
+					reject(err)
+				})
+			})
+		}).then(result => {
+
+		}).catch(error => {
+			reject(error)
+		})
+	})
 }
 
 
@@ -359,7 +430,7 @@ const contactData = [
 		IS_INVITED: null,
 		IS_BLOCKED: 0,
 		IS_PHONEBOOK_CONTACT: 0,
-		UNREAD_COUNT: 2,
+		UNREAD_COUNT: 0,
 		SMALL_IMAGE: null,
 		IMAGE_PATH: 'https://parthaprofiles.s3.ap-south-1.amazonaws.com/9005835708_pic.png',
 		LAST_MSG_CREATED_TIME: '1569819266669',
