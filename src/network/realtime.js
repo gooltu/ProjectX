@@ -40,7 +40,9 @@ export const realtimeConnect = () => {
 			} else if (status == Strophe.Status.DISCONNECTED) {
 				dispatch({ type: 'XMPP_DISCONNECTED' });
 				console.log('Strophe is disconnected.');
+				//save logout time
 			} else if (status == Strophe.Status.CONNECTED) {
+				dispatch({ type: 'XMPP_CONNECTED' });
 				console.log('Strophe is connected.');
 				console.log(connection)
 				getServerTime()
@@ -214,7 +216,8 @@ function getFormattedMessages(msg, createdDateTime) {
 		CREATED_DATE: createdDateTime.date,
 		CREATED_TIME: createdDateTime.time,
 		SENDER_MSG_ID: msg.getAttribute('id'),
-		MSG_TYPE: 0
+		MSG_TYPE: 0,
+		SEQUENCE: -1
 	}
 	return incomingMessage
 }

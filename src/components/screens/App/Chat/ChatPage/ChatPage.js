@@ -345,7 +345,7 @@ class ChatItem extends React.Component {
 
         {!mychat &&
           <View style={styles.friendMsgContainer}>
-            {item.MAX_SEQUENCE - item.SEQUENCE <5?
+            {item.MAX_SEQUENCE - item.SEQUENCE <5 || item.SEQUENCE==-1?
             <TouchableOpacity style={styles.jewelContainer} onPress={onjewelpress}>
               <J3 height="75%" width="75%" style={styles.jewelStyle} />
             </TouchableOpacity>:null}

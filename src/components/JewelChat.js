@@ -310,7 +310,7 @@ class JewelChat extends React.Component {
             try {
                  AsyncStorage.setItem(
                   'logOutTime',
-                  new Date().getTime().toString()
+                  (new Date().getTime() + global.TimeDelta).toString()
                 );
               } catch (error) {
                 // Error saving data
