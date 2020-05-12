@@ -105,12 +105,12 @@ class ChatList extends React.Component {
                 <Item item={item}
                   onpressitem={(item) => {
                     this.props.setActiveDispatch(item)
-                    db.getChats(item.JID)
+                    db.getChats(item.JID, 0)
                       .then(results => {
                         console.log('FROM JEWELCHAT COMPONENT GETCHAT SUCCESS')
                         console.log(results.rows.length)
                         let chatroom = []
-                        for (let i = results.rows.length - 1; i >= 0; i--) {
+                        for (let i = 0; i <results.rows.length; i++) {
                           chatroom.push(results.rows.item(i))
                         }
                         this.props.setChatData(chatroom)

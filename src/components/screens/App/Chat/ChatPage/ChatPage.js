@@ -34,6 +34,7 @@ import { sendReply, sendReadReceipt } from '../../../../../network/realtime'
 import actions from '../../../../../actions'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import Icon1 from 'react-native-vector-icons/MaterialIcons'
+import db from '../../../../../db/localdatabase'
 
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
@@ -211,13 +212,33 @@ class ChatPage extends React.Component {
         {!this.state.chatboxempty && <TouchableOpacity onPress={() => {
           console.log(this.props.activeChat.JID)
           this.props.sendReply(this.state.chatboxtext, this.props.activeChat.JID)
-        }} style={styles.fourthItem}><Icon1 name='send' size={25} color='white'/></TouchableOpacity>}
+        }} style={styles.fourthItem}><Icon1 name='send' size={25} color='white' /></TouchableOpacity>}
       </View>)
   }
 
 
   onJewelPress(id) {
     console.log('wow>' + id);
+  }
+
+  onListEndReached() {
+    db.getChats(this.props.activeChat.JID, this.props.chatroom.length)
+      .then(results => {
+        console.log('FROM JEWELCHAT COMPONENT GETCHAT SUCCESS')
+        console.log(results.rows.length)
+        if (results.rows.length > 0) {
+          let chatroom = []
+          for (let i = 0; i < results.rows.length; i++) {
+            chatroom.push(results.rows.item(i))
+          }
+          var chatData = this.props.chatroom.concat(chatroom)
+          this.props.setChatData(chatData)
+        }
+      })
+      .catch(err => {
+        console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
+        console.log(err)
+      })
   }
 
 
@@ -241,6 +262,7 @@ class ChatPage extends React.Component {
               //   removeClippedSubviews={true}
               style={styles.chatroom}
               inverted
+              onEndReachedThreshold={0.7}
               data={this.props.chatroom}
               renderItem={({ item, index }) => (
                 <ChatItem item={item} index={index}
@@ -258,8 +280,9 @@ class ChatPage extends React.Component {
                   }}
                   allchats={this.props.chatroom} onjewelpress={() => { this.onJewelPress(index) }} />
               )}
-              onEndReached={()=>{
+              onEndReached={() => {
                 console.log('end reached')
+                this.onListEndReached()
               }}
               keyExtractor={item => item._ID + ''}
             />
@@ -348,11 +371,11 @@ class ChatItem extends React.Component {
 
         {!mychat &&
           <View style={styles.friendMsgContainer}>
-            {item.MAX_SEQUENCE - item.SEQUENCE <5 || item.SEQUENCE==-1?
-            <TouchableOpacity style={styles.jewelContainer} onPress={onjewelpress}>
-              <J3 height="75%" width="75%" style={styles.jewelStyle} />
-            </TouchableOpacity>:null}
-    
+            {item.MAX_SEQUENCE - item.SEQUENCE < 5 || item.SEQUENCE == -1 ?
+              <TouchableOpacity style={styles.jewelContainer} onPress={onjewelpress}>
+                <J3 height="75%" width="75%" style={styles.jewelStyle} />
+              </TouchableOpacity> : null}
+
             <Animated.View style={[styles.msgContainer, this.state.position.getLayout()]} {...this.state.panResponder.panHandlers}>
               <AnimatedTouchable style={styles.friendMsgTextContainer} onLongPress={() => onLongPress()}>
                 <Text style={styles.friendMsgText}>{item.MSG_TEXT}</Text>
@@ -373,11 +396,11 @@ class ChatItem extends React.Component {
               </AnimatedTouchable>
               <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
                 <Text style={styles.msgTime}>{item.CREATED_TIME}</Text>
-                { item.IS_READ || item.IS_DELIVERED?
-                <Icon name='check-double' size={10} color={item.IS_READ?colors.lightcolor1:'white'} />:
-                item.IS_SUBMITTED?
-                <Icon name='check' size={10} color={'white'}/>:
-                <Icon name='clock' size={10} color={'white'}/>
+                {item.IS_READ || item.IS_DELIVERED ?
+                  <Icon name='check-double' size={10} color={item.IS_READ ? colors.lightcolor1 : 'white'} /> :
+                  item.IS_SUBMITTED ?
+                    <Icon name='check' size={10} color={'white'} /> :
+                    <Icon name='clock' size={10} color={'white'} />
                 }
               </View>
             </Animated.View>
@@ -409,7 +432,8 @@ function mapDispatchToProps(dispatch) {
   return {
     sendReply: (message, JID) => dispatch(sendReply(message, JID)),
     addChatMessage: (chatData) => dispatch(actions.addChatMessage(chatData)),
-    sendReadReceipt: (JID) => dispatch(sendReadReceipt(JID))
+    sendReadReceipt: (JID) => dispatch(sendReadReceipt(JID)),
+    setChatData: (id, offset) => dispatch(actions.setChatData(id, offset))
   }
 }
 

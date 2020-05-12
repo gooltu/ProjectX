@@ -65,12 +65,12 @@ function _initDb() {
 	})
 }
 
-function getChats(JID) {
+function getChats(JID, offset) {
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
-				txn.executeSql('select * FROM ChatMessage JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) where CHAT_ROOM_JID ="' + JID + '"')
+				txn.executeSql('select * FROM ChatMessage JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) where CHAT_ROOM_JID ="' + JID + '" ORDER BY _ID DESC LIMIT 20 OFFSET ' + offset)
 					.then((results) => {
 						console.log('QUERY COMPLETED for Chat room', JID);
 						console.log(results[1])

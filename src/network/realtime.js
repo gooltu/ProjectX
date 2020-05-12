@@ -104,8 +104,8 @@ function getServerTime() {
 //function to trigger messages download since last logout time of user
 async function downloadMessages() {
 	try {
-		const value = await AsyncStorage.getItem('logOutTime');
-		value = parseInt(value) - (new Date.getTime() + global.TimeDelta) > 604800000 ? (new Date.getTime() + global.TimeDelta - 604800000) : value
+		var value = await AsyncStorage.getItem('logOutTime');
+		value =(new Date().getTime() + global.TimeDelta) - parseInt(value) > 604800000 ? (new Date().getTime() + global.TimeDelta - 604800000) : value
 		if (value !== null) {
 			// We have data!!
 			console.log('date time', value);
