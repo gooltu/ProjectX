@@ -105,6 +105,7 @@ function getServerTime() {
 async function downloadMessages() {
 	try {
 		const value = await AsyncStorage.getItem('logOutTime');
+		value = parseInt(value) - (new Date.getTime() + global.TimeDelta) > 604800000 ? (new Date.getTime() + global.TimeDelta - 604800000) : value
 		if (value !== null) {
 			// We have data!!
 			console.log('date time', value);
@@ -122,10 +123,17 @@ async function downloadMessages() {
 				.up()
 				.c('set', { xmlns: 'http://jabber.org/protocol/rsm' })
 				.c('max').t('20');
-
 			connection.sendIQ(download.tree(), (stanza) => {
 				console.log('CALLBACK SEND IQ')
 				console.log(stanza.toString())
+				var lastElement = stanza.getElementsByTagName('last')
+				if (lastElement.toString()) {
+					var last = Strophe.getText(lastElement[0])
+					downloadPagination(last, value)
+				}
+				else {
+					//update redux
+				}
 			});
 		}
 	} catch (error) {
@@ -133,6 +141,39 @@ async function downloadMessages() {
 	}
 
 }
+
+function downloadPagination(last, value) {
+	console.log('download called')
+	var download = $iq({ type: 'set' })
+		.c('query', { xmlns: 'urn:xmpp:mam:2' })
+		.c('x', { xmlns: 'jabber:x:data', type: 'submit' })
+		.c('field', { var: 'FORM_TYPE', type: 'hidden' })
+		.c('value').t('urn:xmpp:mam:2')
+		.up()
+		.up()
+		.c('field', { var: 'start' })
+		.c('value').t(new Date(parseInt(value)).toISOString())
+		.up()
+		.up()
+		.up()
+		.c('set', { xmlns: 'http://jabber.org/protocol/rsm' })
+		.c('max').t('20').up()
+		.c('after').t(last).up();
+	console.log(download.toString())
+	connection.sendIQ(download.tree(), (stanza) => {
+		console.log('CALLBACK SEND IQ1')
+		console.log(stanza.toString())
+		var lastElement = stanza.getElementsByTagName('last')
+		if (lastElement.toString()) {
+			var last = Strophe.getText(lastElement[0])
+			downloadPagination(last, value)
+		}
+		else {
+			//update redux
+		}
+	});
+}
+
 
 
 //function to detect message type
@@ -225,16 +266,44 @@ function getFormattedMessages(msg, createdDateTime) {
 
 export const handleReadAndDeliveryMessages = (processedMessage) => {
 	return (dispatch, getState) => {
-		var type = processedMessage.type =='DownLoad'?processedMessage.subtype: processedMessage.type
+		var type = processedMessage.type == 'DownLoad' ? processedMessage.subtype : processedMessage.type
 		console.log('processedMessage')
 		console.log(processedMessage, type)
-		if(processedMessage.data.from != getState().mytoken.myphone + '@jewelchat.net'){
+		if (processedMessage.data.from != getState().mytoken.myphone + '@jewelchat.net') {
 			console.log('called')
 			db.updateDeliveryAndReadRecipt(type, processedMessage.data.id, processedMessage.data.time).then(result => {
+				if (getState().chatslist.activeChat.JID == processedMessage.data.from) {
+					dispatch(updateChatData(type, processedMessage.data.id, processedMessage.data.time))
+				}
 				console.log('success')
 			}).catch(err => {
 			})
 		}
+	}
+}
+
+export const updateChatData = (type, id, time) => {
+	console.log(type, id, time)
+	return (dispatch, getState) => {
+		var chatData = JSON.parse(JSON.stringify(getState().chatroom.chatroom))
+		console.log(chatData)
+		chatData.map((item) => {
+			if (item._ID == id) {
+				if (type == 'Delivery') {
+					item['IS_DELIVERED'] = 1
+					item['TIME_DELIVERED'] = time
+				}
+				else if (type == 'Read') {
+					item['IS_READ'] = 1
+					item['TIME_READ'] = time
+				}
+				else {
+					item['IS_SUBMITTED'] = 1
+					item['TIME_SUBMITTED'] = time
+				}
+				dispatch(actions.setChatData(chatData))
+			}
+		})
 	}
 }
 
@@ -260,14 +329,16 @@ export const sendReply = (messageText, chatroom) => {
 			message['SENDER_MSG_ID'] = result
 			dispatch(actions.addChatMessage(message))
 
-			var reply = $msg({ to: message.CHAT_ROOM_JID, from: message.CREATOR_JID, type: 'chat', id: message._ID, createdDate: createdDateTime })
+			var reply = $msg({ to: message.CHAT_ROOM_JID, from: message.CREATOR_JID, type: 'chat', id: message._ID })
 				.cnode(Strophe.xmlElement('body', message.MSG_TEXT))
 				.up()
 				.c('active', { xmlns: "http://jabber.org/protocol/chatstates" });
 			dispatch(updateChatlist(message, createdDateTime, 'Active'))
 			connection.send(reply.tree(), () => {
 				console.log('reply triggered')
-				db.updateDeliveryAndReadRecipt('Submit', result, createdDateTime)
+				db.updateDeliveryAndReadRecipt('Submit', result, createdDateTime).then(status => {
+					dispatch(updateChatData('Submitted', result, createdDateTime))
+				})
 			});
 		}).catch(err => {
 
@@ -304,7 +375,7 @@ export const insertIncomingMessage = (incomingMessage) => {
 					//database single ticks
 				});
 				var read = $msg({ to: incomingMessage.CHAT_ROOM_JID, from: getState().mytoken.myphone + '@jewelchat.net' })
-					.c('read', { xmlns: 'urn:xmpp:chat-markers:0', id: incomingMessage.SENDER_MSG_ID, time: createdDateTime })
+					.c('read', { xmlns: 'urn:xmpp:chat-markers:0', id: incomingMessage.SENDER_MSG_ID })
 
 				connection.send(read.tree(), () => {
 					//database single ticks
@@ -317,7 +388,7 @@ export const insertIncomingMessage = (incomingMessage) => {
 				db.updateDeliveryAndReadRecipt('Delivery', result, createdDateTime)
 
 				var received = $msg({ to: incomingMessage.CHAT_ROOM_JID, from: getState().mytoken.myphone + '@jewelchat.net' })
-					.c('received', { xmlns: 'urn:xmpp:chat-markers:0', id: incomingMessage.SENDER_MSG_ID, time: createdDateTime })
+					.c('received', { xmlns: 'urn:xmpp:chat-markers:0', id: incomingMessage.SENDER_MSG_ID })
 
 				connection.send(received.tree(), () => {
 					//database single ticks
@@ -332,8 +403,6 @@ export const insertIncomingMessage = (incomingMessage) => {
 
 //function to send read receipt for already delivered messages
 export const sendReadReceipt = (JID) => {
-	console.log('JID', JID)
-	console.log(global.TimeDelta)
 	var createdDateTime = (new Date()).getTime() + global.TimeDelta
 	var date = dateToYMD(createdDateTime);
 	return (dispatch, getState) => {

@@ -258,6 +258,9 @@ class ChatPage extends React.Component {
                   }}
                   allchats={this.props.chatroom} onjewelpress={() => { this.onJewelPress(index) }} />
               )}
+              onEndReached={()=>{
+                console.log('end reached')
+              }}
               keyExtractor={item => item._ID + ''}
             />
           </View>
