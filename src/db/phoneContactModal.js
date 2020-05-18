@@ -21,8 +21,29 @@ export default class phoneContactModal {
 
     constructor(jsonObj){
         this.PHONEBOOK_CONTACT_NAME = jsonObj.givenName +" "+ jsonObj.middleName +" "+ jsonObj.familyName
-        this.CONTACT_NUMBER = jsonObj.phoneNumbers[0].number
-        this.JID = jsonObj.phoneNumbers[0].number + '@jewelchat.net'
+        this.CONTACT_NUMBER = _formatNumber(jsonObj.phoneNumbers[0].number)
+        this.JID = _formatNumber(jsonObj.phoneNumbers[0].number) + '@jewelchat.net'
         this.IS_PHONEBOOK_CONTACT = 1
+        this.IS_REGIS = 0
+        this.IS_INVITED = 0
     }
+}
+
+function _formatNumber(number) {
+	var formattedNumber
+	if (number.includes('(')) {
+		formattedNumber = '91' + number.split('-')[0].split(') ')[0].split('(')[1] + number.split('-')[0].split(') ')[1] + number.split('-')[1]
+		console.log(formattedNumber)
+	}
+	else if (number.includes('+')) {
+		formattedNumber = number.split(' ')[0].split('+')[1] + number.split(' ')[1] + number.split(' ')[2]
+		console.log(formattedNumber)
+    }
+    else if(number.includes('-')){
+        formattedNumber = '91' + number.split('-')[0] + number.split('-')[1] + number.split('-')[2]
+    }
+	else
+		formattedNumber = number
+
+	return formattedNumber
 }

@@ -1,9 +1,10 @@
 //let initialState = [];
-import {SET_ACTIVE_CHAT, SET_CHAT_LIST_DATA} from '../actions/ActionTypes'
+import {SET_ACTIVE_CHAT, SET_CHAT_LIST_DATA, SET_PRESENCE} from '../actions/ActionTypes'
 
 let initialState = {
     activeChat:{},
-    chatList : [] 
+    chatList : [],
+    presence: {}
 }
     
 
@@ -21,6 +22,11 @@ const chatslist = (state = initialState, action) => {
                 ...state,
                 chatList: action.chatList
             }
+        case SET_PRESENCE: 
+        return{
+            ...state,
+            presence: action.presenceData
+        }
         default:            
             return state      
 

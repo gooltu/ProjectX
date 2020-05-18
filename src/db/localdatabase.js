@@ -9,8 +9,8 @@ SQLite.enablePromise(true);
 let _jcdb
 
 export default {
-	getChats, insertInitialData, insertContactList, insertChatData, getChatList, insertPhoneContactData, insertStropheChatData, updateDeliveryAndReadRecipt,
-	updateLastMessageAndText, selectUnreadMessages, selectUnsendMessages
+	getChats, getChatList, updatePhoneContact, insertStropheChatData, updateDeliveryAndReadRecipt, getContactList,
+	updateLastMessageAndText, selectUnreadMessages, selectUnsendMessages, updateContact, insertContactData, checkIfRowExist
 };
 
 SQLite.openDatabase({
@@ -92,7 +92,7 @@ function getChatList() {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
-				txn.executeSql('Select * from Contact')
+				txn.executeSql('Select * from Contact WHERE LAST_MSG_CREATED_TIME IS NOT NULL ORDER BY LAST_MSG_CREATED_TIME DESC')
 					.then((results) => {
 						console.log('Contact query COMPLETED for');
 						console.log(results[1])
@@ -109,122 +109,50 @@ function getChatList() {
 	});
 }
 
-function insertInitialData() {
-	console.log('INSERT ROWS START');
-	//return (dispatch, getState) => {
-	console.log('INSERT ROWS');
-	_initDb().then(instance => {
-		jcdb = instance;
-		if (jcdb) {
+function getContactList() {
+	return new Promise((resolve, reject) => {
+		_initDb().then(instance => {
+			jcdb = instance;
 			jcdb.transaction((txn) => {
-				let queries = [];
-				let sql;
-				sql = "INSERT INTO Contact " +
-					" ( JEWELCHAT_ID, JID, CONTACT_NUMBER, CONTACT_NAME, STATUS_MSG, IS_REGIS, IS_INVITED, IS_PHONEBOOK_CONTACT, UNREAD_COUNT ) " +
-					" VALUES ( 1, '918700000000@jewelchat.net', '918700000000', 'Team JewelChat', 'Collect and Win', 1, 1, 0, 1 )";
-				let q = txn.executeSql(sql);
-				queries.push(q);
-
-
-				sql = "INSERT INTO ChatMessage " +
-					" ( MSG_TYPE, CREATED_TIME, CHAT_ROOM_JID, CREATOR_JID, SENDER_NAME, SENDER_MSG_ID, JEWEL_TYPE, MSG_TEXT ) " +
-					" VALUES ( 1, 1569819057204, '918700000000@jewelchat.net', '910000000000@jewelchat.net', 'Team Jewelchat', '1', '3', 'Hello World' ) ";
-				q = txn.executeSql(sql);
-				queries.push(q);
-
-				sql = "INSERT INTO ChatMessage " +
-					" ( MSG_TYPE, CREATED_TIME, CHAT_ROOM_JID, CREATOR_JID, SENDER_NAME, SENDER_MSG_ID, JEWEL_TYPE, MSG_TEXT ) " +
-					" VALUES ( 1, 1569819266669, '910000000000@jewelchat.net', '910000000000@jewelchat.net', 'Team Jewelchat', '2', '6', 'How are you?' ) ";
-				q = txn.executeSql(sql);
-				queries.push(q);
-
-				Promise.all(queries).then(val => {
-					console.log('INSERT DATA PROMISE ALL')
-					console.log(val)
-					resolve('Success')
-				}).catch(err => {
-					reject(err)
-					throw err;
-				})
-			}).then((result) => {
-				resolve('Success')
-				console.log('Result:' + result);
-			}).catch((err) => {
-				reject(err)
-				throw err;
+				txn.executeSql('Select * from Contact where IS_PHONEBOOK_CONTACT=1')
+					.then((results) => {
+						console.log('Contact query COMPLETED for');
+						console.log(results[1])
+						resolve(results[1])
+					})
+					.catch(err => {
+						reject(err)
+					})
 			})
-		}
-	}).catch((err) => {
-		reject(err)
-		throw err;
-	})
-}
-//}
-
-function insertContactList() {
-	//	return new Promise((resolve, reject) => {
-	_initDb().then(instance => {
-		jcdb = instance;
-		jcdb.transaction((txn) => {
-			let queries = [];
-			let sql;
-			let q;
-			for (let i = 0; i < contactData.length; i++) {
-				let data = contactData[i]
-				sql = "INSERT INTO Contact " +
-					" ( JEWELCHAT_ID, JID, CONTACT_NUMBER, CONTACT_NAME, STATUS_MSG, IS_REGIS, IS_INVITED, IS_PHONEBOOK_CONTACT, UNREAD_COUNT , PHONEBOOK_CONTACT_NAME, LAST_MSG_CREATED_TIME, MSG_TEXT ) " +
-					" VALUES (" + data.JEWELCHAT_ID + ",'" + data.JID + "','" + data.CONTACT_NUMBER + "','" + data.CONTACT_NAME + "','" + data.STATUS_MSG + "' ," + data.IS_REGIS + " , " + data.IS_INVITED + " , " + data.IS_PHONEBOOK_CONTACT + "," + data.UNREAD_COUNT + ",'" + data.PHONEBOOK_CONTACT_NAME + "','" + data.LAST_MSG_CREATED_TIME + "','" + data.MSG_TEXT + "') "
-				q = txn.executeSql(sql);
-				queries.push(q);
-			}
-			Promise.all(queries).then(val => {
-				console.log('INSERT all Contact DATA PROMISE Successful')
-				console.log(val)
-				//		resolve('Success')
-			}).catch(err => {
-				//				reject(err)
-				console.log('INSERT all Contact DATA PROMISE error')
-				throw err;
-			})
+		}).then(result => {
+		}).catch(err => {
+			reject(err)
 		})
-	}).then(result => {
-	}).catch(err => {
-		//			reject(err)
-	})
-	//	})
+	});
 }
 
-function insertChatData() {
-	//return new Promise((resolve, reject) => {
-	_initDb().then(instance => {
-		jcdb = instance;
-		jcdb.transaction((txn) => {
-			let queries = [];
-			let sql;
-			let q;
-			for (let i = 0; i < chatList.length; i++) {
-				let data = chatList[i]
-				sql = "INSERT INTO ChatMessage " +
-					" ( MSG_TYPE,CREATED_DATE, CREATED_TIME, CHAT_ROOM_JID, CREATOR_JID, SENDER_NAME, SENDER_MSG_ID, JEWEL_TYPE, MSG_TEXT) " +
-					" VALUES (" + data.MSG_TYPE + ",'" + data.CREATED_DATE + "','" + data.CREATED_TIME + "','" + data.CHAT_ROOM_JID + "','" + data.CREATOR_JID + "','" + data.SENDER_NAME + "'," + data.SENDER_MSG_ID + "," + data.JEWEL_TYPE + ",'" + data.MSG_TEXT + "')"
-				console.log(sql)
-				q = txn.executeSql(sql)
-				queries.push(q);
-			}
-			Promise.all(queries).then(val => {
-				console.log('INSERT all Chat Data DATA PROMISE Successful')
-				console.log(val)
-			}).catch(err => {
-				console.log('INSERT all CHAT DATA PROMISE error')
-				throw err;
+function checkIfRowExist(JID){
+	return new Promise((resolve, reject) => {
+		_initDb().then(instance => {
+			jcdb = instance;
+			jcdb.transaction((txn) => {
+				txn.executeSql('Select * from Contact where JID="'+JID + '"')
+					.then((results) => {
+						console.log('Contact query COMPLETED for');
+						console.log(results[1])
+						resolve(results[1])
+					})
+					.catch(err => {
+						reject(err)
+					})
 			})
+		}).then(result => {
+		}).catch(err => {
+			reject(err)
 		})
-	}).then(result => {
-	}).catch(err => {
-		//	reject(err)
-	})
-	//	})
+	});
 }
+
 
 function insertStropheChatData(data) {
 	//select last_insert_rowid()
@@ -259,7 +187,7 @@ function updateDeliveryAndReadRecipt(type, id, time) {
 			jcdb.transaction((txn) => {
 				let sql;
 				if (type == 'Delivery') {
-					sql = "UPDATE ChatMessage SET IS_DELIVERED = 1, TIME_DELIVERED = " + time + " WHERE _ID =  " + id 
+					sql = "UPDATE ChatMessage SET IS_DELIVERED = 1, TIME_DELIVERED = " + time + " WHERE _ID =  " + id
 					txn.executeSql(sql).then((results) => {
 						console.log('ChatMessage Delivered Query COMPLETED for id, ', id);
 						resolve('success')
@@ -268,7 +196,7 @@ function updateDeliveryAndReadRecipt(type, id, time) {
 					})
 				}
 				else if (type == 'Both') {
-					sql = "UPDATE ChatMessage SET IS_READ = 1,TIME_READ=" + time + ", IS_DELIVERED = 1, TIME_DELIVERED = " + time + "  WHERE _ID =  " + id 
+					sql = "UPDATE ChatMessage SET IS_READ = 1,TIME_READ=" + time + ", IS_DELIVERED = 1, TIME_DELIVERED = " + time + "  WHERE _ID =  " + id
 					txn.executeSql(sql).then((results) => {
 						console.log('ChatMessage Read Query COMPLETED for id, ', id);
 						resolve('success')
@@ -277,7 +205,7 @@ function updateDeliveryAndReadRecipt(type, id, time) {
 					})
 				}
 				else if (type == 'Read') {
-					sql = "UPDATE ChatMessage SET IS_READ = 1,TIME_READ=" + time + " WHERE _ID = " + id 
+					sql = "UPDATE ChatMessage SET IS_READ = 1,TIME_READ=" + time + " WHERE _ID = " + id
 					txn.executeSql(sql).then((results) => {
 						console.log('ChatMessage Delivered Query COMPLETED for id, ', id);
 						resolve('success')
@@ -286,7 +214,7 @@ function updateDeliveryAndReadRecipt(type, id, time) {
 					})
 				}
 				else if (type == 'Submit') {
-					sql = "UPDATE ChatMessage SET IS_SUBMITTED = 1,TIME_SUBMITTED=" + time + " WHERE _ID = " + id 
+					sql = "UPDATE ChatMessage SET IS_SUBMITTED = 1,TIME_SUBMITTED=" + time + " WHERE _ID = " + id
 					txn.executeSql(sql).then((results) => {
 						console.log('ChatMessage Delivered Query COMPLETED for id, ', id);
 						resolve('success')
@@ -326,7 +254,7 @@ function selectUnreadMessages(JID) {
 	})
 }
 
-function selectUnsendMessages(JID){
+function selectUnsendMessages(JID) {
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
 			jcdb = instance;
@@ -356,10 +284,10 @@ function updateLastMessageAndText(message, createdDateTime, messageType) {
 			jcdb.transaction((txn) => {
 				let sql;
 				if (messageType == 'Active') {
-					sql = "UPDATE Contact SET LAST_MSG_CREATED_TIME ='" + createdDateTime + "', MSG_TEXT = '" + message.MSG_TEXT + "', MSG_TYPE= " + message.MSG_TYPE + ", UNREAD_COUNT = " + 0 + " WHERE JID = '" + message.CHAT_ROOM_JID + "'"
+					sql = "UPDATE Contact SET LAST_MSG_CREATED_TIME =" + createdDateTime + ", MSG_TEXT = '" + message.MSG_TEXT + "', MSG_TYPE= " + message.MSG_TYPE + ", UNREAD_COUNT = " + 0 + " WHERE JID = '" + message.CHAT_ROOM_JID + "'"
 				}
 				else {
-					sql = "UPDATE Contact SET LAST_MSG_CREATED_TIME ='" + createdDateTime + "', MSG_TEXT = '" + message.MSG_TEXT + "', MSG_TYPE= " + message.MSG_TYPE + ", UNREAD_COUNT = UNREAD_COUNT +" + 1 + " WHERE JID = '" + message.CHAT_ROOM_JID + "'"
+					sql = "UPDATE Contact SET LAST_MSG_CREATED_TIME =" + createdDateTime + ", MSG_TEXT = '" + message.MSG_TEXT + "', MSG_TYPE= " + message.MSG_TYPE + ", UNREAD_COUNT = UNREAD_COUNT +" + 1 + " WHERE JID = '" + message.CHAT_ROOM_JID + "'"
 				}
 				txn.executeSql(sql).then((results) => {
 					console.log('ChatMessage contact update Query COMPLETED for id, ');
@@ -377,42 +305,78 @@ function updateLastMessageAndText(message, createdDateTime, messageType) {
 }
 
 
-function insertPhoneContactData(phoneContactData) {
-	//	 return new Promise((resolve, reject) => {
-	_initDb().then(instance => {
-		jcdb = instance;
-		jcdb.transaction((txn) => {
-			let queries = [];
-			let sql;
-			let q;
-			for (let i = 0; i < phoneContactData.length; i++) {
-				console.log(phoneContactData[i])
-				console.log(new phoneContactModal(phoneContactData[i]))
-				let data = new phoneContactModal(phoneContactData[i])
-				sql = "INSERT INTO Contact " +
-					" (JID, CONTACT_NUMBER, CONTACT_NAME, IS_PHONEBOOK_CONTACT , PHONEBOOK_CONTACT_NAME) " +
-					" VALUES ('" + data.JID + "','" + data.CONTACT_NUMBER + "','" + data.PHONEBOOK_CONTACT_NAME + "', " + data.IS_PHONEBOOK_CONTACT + ",'" + data.PHONEBOOK_CONTACT_NAME + "') "
-				q = txn.executeSql(sql);
-				queries.push(q);
-			}
-			Promise.all(queries).then(val => {
-				console.log('INSERT all phone Contact DATA PROMISE Successful')
-				console.log(val)
-				//		resolve('Success')
+function insertContactData(data) {
+	return new Promise((resolve, reject) => {
+		_initDb().then(instance => {
+			jcdb = instance;
+			jcdb.transaction((txn) => {
+				let sql = "INSERT INTO Contact " +
+					" (JID, CONTACT_NUMBER, IS_PHONEBOOK_CONTACT , PHONEBOOK_CONTACT_NAME, IS_REGIS) " +
+					" VALUES (" + _handleString(data.JID) + "," + _handleString(data.CONTACT_NUMBER) + ", " + data.IS_PHONEBOOK_CONTACT + "," + _handleString(data.PHONEBOOK_CONTACT_NAME) + "," + data.IS_REGIS + ") "
+				txn.executeSql(sql).then(val => {
+					resolve('Success')
+				}).catch(err => {
+					console.log('reject')
+					reject(err)
+				})
 			}).catch(err => {
-				//				reject(err)
-				console.log('INSERT all Contact DATA PROMISE error')
-				throw err;
+				console.log('reject1')
+				reject(err)
 			})
 		})
-	}).then(result => {
-	}).catch(err => {
-		//			reject(err)
 	})
-	// })
 }
 
+function updatePhoneContact(contactData){
+	return new Promise((resolve, reject) => {
+		_initDb().then(instance => {
+			jcdb = instance;
+			jcdb.transaction((txn) => {
+				let sql = "UPDATE Contact SET PHONEBOOK_CONTACT_NAME=" + _handleString(contactData.PHONEBOOK_CONTACT_NAME) + ", IS_PHONEBOOK_CONTACT = 1  WHERE CONTACT_NUMBER=" + contactData.phone;
+				txn.executeSql(sql).then(result => {
+					resolve('success')
+					console.log('success Contact update')
+				}).catch(err => {
+					reject('fail')
+					console.log('fail Contact update')
+				})
+			}).catch(err => {
+				reject('fail')
+				console.log('fail Contact update')
+			})
+		})
+	})
+}
 
+function updateContact(contactData) {
+	return new Promise((resolve, reject) => {
+		_initDb().then(instance => {
+			jcdb = instance;
+			jcdb.transaction((txn) => {
+				let sql = "UPDATE Contact SET JEWELCHAT_ID = " + contactData.id + ", SMALL_IMAGE=" + _handleString(contactData.pic) + ", IMAGE_PATH=" + _handleString(contactData.large_pic) + "," +
+					"CONTACT_NAME=" + _handleString(contactData.name) + ",STATUS_MSG=" + _handleString(contactData.status) + ", IS_INVITED=" + contactData.invited + ", IS_REGIS=" + contactData.regis + " WHERE CONTACT_NUMBER=" + contactData.phone;
+				txn.executeSql(sql).then(result => {
+					resolve('success')
+					console.log('success Contact update')
+				}).catch(err => {
+					reject('fail')
+					console.log('fail Contact update')
+				})
+			}).catch(err => {
+				reject('fail')
+				console.log('fail Contact update')
+			})
+		})
+	})
+}
+
+function _handleString(value) {
+	if (value == 'null' || value == 'undefined' || value == null || value == '') {
+		return null
+	}
+	else
+		return "'" + value + "'"
+}
 
 
 const contactData = [

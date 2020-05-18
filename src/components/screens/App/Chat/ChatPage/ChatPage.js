@@ -35,7 +35,10 @@ import actions from '../../../../../actions'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import Icon1 from 'react-native-vector-icons/MaterialIcons'
 import db from '../../../../../db/localdatabase'
-
+import rest from '../../../../../network/rest';
+import axios from 'axios'
+import NetworkManager from '../../../../../network/NetworkManager'
+import { getContacts } from '../../../../JCUtils/CommonUtils'
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
@@ -50,7 +53,30 @@ class ChatPage extends React.Component {
     console.log(this.props.navigation.setParams({ otherParam: 'Updated!' }));
     this.props.sendReadReceipt(this.props.activeChat.JID)
     //console.log(this.props);
-    //console.log(this.props.navigation.state.routeName);
+    this.UpdateContact()
+    getContacts(this.getContactCallback)
+  }
+
+  getContactCallback = () =>{
+    //************** update chatlist redux *******************/
+  }
+  //to update the contact data (Image, JEWELCHAT_ID etc)
+  UpdateContact() {
+    var data = {
+      'phone': '918756463536',
+    }
+    NetworkManager.callAPI(rest.downloadContact_Phone, 'post', data).then((responseJson) => {
+      console.log('responseJson')
+      if(responseJson.error==false){
+        responseJson.contact['invited'] = 0
+        responseJson.contact['regis'] = 1
+        db.updateContact(responseJson.contact)
+      }
+      console.log(responseJson)
+    })
+      .catch((error) => {
+        console.log(error)
+      });
   }
 
   state = {
@@ -423,7 +449,7 @@ class ChatItem extends React.Component {
 function mapStateToProps(state) {
   return {
     chatroom: state.chatroom.chatroom,
-    activeChat: state.chatslist.activeChat
+    activeChat: state.chatslist.activeChat,
   }
 }
 

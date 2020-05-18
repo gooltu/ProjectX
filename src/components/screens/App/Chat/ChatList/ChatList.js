@@ -23,7 +23,7 @@ import TabIcon from "../../../../svg_components/TabIcons";
 import colors from "../../../../shared_styles/colors";
 import db from '../../../../../db/localdatabase'
 import actions from '../../../../../actions'
-import { setActiveDispatch } from '../../../../../actions/chatListActions'
+import { setActiveChat } from '../../../../../actions/chatListActions'
 
 function Item({ item, onpressitem, onlongpressitem }) {
 
@@ -104,7 +104,7 @@ class ChatList extends React.Component {
               renderItem={({ item }) => (
                 <Item item={item}
                   onpressitem={(item) => {
-                    this.props.setActiveDispatch(item)
+                    this.props.setActiveChat(item)
                     db.getChats(item.JID, 0)
                       .then(results => {
                         console.log('FROM JEWELCHAT COMPONENT GETCHAT SUCCESS')
@@ -136,7 +136,7 @@ class ChatList extends React.Component {
               icon={this.state.open ? 'today' : 'add'}
               actions={[
                 { icon: 'email', label: 'New Group', color: 'white', style: { backgroundColor: colors.lightcolor2 }, onPress: () => console.log('Pressed email') },
-                { icon: 'notifications', label: 'Contacts', color: 'white', style: { backgroundColor: colors.lightcolor2 }, onPress: () => this.props.navigation.navigate('Contacts') },
+                { icon: 'phone', label: 'Contacts', color: 'white', style: { backgroundColor: colors.lightcolor2 }, onPress: () => this.props.navigation.navigate('Contacts') },
               ]}
               onStateChange={({ open }) => this.setState({ open })}
               onPress={() => {
@@ -211,7 +211,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    setActiveDispatch: (activeChat) => dispatch(setActiveDispatch(activeChat)),
+    setActiveChat: (activeChat) => dispatch(setActiveChat(activeChat)),
     setChatData: (chatData) => dispatch(actions.setChatData(chatData))
   }
 }

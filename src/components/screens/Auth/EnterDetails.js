@@ -106,6 +106,7 @@ class EnterDetails extends React.Component {
             throw(new Error(responseJson.message))  
         })
         .catch((error) => {
+          console.log(error)
           this.setState({ networkloading: false })
           let s = {visible: true, text: error.message} 
           this.setState( { snackbar: s } );  

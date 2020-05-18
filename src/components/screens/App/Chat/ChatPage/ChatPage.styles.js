@@ -23,6 +23,7 @@ export default styles = StyleSheet.create({
     createdDateStyle: {
         marginTop: 5,
         marginBottom: 5,
+        color: 'white',
         alignSelf: 'center'
     },
     chatItemContainer: {

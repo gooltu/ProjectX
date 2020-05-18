@@ -141,7 +141,7 @@ class FriendProfile extends Component {
                 <ListItem icon>
                     <Left>
                         <Button style={{ backgroundColor: "#007AFF" }}>
-                            <Icon active name="ios-volume" />
+                            <Icon active name="volume-mute" />
                         </Button>
                     </Left>
                     <Body>

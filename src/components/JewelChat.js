@@ -1,6 +1,6 @@
 import React from "react";
 
-import { AppState, Text } from 'react-native';
+import { AppState, Text, Platform, PermissionsAndroid } from 'react-native';
 import NetInfo from "@react-native-community/netinfo";
 
 import AsyncStorage from '@react-native-community/async-storage';
@@ -44,10 +44,9 @@ import TabIcon from "./svg_components/TabIcons";
 import db from "../db/localdatabase";
 import { realtimeConnect, realtimeDisconnect } from "../network/realtime"
 import actions from '../actions'
-import Contacts from '../components/screens/App/Contacts/Contacts'
+import ContactsScreen from '../components/screens/App/Contacts/Contacts'
 import RNRestart from 'react-native-restart';
-
-
+import Contacts from 'react-native-contacts';
 
 
 const MainTabs = createBottomTabNavigator({
@@ -111,14 +110,6 @@ const MainTabs = createBottomTabNavigator({
 const AppMainStack = createStackNavigator({
     MainTabs: {
         screen: MainTabs,
-        navigationOptions: ({ navigation }) => {
-            return {
-                header: <CustomHeader navigation={navigation} />
-            };
-        }
-    },
-    Contacts: {
-        screen: Contacts,
         navigationOptions: ({ navigation }) => {
             return {
                 header: <CustomHeader navigation={navigation} />
@@ -200,7 +191,7 @@ const AppMainStack = createStackNavigator({
         }
     },
     Contacts:{
-        screen: Contacts,
+        screen: ContactsScreen,
         navigationOptions: ({ navigation }) => {
             return {
                 header: <CustomHeader navigation={navigation} />
@@ -268,15 +259,12 @@ class JewelChat extends React.Component {
         console.log(this.props)
     }
 
+   
+
     componentDidMount() {
         console.log('MOUNT APP');
-        console.log(db)
         AppState.addEventListener('change', this._handleAppStateChange);
         this.unsubscribe = NetInfo.addEventListener(this._handleNetworkChange);
-        console.log(actions)
-    //   db.insertChatData()
-       //db.insertContactList()
-    //   db.insertPhoneContactData(global.Contacts)
         db.getChatList().then(results => {
             console.log('FROM JEWELCHAT COMPONENT GETCHAT SUCCESS')
             console.log(results.rows.length)
@@ -296,7 +284,6 @@ class JewelChat extends React.Component {
         this.props.realtimeConnect();
         }
     }
-
     componentWillUnmount() {
         console.log('UNMOUNT APP')
         AppState.removeEventListener('change', this._handleAppStateChange);

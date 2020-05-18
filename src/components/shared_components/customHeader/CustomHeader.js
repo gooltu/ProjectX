@@ -28,8 +28,11 @@ class CustomHeader extends React.Component {
         console.log(this.props.navigation.state.routeName)
         //console.log(this.props.navigation.state.params)
 
-        if (this.props.mytoken.token && this.props.appstate.state === 'active' && this.props.network.xmppState === 'XMPP_DISCONNECTED')
+        if (this.props.mytoken.token && this.props.appstate.state === 'active' && this.props.network.xmppState === 'XMPP_DISCONNECTED') {
             console.log('CALL Connect strophe xmpp')
+            this.props.openRealtimeConnection()
+        }
+
     }
 
     componentWillUnmount() {
@@ -39,24 +42,26 @@ class CustomHeader extends React.Component {
     componentDidUpdate(prevProps, prevState) {
         console.log('CUSTOM HEADER STATE UPDATE')
         console.log(this.props.navigation.state.params);
-        if (this.props.mytoken.token && this.props.appstate.state === 'active' && this.props.network.xmppState === 'XMPP_DISCONNECTED')
+        if (this.props.mytoken.token && this.props.appstate.state === 'active' && this.props.network.xmppState === 'XMPP_DISCONNECTED') {
             console.log('CALL Connect strophe xmpp')
+            this.props.openRealtimeConnection()
+        }
     }
 
     displayLogo() {
         let logoView
-        if(this.props.navigation.state.routeName == 'ChatPage') 
+        if (this.props.navigation.state.routeName == 'ChatPage')
             logoView =
-            <TouchableOpacity style={styles.profilepic} onPress={()=>this.props.navigation.navigate('FriendProfile')}>
-                {this.props.activeChat.SMALL_IMAGE == null ?
-                    <ImageBackground
-                        source={require('../../../assets/placeholder_img.png')}
-                        style={styles.imgBackground}></ImageBackground> :
-                    <ImageBackground
-                        source={{ uri: this.props.activeChat.SMALL_IMAGE }}
-                        style={styles.imgBackground}></ImageBackground>}
-            </TouchableOpacity>
-        else if(this.props.navigation.state.routeName == 'FriendProfile'){
+                <TouchableOpacity style={styles.profilepic} onPress={() => this.props.navigation.navigate('FriendProfile')}>
+                    {this.props.activeChat.SMALL_IMAGE == null ?
+                        <ImageBackground
+                            source={require('../../../assets/placeholder_img.png')}
+                            style={styles.imgBackground}></ImageBackground> :
+                        <ImageBackground
+                            source={{ uri: this.props.activeChat.SMALL_IMAGE }}
+                            style={styles.imgBackground}></ImageBackground>}
+                </TouchableOpacity>
+        else if (this.props.navigation.state.routeName == 'FriendProfile') {
             logoView = null
         }
         else
@@ -87,7 +92,7 @@ class CustomHeader extends React.Component {
         let factoryView
         this.props.navigation.state.routeName == 'ChatPage' ?
             factoryView =
-            <TouchableOpacity  onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'ChatPageOptions' })} style={styles.jewelBox}>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'ChatPageOptions' })} style={styles.jewelBox}>
                 <ImageBackground source={require('../../../assets/dots.png')} style={{
                     width: '100%', height: '100%', justifyContent: 'center',
                     alignItems: 'center'
@@ -124,15 +129,15 @@ class CustomHeader extends React.Component {
 
     displayTitle() {
         let titleView
-        if(this.props.navigation.state.routeName == 'ChatPage')
-            titleView = <TouchableOpacity onPress={()=>this.props.navigation.navigate('FriendProfile')} style={{ flexDirection: 'column', paddingLeft: 5, height: 32, justifyContent: 'center' }}>
-                <Text style={{ fontSize: 14, color: 'white', fontWeight: 'bold' }}>{this.props.activeChat.PHONEBOOK_CONTACT_NAME}</Text>
-                <Text style={{ fontSize: 11, color: 'white' }}>online</Text>
+        if (this.props.navigation.state.routeName == 'ChatPage')
+            titleView = <TouchableOpacity onPress={() => this.props.navigation.navigate('FriendProfile')} style={{ flexDirection: 'column', paddingLeft: 5, height: 32, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: 'white', fontWeight: 'bold' }}>{this.props.activeChat.PHONEBOOK_CONTACT_NAME?this.props.activeChat.PHONEBOOK_CONTACT_NAME: '+' + this.props.activeChat.CONTACT_NUMBER}</Text>
+                <Text style={{ fontSize: 11, color: 'white' }}>{this.props.presence.hasOwnProperty(this.props.activeChat.JID)?this.props.presence[this.props.activeChat.JID]:this.props.activeChat.IS_PHONEBOOK_CONTACT==1?'offine':null}</Text>
             </TouchableOpacity>
-            else if(this.props.navigation.state.routeName == 'FriendProfile'){
-                titleView=  <Text style={{ fontSize: 16, color: 'white',paddingLeft:10, fontWeight: 'bold' }}>{this.props.activeChat.PHONEBOOK_CONTACT_NAME}</Text>
-            }
-            else
+        else if (this.props.navigation.state.routeName == 'FriendProfile') {
+            titleView = <Text style={{ fontSize: 16, color: 'white', paddingLeft: 10, fontWeight: 'bold' }}>{this.props.activeChat.PHONEBOOK_CONTACT_NAME}</Text>
+        }
+        else
             titleView = <Text style={{ fontSize: 20, fontWeight: '500', color: 'white', textAlignVertical: 'center', paddingLeft: 16 }}>JewelChat</Text>
         return titleView
     }
@@ -198,6 +203,7 @@ function mapStateToProps(state) {
         appstate: state.appstate,
         network: state.network,
         game: state.game,
+        presence: state.chatslist.presence,
         activeChat: state.chatslist.activeChat
     }
 }

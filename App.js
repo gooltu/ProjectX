@@ -14,7 +14,6 @@ import { Provider } from 'react-redux';
 import colors from "./src/components/shared_styles/colors";
 import { PersistGate } from 'redux-persist/integration/react';
 import messaging from '@react-native-firebase/messaging';
-import Contacts from 'react-native-contacts';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -53,7 +52,6 @@ export default class App extends React.Component {
 
     // return unsubscribe;
     this.getStoragePermission()
-    this.getContactsPermissions()
     console.log(this.getFCMToken())
 
   }
@@ -129,39 +127,7 @@ export default class App extends React.Component {
     }
   }
 
-  getContactsPermissions() {
-    if (Platform.os == 'android') {
-      PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
-        {
-          'title': 'Contacts',
-          'message': 'This app would like to view your contacts.',
-          'buttonPositive': 'Please accept bare mortal'
-        }
-      ).then(() => {
-        Contacts.getAll((err, contacts) => {
-          if (err === 'denied') {
-            // Alert.alert("Error", err)
-          } else {
-            console.log('contacts', contacts)
-            global.Contacts = contacts
-            // contacts returned in Array
-          }
-        })
-      })
-    }
-    else {
-      Contacts.getAll((err, contacts) => {
-        if (err === 'denied') {
-          // Alert.alert("Error", err)
-        } else {
-          console.log('contacts', contacts)
-          global.Contacts = contacts
-          // contacts returned in Array
-        }
-      })
-    }
-  }
+
 
   render() {
     return (

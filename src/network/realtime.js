@@ -2,7 +2,7 @@ import XMPP from "../utilities/xmpp/strophe";
 import { store } from '../store'
 import actions from '../actions'
 import AsyncStorage from '@react-native-community/async-storage';
-import db from '../db/localdatabase'
+import db from '../db/localdatabase' 
 const URL = 'ws://13.127.197.210:5280/ws-xmpp';
 
 let connection = new XMPP.Strophe.Connection(URL);
@@ -59,13 +59,61 @@ export const realtimeConnect = () => {
 
 function onPresence(msg) {
 	console.log(msg.toString());
+	connection.roster.get( (result) => { 
+		console.log('roster')
+        console.log(result);
+	  });
+	  _handlePresence(msg)
+	//  connection.roster.add( '3@jewelchat.net', 'nickname', [], function(){    });
+	//  connection.roster.authorize( '6@jewelchat.net' );
+	//  connection.roster.subscribe( '2@jewelchat.net' );
 	return true;
+}
+
+function _handlePresence(msg){
+	var type = msg.getAttribute('type')
+	var from = msg.getAttribute('from').split('/')[0]
+	var to = msg.getAttribute('to').split('/')[0]
+	console.log(type)
+	console.log(from)
+	console.log(to)
+	connection.roster.add( '7@jewelchat.net', 'nickname', [], function(){    })
+	if((type=='' || type=='unavailable') && from != to){
+		let presenceData = JSON.parse(JSON.stringify(store.getState().chatslist.presence))
+		if(type=='unavailable')
+		presenceData[from] = 'offline'
+		else
+		presenceData[from] = 'online'
+		store.dispatch(actions.setPresence(presenceData))
+	}
+	else if(type=='subscribe'){
+		db.checkIfRowExist(from).then(result=>{
+			if(result.rows.length>0){
+				var contact = result.rows.item(0)
+				if(contact.IS_PHONEBOOK_CONTACT==1){
+					connection.roster.authorize(from)
+				}
+			}
+			else{
+				connection.roster.unauthorize(from)
+			}
+		})
+	}
+	else if(type=='subscribed'){
+		connection.roster.authorize(from)
+	}
+}
+
+export const sendSubscriptionRequest = (JID) =>{
+	return(dispatch, getState) =>{
+		connection.roster.subscribe(JID);
+	}
 }
 
 //onMessage Handler
 const onMessage = (msg) => {
 	console.log(msg.toString());
-	var processedMessage = detectMessagetype(msg)
+	var processedMessage = _detectMessagetype(msg)
 	if (processedMessage.type == 'DownLoad') {
 		if (processedMessage.subtype == 'Delivery' || processedMessage.subtype == 'Read') {
 			store.dispatch(handleReadAndDeliveryMessages(processedMessage))
@@ -83,7 +131,6 @@ const onMessage = (msg) => {
 
 //function to sync device time with server time
 function getServerTime() {
-	console.log('CALLBACK serverTime SEND IQ')
 	var serverTime = $iq({ type: 'get', from: store.getState().mytoken.myphone + '@jewelchat.net', to: 'jewelchat.net', id: 'time_1' })
 		.c('time', { xmlns: 'urn:xmpp:time' });
 	connection.sendIQ(serverTime.tree(), (stanza) => {
@@ -105,10 +152,9 @@ function getServerTime() {
 async function downloadMessages() {
 	try {
 		var value = await AsyncStorage.getItem('logOutTime');
-		value =(new Date().getTime() + global.TimeDelta) - parseInt(value) > 604800000 ? (new Date().getTime() + global.TimeDelta - 604800000) : value
+		value = (new Date().getTime() + global.TimeDelta) - parseInt(value) > 604800000 ? (new Date().getTime() + global.TimeDelta - 604800000) : value
 		if (value !== null) {
 			// We have data!!
-			console.log('date time', value);
 			var download = $iq({ type: 'set' })
 				.c('query', { xmlns: 'urn:xmpp:mam:2' })
 				.c('x', { xmlns: 'jabber:x:data', type: 'submit' })
@@ -129,7 +175,7 @@ async function downloadMessages() {
 				var lastElement = stanza.getElementsByTagName('last')
 				if (lastElement.toString()) {
 					var last = Strophe.getText(lastElement[0])
-					downloadPagination(last, value)
+					_downloadPagination(last, value)
 				}
 				else {
 					//update redux
@@ -142,8 +188,7 @@ async function downloadMessages() {
 
 }
 
-function downloadPagination(last, value) {
-	console.log('download called')
+function _downloadPagination(last, value) {
 	var download = $iq({ type: 'set' })
 		.c('query', { xmlns: 'urn:xmpp:mam:2' })
 		.c('x', { xmlns: 'jabber:x:data', type: 'submit' })
@@ -166,7 +211,7 @@ function downloadPagination(last, value) {
 		var lastElement = stanza.getElementsByTagName('last')
 		if (lastElement.toString()) {
 			var last = Strophe.getText(lastElement[0])
-			downloadPagination(last, value)
+			_downloadPagination(last, value)
 		}
 		else {
 			//update redux
@@ -177,20 +222,20 @@ function downloadPagination(last, value) {
 
 
 //function to detect message type
-function detectMessagetype(incomingStanza) {
+function _detectMessagetype(incomingStanza) {
 	var type
 	var subtype
 	var data
 	var fwd = incomingStanza.getElementsByTagName('forwarded');
 	var recieved = incomingStanza.getElementsByTagName('received')
 	var read = incomingStanza.getElementsByTagName('read')
-	var date = dateToYMD((new Date()).getTime() + global.TimeDelta)
+	var date = _dateToYMD((new Date()).getTime() + global.TimeDelta)
 
 	if (fwd.toString()) {
 		type = 'DownLoad'
 		var delay = incomingStanza.getElementsByTagName('delay')
 		var stamp = delay[0].getAttribute('stamp')
-		var delayDate = dateToYMD(new Date(stamp).getTime())
+		var delayDate = _dateToYMD(new Date(stamp).getTime())
 		if (incomingStanza.getElementsByTagName('message').toString()) {
 			var msg = incomingStanza.getElementsByTagName('message')[0]
 			//Downloaded Delivery
@@ -267,15 +312,11 @@ function getFormattedMessages(msg, createdDateTime) {
 export const handleReadAndDeliveryMessages = (processedMessage) => {
 	return (dispatch, getState) => {
 		var type = processedMessage.type == 'DownLoad' ? processedMessage.subtype : processedMessage.type
-		console.log('processedMessage')
-		console.log(processedMessage, type)
 		if (processedMessage.data.from != getState().mytoken.myphone + '@jewelchat.net') {
-			console.log('called')
 			db.updateDeliveryAndReadRecipt(type, processedMessage.data.id, processedMessage.data.time).then(result => {
 				if (getState().chatslist.activeChat.JID == processedMessage.data.from) {
 					dispatch(updateChatData(type, processedMessage.data.id, processedMessage.data.time))
 				}
-				console.log('success')
 			}).catch(err => {
 			})
 		}
@@ -283,10 +324,8 @@ export const handleReadAndDeliveryMessages = (processedMessage) => {
 }
 
 export const updateChatData = (type, id, time) => {
-	console.log(type, id, time)
 	return (dispatch, getState) => {
 		var chatData = JSON.parse(JSON.stringify(getState().chatroom.chatroom))
-		console.log(chatData)
 		chatData.map((item) => {
 			if (item._ID == id) {
 				if (type == 'Delivery') {
@@ -311,9 +350,8 @@ export const updateChatData = (type, id, time) => {
 export const sendReply = (messageText, chatroom) => {
 
 	return (dispatch, getState) => {
-		console.log(global.TimeDelta)
 		var createdDateTime = (new Date()).getTime() + global.TimeDelta
-		var date = dateToYMD(createdDateTime);
+		var date = _dateToYMD(createdDateTime);
 		var message = {
 			CHAT_ROOM_JID: chatroom,
 			MSG_TEXT: messageText,
@@ -333,13 +371,13 @@ export const sendReply = (messageText, chatroom) => {
 				.cnode(Strophe.xmlElement('body', message.MSG_TEXT))
 				.up()
 				.c('active', { xmlns: "http://jabber.org/protocol/chatstates" });
-			dispatch(updateChatlist(message, createdDateTime, 'Active'))
 			connection.send(reply.tree(), () => {
 				console.log('reply triggered')
 				db.updateDeliveryAndReadRecipt('Submit', result, createdDateTime).then(status => {
 					dispatch(updateChatData('Submitted', result, createdDateTime))
 				})
 			});
+			dispatch(updateChatlist(message, createdDateTime, 'Active'))
 		}).catch(err => {
 
 		})
@@ -347,7 +385,7 @@ export const sendReply = (messageText, chatroom) => {
 }
 
 // function to convert date in ms to specified format ('YYYY-DD-MM' & 'HH:MM:SS')
-function dateToYMD(createdDateTime) {
+function _dateToYMD(createdDateTime) {
 	var d = new Date(parseInt(createdDateTime))
 	var date = d.toLocaleString().split(', ')[0].split('/').reverse().join("-")
 	var time = d.toLocaleString().split(', ')[1]
@@ -364,34 +402,27 @@ export const insertIncomingMessage = (incomingMessage) => {
 			//send read reciept if activechat
 			if (getState().chatslist.activeChat.JID == incomingMessage.CHAT_ROOM_JID) {
 				dispatch(actions.addChatMessage(incomingMessage))
-
 				dispatch(updateChatlist(incomingMessage, createdDateTime, 'Active'))
 
-				db.updateDeliveryAndReadRecipt('Both', result, createdDateTime)
 				var received = $msg({ to: incomingMessage.CHAT_ROOM_JID, from: getState().mytoken.myphone + '@jewelchat.net' })
 					.c('received', { xmlns: 'urn:xmpp:chat-markers:0', id: incomingMessage.SENDER_MSG_ID, time: createdDateTime })
-
+					db.updateDeliveryAndReadRecipt('Delivery', result, createdDateTime)
 				connection.send(received.tree(), () => {
-					//database single ticks
 				});
 				var read = $msg({ to: incomingMessage.CHAT_ROOM_JID, from: getState().mytoken.myphone + '@jewelchat.net' })
 					.c('read', { xmlns: 'urn:xmpp:chat-markers:0', id: incomingMessage.SENDER_MSG_ID })
-
 				connection.send(read.tree(), () => {
-					//database single ticks
+					db.updateDeliveryAndReadRecipt('Read', result, createdDateTime)
 				});
 			}
 			//otherwise send delivery recipt
 			else {
 				dispatch(updateChatlist(incomingMessage, createdDateTime, 'InActive'))
 
-				db.updateDeliveryAndReadRecipt('Delivery', result, createdDateTime)
-
 				var received = $msg({ to: incomingMessage.CHAT_ROOM_JID, from: getState().mytoken.myphone + '@jewelchat.net' })
 					.c('received', { xmlns: 'urn:xmpp:chat-markers:0', id: incomingMessage.SENDER_MSG_ID })
-
 				connection.send(received.tree(), () => {
-					//database single ticks
+					db.updateDeliveryAndReadRecipt('Delivery', result, createdDateTime)
 				});
 			}
 
@@ -404,7 +435,7 @@ export const insertIncomingMessage = (incomingMessage) => {
 //function to send read receipt for already delivered messages
 export const sendReadReceipt = (JID) => {
 	var createdDateTime = (new Date()).getTime() + global.TimeDelta
-	var date = dateToYMD(createdDateTime);
+	var date = _dateToYMD(createdDateTime);
 	return (dispatch, getState) => {
 		db.selectUnreadMessages(JID).then(result => {
 			if (result.rows.length > 0) {
@@ -429,7 +460,7 @@ export const sendReadReceipt = (JID) => {
 export const resendMessages = (JID) => {
 	console.log('JID', JID)
 	var createdDateTime = (new Date()).getTime() + global.TimeDelta
-	var date = dateToYMD(createdDateTime);
+	var date = _dateToYMD(createdDateTime);
 	return (dispatch, getState) => {
 		db.selectUnsendMessages(JID).then(result => {
 			if (result.rows.length > 0) {
@@ -455,33 +486,72 @@ export const resendMessages = (JID) => {
 
 // function to update chat list on any messaging activity
 export const updateChatlist = (message, createdDateTime, messageType) => {
-	console.log('test came', createdDateTime)
-	console.log(message)
 	return (dispatch, getState) => {
-		db.updateLastMessageAndText(message, createdDateTime, messageType).then(result => {
-			if (result == 'success') {
-				let chatList = JSON.parse(JSON.stringify(getState().chatslist.chatList))
-				chatList.map((chatItem, index) => {
-					if (chatItem.JID == message.CHAT_ROOM_JID) {
-						chatList[index]['LAST_MSG_CREATED_TIME'] = createdDateTime
-						chatList[index]['MSG_TEXT'] = message.MSG_TEXT
-						chatList[index]['MSG_TYPE'] = message.MSG_TYPE
-						if (messageType != 'Active') {
-							chatList[index]['UNREAD_COUNT'] = chatList[index]['UNREAD_COUNT'] + 1
-						}
-						else {
-							chatList[index]['UNREAD_COUNT'] = 0
-						}
+		console.log('came to update chatlist', message.CHAT_ROOM_JID)
+		let data = {
+			JID: message.CHAT_ROOM_JID,
+			CONTACT_NUMBER: message.CHAT_ROOM_JID.split('@')[0],
+			IS_PHONEBOOK_CONTACT: 0,
+			PHONEBOOK_CONTACT_NAME: null,
+			IS_REGIS: 1
+		}
+		console.log(data)
+		db.insertContactData(data).then(response => {
+			db.updateLastMessageAndText(message, createdDateTime, messageType).then(result => {
+				db.getChatList().then(results => {
+					let chatList = []
+					for (let i = 0; i < results.rows.length; i++) {
+						chatList.push(results.rows.item(i))
 					}
+					dispatch(actions.setChatListData(chatList))
+				}).catch(err => {
+					console.log(err)
 				})
-				dispatch(actions.setChatListData(chatList))
-			}
-		}).catch(err => {
+			}).catch(error => {
 
+			})
+		}).catch(error => {
+			db.updateLastMessageAndText(message, createdDateTime, messageType).then(result => {
+				db.getChatList().then(results => {
+					let chatList = []
+					for (let i = 0; i < results.rows.length; i++) {
+						chatList.push(results.rows.item(i))
+					}
+					store.dispatch(actions.setChatListData(chatList))
+				}).catch(err => {
+					console.log(err)
+				})
+			}).catch(error => {
+
+			})
 		})
 	}
 }
 
+function _initRedux() {
+	db.getChatList().then(results => {
+		let chatList = []
+		for (let i = 0; i < results.rows.length; i++) {
+			chatList.push(results.rows.item(i))
+		}
+		store.dispatch(actions.setChatListData(chatList))
+	}).catch(err => {
+		console.log(err)
+	})
+	if (store.getState().chatslist.activeChat.JID) {
+		db.getChats(store.getState().chatslist.activeChat.JID, 0)
+			.then(results => {
+				let chatroom = []
+				for (let i = 0; i < results.rows.length; i++) {
+					chatroom.push(results.rows.item(i))
+				}
+				store.dispatch(actions.setChatData(chatroom))
+
+			}).catch(err => {
+				console.log(err)
+			})
+	}
+}
 
 export const realtimeDisconnect = () => {
 	return (dispatch, getState) => {
@@ -492,11 +562,13 @@ export const realtimeDisconnect = () => {
 
 
 
+
 export default {
 	realtimeConnect,
 	realtimeDisconnect,
 	sendReply,
-	sendReadReceipt
+	sendReadReceipt,
+	sendSubscriptionRequest
 }
 
 /*

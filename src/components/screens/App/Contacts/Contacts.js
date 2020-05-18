@@ -15,7 +15,11 @@ import { connect } from 'react-redux';
 import colors from "../../../shared_styles/colors";
 import Logo from '../../../svg_components/Logo';
 import { Searchbar } from 'react-native-paper'
-
+import NetworkManager from "../../../../network/NetworkManager";
+import rest from "../../../../network/rest";
+import db from "../../../../db/localdatabase";
+import actions from '../../../../actions/index'
+import { getContacts } from '../../../JCUtils/CommonUtils'
 
 
 class Contacts extends React.Component {
@@ -26,12 +30,30 @@ class Contacts extends React.Component {
       header: <CustomHeader levelbar="show" />
     };
 };*/
-constructor(props){
-  super(props)
-  this.state={
-    searchQuery :''
+  constructor(props) {
+    super(props)
+    this.state = {
+      searchQuery: '',
+      contactData: []
+    }
   }
-}
+  componentDidMount() {
+    getContacts(this.getContactsCallback)
+  }
+  getContactsCallback = () => {
+    console.log('came to callback')
+    db.getContactList().then(results => {
+      let chatList = []
+      for (let i = 0; i < results.rows.length; i++) {
+        chatList.push(results.rows.item(i))
+      }
+      this.setState({
+        contactData: chatList
+      })
+    }).catch(err => {
+      console.log(err)
+    })
+  }
 
   _onChangeSearch = (query) => {
     this.setState({ searchQuery: query })
@@ -43,19 +65,18 @@ constructor(props){
           placeholder="Search Contacts"
           onChangeText={this._onChangeSearch}
           value={this.state.searchQuery}
-          style={{backgroundColor:colors.darkcolor3, color:'white'}}
-          inputStyle={{color:'white',fontSize:14}}
-          placeholderTextColor = 'white'
+          style={{ backgroundColor: colors.darkcolor3, color: 'white' }}
+          inputStyle={{ color: 'white', fontSize: 14 }}
+          placeholderTextColor='white'
           iconColor='white'
           theme='dark'
         />
         <FlatList
-          data={this.props.chatslist}
+          data={this.state.contactData}
           renderItem={({ item }) => (
             <Item item={item}
               onpressitem={(item) => {
-                // this.props.setActiveDispatch(item)  
-                // this.props.navigation.navigate('ChatPage', item)
+                inviteUser(item, this.props)
               }}
             />
           )}
@@ -96,15 +117,60 @@ function Item({ item, onpressitem }) {
         </View>
       </View>
       <View style={styles.itemLeftConatiner} >
-        <View style={styles.itemLeftSubContainer}>
+        <TouchableOpacity style={styles.itemLeftSubContainer}
+          disabled={item.IS_INVITED}
+          onPress={() => onpressitem(item)}
+        >
           <Text style={styles.inviteText}>{item.IS_REGIS == 0 ? 'INVITE' : ''}</Text>
-        </View>
+        </TouchableOpacity>
         <View style={styles.marginStyleLeft} />
       </View>
     </TouchableOpacity>
   );
 }
 
+function inviteUser(item, props) {
+  console.log(item)
+  let data = {
+    phone: item.CONTACT_NUMBER
+    //  phone: '918756463536'
+  }
+  NetworkManager.callAPI(rest.inviteUser, 'post', data).then(result => {
+    console.log(result)
+    if (result.is_regis) {
+      result.contact['invited'] = 1
+      result.contact['regis'] = 1
+      db.updateContact(result.contact).then(result => {
+        db.getChatList().then(results => {
+          let chatList = []
+          for (let i = 0; i < results.rows.length; i++) {
+            chatList.push(results.rows.item(i))
+          }
+          props.setChatListData(chatList)
+        })
+          .catch(err => {
+            console.log(err)
+          })
+      })
+
+      db.getChats(item.JID, 0)
+        .then(results => {
+          let chatroom = []
+          for (let i = 0; i < results.rows.length; i++) {
+            chatroom.push(results.rows.item(i))
+          }
+          props.setChatData(chatroom)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      props.setActiveChat(item)
+      props.navigation.navigate('ChatPage', item)
+    }
+  }).catch(error => {
+    console.log(error)
+  })
+}
 function mapStateToProps(state) {
   return {
     chatslist: state.chatslist.chatList
@@ -114,7 +180,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    //  setActiveDispatch: (activeChat) => dispatch(setActiveDispatch(activeChat))
+    setActiveChat: (activeChat) => dispatch(actions.setActiveChat(activeChat)),
+    setChatListData: (chatList) => dispatch(actions.setChatListData(chatList)),
+    setChatData: (chatdata) => dispatch(actions.setChatData(chatdata))
   }
 }
 

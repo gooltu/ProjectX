@@ -13,12 +13,11 @@ const Create_Contact = "CREATE TABLE if not exists Contact (" +
     "IS_BLOCKED" + "  INTEGER DEFAULT 0 , " +//11
     "IS_PHONEBOOK_CONTACT" + "  INTEGER , " +//12					
     "UNREAD_COUNT" + "  INTEGER DEFAULT 0  , " +//13
-    "LAST_MSG_CREATED_TIME  TEXT, " +
+    "LAST_MSG_CREATED_TIME  INTEGER, " +
     "MSG_TYPE   INTEGER ," +
     "MSG_TEXT   TEXT ," +
     "SMALL_IMAGE" + " TEXT ," +
     "IMAGE_PATH" + "  TEXT , unique ( " + "JID" + " ), unique ( " + "CONTACT_NUMBER" + " ) )";
-
 
 
 const Create_ChatMessage = "CREATE TABLE if not exists ChatMessage (" +
@@ -54,7 +53,7 @@ const Create_ChatMessage = "CREATE TABLE if not exists ChatMessage (" +
     "SEQUENCE  INTEGER DEFAULT 0," +
     "UNIQUE(" + "SENDER_MSG_ID" + "," + "CHAT_ROOM_JID" + "))"
 
-const Sequence_Trigger = "CREATE TRIGGER Update_Sequence " +
+const Sequence_Trigger = "CREATE TRIGGER IF NOT EXISTS Update_Sequence " +
     " AFTER INSERT ON ChatMessage WHEN NEW.CHAT_ROOM_JID = NEW.CREATOR_JID " +
     " BEGIN" +
     " UPDATE ChatMessage " +

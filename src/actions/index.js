@@ -1,4 +1,4 @@
-import { setActiveDispatch, setChatListData } from './chatListActions'
+import { setActiveChat, setChatListData, setPresence } from './chatListActions'
 import { setChatData, addChatMessage } from './chatRoomActions'
 
-export default { setActiveDispatch, setChatListData, setChatData, addChatMessage }
+export default { setActiveChat, setChatListData, setChatData, addChatMessage, setPresence }
