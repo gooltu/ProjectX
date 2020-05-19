@@ -110,6 +110,7 @@ export const sendSubscriptionRequest = (JID) =>{
 	}
 }
 
+
 //onMessage Handler
 const onMessage = (msg) => {
 	console.log(msg.toString());

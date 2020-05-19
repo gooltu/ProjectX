@@ -30,7 +30,7 @@ import J6 from '../../../../svg_components/J6';
 import J3 from '../../../../svg_components/J6';
 import { connect } from 'react-redux';
 import { CheckBox, Item } from 'native-base'
-import { sendReply, sendReadReceipt } from '../../../../../network/realtime'
+import { sendReply, sendReadReceipt, sendSubscriptionRequest } from '../../../../../network/realtime'
 import actions from '../../../../../actions'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import Icon1 from 'react-native-vector-icons/MaterialIcons'
@@ -59,6 +59,17 @@ class ChatPage extends React.Component {
 
   getContactCallback = () =>{
     //************** update chatlist redux *******************/
+    db.getChatList().then(results => {
+      let chatList = []
+      for(let i=0;i<results.rows.length;i++){
+          chatList.push(results.rows.item(i))
+      }
+      this.props.setChatListData(chatList)
+  })
+  .catch(err => {
+      console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
+      console.log(err)
+  })
   }
   //to update the contact data (Image, JEWELCHAT_ID etc)
   UpdateContact() {
@@ -236,8 +247,11 @@ class ChatPage extends React.Component {
         {this.state.chatboxempty && <TouchableOpacity style={styles.secondItem}></TouchableOpacity>}
         {this.state.chatboxempty && <TouchableOpacity style={styles.thirdItem}></TouchableOpacity>}
         {!this.state.chatboxempty && <TouchableOpacity onPress={() => {
-          console.log(this.props.activeChat.JID)
+          if(this.props.activeChat.IS_PHONEBOOK_CONTACT==1 && this.props.chatroom.length==0){
+            this.props.sendSubscriptionRequest(this.props.activeChat.JID)
+          }
           this.props.sendReply(this.state.chatboxtext, this.props.activeChat.JID)
+
         }} style={styles.fourthItem}><Icon1 name='send' size={25} color='white' /></TouchableOpacity>}
       </View>)
   }
@@ -459,7 +473,9 @@ function mapDispatchToProps(dispatch) {
     sendReply: (message, JID) => dispatch(sendReply(message, JID)),
     addChatMessage: (chatData) => dispatch(actions.addChatMessage(chatData)),
     sendReadReceipt: (JID) => dispatch(sendReadReceipt(JID)),
-    setChatData: (id, offset) => dispatch(actions.setChatData(id, offset))
+    setChatData: (id, offset) => dispatch(actions.setChatData(id, offset)),
+    setChatListData: () => dispatch(actions.setChatListData()),
+    sendSubscriptionRequest: (JID) => dispatch(sendSubscriptionRequest(JID))
   }
 }
 

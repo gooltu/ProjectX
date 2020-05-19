@@ -118,8 +118,8 @@ function Item({ item, onpressitem }) {
       </View>
       <View style={styles.itemLeftConatiner} >
         <TouchableOpacity style={styles.itemLeftSubContainer}
-          disabled={item.IS_INVITED}
-          onPress={() => onpressitem(item)}
+          disabled={item.IS_INVITED==1?true:false}
+          onPress={() =>  onpressitem(item)}
         >
           <Text style={styles.inviteText}>{item.IS_REGIS == 0 ? 'INVITE' : ''}</Text>
         </TouchableOpacity>
