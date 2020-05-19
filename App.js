@@ -90,7 +90,7 @@ export default class App extends React.Component {
   };
 
   getStoragePermission() {
-    if (Platform.os == 'android') {
+    if (Platform.OS == 'android') {
       try {
         // const granted = PermissionsAndroid.request(
         //   PermissionsAndroid.PERMISSIONS.CAMERA,

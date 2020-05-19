@@ -4,8 +4,8 @@ import db from '../../db/localdatabase'
 import { Platform, PermissionsAndroid } from "react-native";
 import phoneContactModal from '../../db/phoneContactModal'
 
-export const getContacts = (callback) => {
-    if (Platform.os == 'android') {
+export const  getContacts = (callback) => {
+    if (Platform.OS == 'android') {
         PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
             {
