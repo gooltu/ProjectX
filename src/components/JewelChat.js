@@ -268,6 +268,7 @@ class JewelChat extends React.Component {
         db.getChatList().then(results => {
             console.log('FROM JEWELCHAT COMPONENT GETCHAT SUCCESS')
             console.log(results.rows.length)
+          
             let chatList = []
             for(let i=0;i<results.rows.length;i++){
                 chatList.push(results.rows.item(i))

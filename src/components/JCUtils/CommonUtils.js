@@ -39,33 +39,36 @@ function insertContacts(Contacts, callback) {
     console.log(callback)
     for (let i = 0; i < Contacts.length; i++) {
         console.log(Contacts[i])
-        console.log(new phoneContactModal(Contacts[i]))
-        let data = new phoneContactModal(Contacts[i])
-        var from  = data.CONTACT_NUMBER + '@jewelchat.net'
-        db.checkIfRowExist(from).then(result => {
-            if(i==Contacts.length-1){
-                callback()
-            }
-            if (result.rows.length > 0) {
-                var contact = result.rows.item(0)
-                if (contact.IS_PHONEBOOK_CONTACT != 1) {
-                    db.updatePhoneContact(data).then(res => {
-                        store.dispatch(sendSubscriptionRequest(result.JID))
-                        
+       // console.log(new phoneContactModal(Contacts[i]))
+        if(Contacts[i].phoneNumbers.length>0){
+            let data = new phoneContactModal(Contacts[i])
+            var from  = data.CONTACT_NUMBER + '@jewelchat.net'
+            db.checkIfRowExist(from).then(result => {
+                if(i==Contacts.length-1){
+                    callback()
+                }
+                if (result.rows.length > 0) {
+                    var contact = result.rows.item(0)
+                    if (contact.IS_PHONEBOOK_CONTACT != 1) {
+                        db.updatePhoneContact(data).then(res => {
+                            store.dispatch(sendSubscriptionRequest(result.JID))
+                            
+                        }).catch(err => {
+    
+                        })
+                    }
+                }
+                else {
+                    db.insertContactData(data).then(res => {
+                        if(i==Contacts.length-1){
+                            callback()
+                        }
                     }).catch(err => {
-
+    
                     })
                 }
-            }
-            else {
-                db.insertContactData(data).then(res => {
-                    if(i==Contacts.length-1){
-                        callback()
-                    }
-                }).catch(err => {
-
-                })
-            }
-        })
+            })
+        }
+       
     }
 }

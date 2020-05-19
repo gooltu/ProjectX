@@ -54,7 +54,9 @@ class ChatPage extends React.Component {
     this.props.sendReadReceipt(this.props.activeChat.JID)
     //console.log(this.props);
     this.UpdateContact()
-    getContacts(this.getContactCallback)
+    if(this.props.activeChat.IS_PHONEBOOK_CONTACT==0){
+      getContacts(this.getContactCallback)
+    }
   }
 
   getContactCallback = () =>{
@@ -474,7 +476,7 @@ function mapDispatchToProps(dispatch) {
     addChatMessage: (chatData) => dispatch(actions.addChatMessage(chatData)),
     sendReadReceipt: (JID) => dispatch(sendReadReceipt(JID)),
     setChatData: (id, offset) => dispatch(actions.setChatData(id, offset)),
-    setChatListData: () => dispatch(actions.setChatListData()),
+    setChatListData: (chatlistData) => dispatch(actions.setChatListData(chatlistData)),
     sendSubscriptionRequest: (JID) => dispatch(sendSubscriptionRequest(JID))
   }
 }
