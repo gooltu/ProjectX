@@ -34,6 +34,7 @@ class Contacts extends React.Component {
     super(props)
     this.state = {
       searchQuery: '',
+      displayContactData: [],
       contactData: []
     }
   }
@@ -48,7 +49,8 @@ class Contacts extends React.Component {
         chatList.push(results.rows.item(i))
       }
       this.setState({
-        contactData: chatList
+        contactData: chatList,
+        displayContactData: chatList
       })
     }).catch(err => {
       console.log(err)
@@ -57,6 +59,19 @@ class Contacts extends React.Component {
 
   _onChangeSearch = (query) => {
     this.setState({ searchQuery: query })
+    if(query.length>0){
+      var filteredContacts = this.state.contactData.filter(item => {
+        return item.PHONEBOOK_CONTACT_NAME.toLowerCase().includes(query.toLowerCase())
+      })
+      this.setState({
+        displayContactData: filteredContacts
+      })
+    }
+    else{
+      this.setState({
+        displayContactData: this.state.contactData
+      })
+    }
   }
   render() {
     return (
@@ -72,7 +87,7 @@ class Contacts extends React.Component {
           theme='dark'
         />
         <FlatList
-          data={this.state.contactData}
+          data={this.state.displayContactData}
           renderItem={({ item }) => (
             <Item item={item}
               onpressitem={(item) => {
@@ -118,8 +133,8 @@ function Item({ item, onpressitem }) {
       </View>
       <View style={styles.itemLeftConatiner} >
         <TouchableOpacity style={styles.itemLeftSubContainer}
-          disabled={item.IS_INVITED==1?true:false}
-          onPress={() =>  onpressitem(item)}
+          disabled={item.IS_INVITED == 1 ? true : false}
+          onPress={() => onpressitem(item)}
         >
           <Text style={styles.inviteText}>{item.IS_REGIS == 0 ? 'INVITE' : ''}</Text>
         </TouchableOpacity>

@@ -33,6 +33,7 @@ import { CheckBox, Item } from 'native-base'
 import { sendReply, sendReadReceipt, sendSubscriptionRequest } from '../../../../../network/realtime'
 import actions from '../../../../../actions'
 import Icon from 'react-native-vector-icons/FontAwesome5'
+import Icon2 from 'react-native-vector-icons/FontAwesome'
 import Icon1 from 'react-native-vector-icons/MaterialIcons'
 import db from '../../../../../db/localdatabase'
 import rest from '../../../../../network/rest';
@@ -54,24 +55,24 @@ class ChatPage extends React.Component {
     this.props.sendReadReceipt(this.props.activeChat.JID)
     //console.log(this.props);
     this.UpdateContact()
-    if(this.props.activeChat.IS_PHONEBOOK_CONTACT==0){
+    if (this.props.activeChat.IS_PHONEBOOK_CONTACT == 0) {
       getContacts(this.getContactCallback)
     }
   }
 
-  getContactCallback = () =>{
+  getContactCallback = () => {
     //************** update chatlist redux *******************/
     db.getChatList().then(results => {
       let chatList = []
-      for(let i=0;i<results.rows.length;i++){
-          chatList.push(results.rows.item(i))
+      for (let i = 0; i < results.rows.length; i++) {
+        chatList.push(results.rows.item(i))
       }
       this.props.setChatListData(chatList)
-  })
-  .catch(err => {
-      console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
-      console.log(err)
-  })
+    })
+      .catch(err => {
+        console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
+        console.log(err)
+      })
   }
   //to update the contact data (Image, JEWELCHAT_ID etc)
   UpdateContact() {
@@ -80,7 +81,7 @@ class ChatPage extends React.Component {
     }
     NetworkManager.callAPI(rest.downloadContact_Phone, 'post', data).then((responseJson) => {
       console.log('responseJson')
-      if(responseJson.error==false){
+      if (responseJson.error == false) {
         responseJson.contact['invited'] = 0
         responseJson.contact['regis'] = 1
         db.updateContact(responseJson.contact)
@@ -96,7 +97,9 @@ class ChatPage extends React.Component {
     replyTriggered: false,
     longPressMessage: false,
     chatboxtext: '',
+    selectedCount: 0,
     selectedParent: {},
+    selectedMessages: {},
     chatboxempty: true,
     replybarshow: false,
     longpressbarshow: false,
@@ -117,7 +120,7 @@ class ChatPage extends React.Component {
               selectedParent: {}
             })
           }} >
-            <Image style={{ width: 25, height: 25 }} source={require('../../../../../assets/setting.png')} />
+            <Icon1 name='cancel' size={25} color={'white'} />
           </TouchableOpacity>
         </View> : null
     )
@@ -126,14 +129,34 @@ class ChatPage extends React.Component {
   selectedMessageBottomBar() {
     return (
       this.state.longPressMessage ?
-        <View style={{ alignItems: 'center', paddingHorizontal: 10, flexDirection: 'row', textAlignVertical: 'top', width: '100%', justifyContent: 'space-between', borderRadius: 10, height: 50, backgroundColor: colors.lightcolor1 }}>
+        <View style={{ alignItems: 'center', paddingHorizontal: 20, flexDirection: 'row', textAlignVertical: 'top', width: '100%', justifyContent: 'space-between', borderRadius: 10, height: 50, backgroundColor: colors.darkcolor3 }}>
+          <View>
+            <Text style={{ fontSize: 16, color: 'white' }}>{this.state.selectedCount}</Text>
+          </View>
           <TouchableOpacity onPress={() => {
             this.setState({
               longPressMessage: false,
               selectedParent: {}
             })
           }} >
-            <Image style={{ width: 25, height: 25 }} source={require('../../../../../assets/setting.png')} />
+            <Icon1 name='share' size={25} color={'white'} />
+          </TouchableOpacity>
+          {Object.keys(this.state.selectedMessages).length < 2 ?
+            <TouchableOpacity onPress={() => {
+              this.setState({
+                longPressMessage: false,
+                selectedParent: {}
+              })
+            }} >
+              <Icon2 name='reply' size={25} color={'white'} />
+            </TouchableOpacity> : null}
+          <TouchableOpacity onPress={() => {
+            this.setState({
+              longPressMessage: false,
+              selectedParent: {}
+            })
+          }} >
+            <Icon1 name='delete' size={25} color={'white'} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => {
             this.setState({
@@ -141,7 +164,7 @@ class ChatPage extends React.Component {
               selectedParent: {}
             })
           }} >
-            <Image style={{ width: 25, height: 25 }} source={require('../../../../../assets/setting.png')} />
+            <Icon1 name='content-copy' size={25} color={'white'} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => {
             this.setState({
@@ -149,15 +172,7 @@ class ChatPage extends React.Component {
               selectedParent: {}
             })
           }} >
-            <Image style={{ width: 25, height: 25 }} source={require('../../../../../assets/setting.png')} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => {
-            this.setState({
-              longPressMessage: false,
-              selectedParent: {}
-            })
-          }} >
-            <Image style={{ width: 25, height: 25 }} source={require('../../../../../assets/setting.png')} />
+            <Icon2 name='mail-forward' size={25} color={'white'} />
           </TouchableOpacity>
         </View> : null
     )
@@ -249,7 +264,7 @@ class ChatPage extends React.Component {
         {this.state.chatboxempty && <TouchableOpacity style={styles.secondItem}></TouchableOpacity>}
         {this.state.chatboxempty && <TouchableOpacity style={styles.thirdItem}></TouchableOpacity>}
         {!this.state.chatboxempty && <TouchableOpacity onPress={() => {
-          if(this.props.activeChat.IS_PHONEBOOK_CONTACT==1 && this.props.chatroom.length==0){
+          if (this.props.activeChat.IS_PHONEBOOK_CONTACT == 1 && this.props.chatroom.length == 0) {
             this.props.sendSubscriptionRequest(this.props.activeChat.JID)
           }
           this.props.sendReply(this.state.chatboxtext, this.props.activeChat.JID)
@@ -315,11 +330,40 @@ class ChatPage extends React.Component {
                     })
                   }}
                   onLongPress={() => {
+                    this.state.selectedMessages[item._ID] = { 'isSelected': true, 'data': item }
                     this.setState({
                       longPressMessage: true,
-                      selectedParent: item
+                      selectedParent: item,
+                      selectedCount: 1,
+                      selectedMessages: this.state.selectedMessages
                     })
                   }}
+                  onPress={() => {
+                    if (this.state.longPressMessage) {
+
+                      if (!this.state.selectedMessages.hasOwnProperty(item._ID)) {
+                        this.state.selectedMessages[item._ID] = { 'isSelected': true, 'data': item }
+                        this.setState({
+                          selectedCount: this.state.selectedCount + 1,
+                          selectedMessages: this.state.selectedMessages
+                        })
+                      }
+                      else {
+                        delete this.state.selectedMessages[item._ID]
+                        this.setState({
+                          selectedCount: this.state.selectedCount - 1,
+                          selectedMessages: this.state.selectedMessages
+                        })
+                      }
+                      if (Object.keys(this.state.selectedMessages).length == 0) {
+                        this.setState({
+                          longPressMessage: false
+                        })
+                      }
+                      console.log(this.state.selectedMessages)
+                    }
+                  }}
+                  state={this.state}
                   allchats={this.props.chatroom} onjewelpress={() => { this.onJewelPress(index) }} />
               )}
               onEndReached={() => {
@@ -391,7 +435,7 @@ class ChatItem extends React.Component {
   }
 
   render() {
-    const { item, index, allchats, onjewelpress, onReplyTriggered, onLongPress } = this.props
+    const { item, index, allchats, onjewelpress, onReplyTriggered, onLongPress, onPress, state } = this.props
     let sectionheader = false, mychat = false;
     if (!allchats[index + 1] || item.CREATED_DATE !== allchats[index + 1].CREATED_DATE)
       sectionheader = true;
@@ -403,7 +447,6 @@ class ChatItem extends React.Component {
 
     return (
       <View style={styles.chatItemContainer}>
-
         {
           sectionheader &&
           <Text style={styles.createdDateStyle}>
@@ -413,43 +456,51 @@ class ChatItem extends React.Component {
 
         {!mychat &&
           <View style={styles.friendMsgContainer}>
+            {state.longPressMessage ?
+              <View style={{ marginBottom: 10, paddingRight: 10 }}>
+                <CheckBox onPress={() => onPress()} checked={state.selectedMessages.hasOwnProperty(item._ID) ? true : false} color='#4287f5' />
+              </View>
+              : null}
             {item.MAX_SEQUENCE - item.SEQUENCE < 5 || item.SEQUENCE == -1 ?
               <TouchableOpacity style={styles.jewelContainer} onPress={onjewelpress}>
                 <J3 height="75%" width="75%" style={styles.jewelStyle} />
               </TouchableOpacity> : null}
 
             <Animated.View style={[styles.msgContainer, this.state.position.getLayout()]} {...this.state.panResponder.panHandlers}>
-              <AnimatedTouchable style={styles.friendMsgTextContainer} onLongPress={() => onLongPress()}>
+              <AnimatedTouchable style={styles.friendMsgTextContainer} onLongPress={() => onLongPress()} onPress={() => onPress()}>
                 <Text style={styles.friendMsgText}>{item.MSG_TEXT}</Text>
               </AnimatedTouchable>
               <Text style={styles.msgTime}>{item.CREATED_TIME}</Text>
             </Animated.View>
-            {/* <View style={{ marginBottom: 10 }}>
-              <CheckBox checked={true} color='#4287f5' />
-            </View> */}
+
           </View>
         }
 
         {mychat &&
-          <View style={styles.myMsgContainer}>
-            <Animated.View style={[styles.msgContainer, this.state.position.getLayout()]} {...this.state.panResponder.panHandlers}>
-              <AnimatedTouchable style={styles.myMsgTextConatiner} onLongPress={() => onLongPress()}>
-                <Text style={styles.myMsgText}>{item.MSG_TEXT}</Text>
-              </AnimatedTouchable>
-              <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
-                <Text style={styles.msgTime}>{item.CREATED_TIME}</Text>
-                {item.IS_READ || item.IS_DELIVERED ?
-                  <Icon name='check-double' size={10} color={item.IS_READ ? colors.lightcolor1 : 'white'} /> :
-                  item.IS_SUBMITTED ?
-                    <Icon name='check' size={10} color={'white'} /> :
-                    <Icon name='clock' size={10} color={'white'} />
-                }
-              </View>
-            </Animated.View>
-            {/* <View style={{ marginTop: 5, marginRight: 10 }}>
-              <CheckBox checked={true} color='#4287f5' />
-            </View> */}
+          <View style={{ alignItems: 'center', flexDirection: 'row', marginBottom: 10 }}>
+            {state.longPressMessage ?
+              <TouchableOpacity onPress={() => onPress()} style={{ marginBottom: 15 }}>
+                <CheckBox onPress={() => onPress()} checked={state.selectedMessages.hasOwnProperty(item._ID) ? true : false} color='#4287f5' />
+              </TouchableOpacity>
+              : null}
+            <View style={styles.myMsgContainer}>
+              <Animated.View style={[styles.msgContainer, this.state.position.getLayout()]} {...this.state.panResponder.panHandlers}>
+                <AnimatedTouchable style={styles.myMsgTextConatiner} onLongPress={() => onLongPress()} onPress={() => onPress()}>
+                  <Text style={styles.myMsgText}>{item.MSG_TEXT}</Text>
+                </AnimatedTouchable>
+                <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                  <Text style={styles.msgTime}>{item.CREATED_TIME}</Text>
+                  {item.IS_READ || item.IS_DELIVERED ?
+                    <Icon name='check-double' size={10} color={item.IS_READ ? colors.lightcolor1 : 'white'} /> :
+                    item.IS_SUBMITTED ?
+                      <Icon name='check' size={10} color={'white'} /> :
+                      <Icon name='clock' size={10} color={'white'} />
+                  }
+                </View>
+              </Animated.View>
+            </View>
           </View>
+
         }
 
       </View>
