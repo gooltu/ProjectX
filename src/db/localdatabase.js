@@ -109,12 +109,18 @@ function getChatList() {
 	});
 }
 
-function getContactList() {
+function getContactList(type) {
+	let Query
+	if (type == 'Forward')
+		Query = 'Select * from Contact where IS_REGIS=1'
+	else
+		Query = 'Select * from Contact where IS_PHONEBOOK_CONTACT=1'
+
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
-				txn.executeSql('Select * from Contact where IS_PHONEBOOK_CONTACT=1')
+				txn.executeSql(Query)
 					.then((results) => {
 						console.log('Contact query COMPLETED for');
 						console.log(results[1])
@@ -131,12 +137,12 @@ function getContactList() {
 	});
 }
 
-function checkIfRowExist(JID){
+function checkIfRowExist(JID) {
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
-				txn.executeSql('Select * from Contact where JID="'+JID + '"')
+				txn.executeSql('Select * from Contact where JID="' + JID + '"')
 					.then((results) => {
 						console.log('Contact query COMPLETED for');
 						console.log(results[1])
@@ -162,8 +168,8 @@ function insertStropheChatData(data) {
 			jcdb.transaction((txn) => {
 				let sql;
 				sql = "INSERT INTO ChatMessage " +
-					" ( MSG_TYPE, CREATED_DATE, CREATED_TIME, CHAT_ROOM_JID, CREATOR_JID, JEWEL_TYPE, MSG_TEXT, SENDER_MSG_ID) " +
-					" VALUES (" + data.MSG_TYPE + ",'" + data.CREATED_DATE + "','" + data.CREATED_TIME + "','" + data.CHAT_ROOM_JID + "','" + data.CREATOR_JID + "'," + data.JEWEL_TYPE + ",'" + data.MSG_TEXT + "'," + data.SENDER_MSG_ID + ")"
+					" ( MSG_TYPE, CREATED_DATE, CREATED_TIME, CHAT_ROOM_JID, CREATOR_JID, JEWEL_TYPE, MSG_TEXT, SENDER_MSG_ID, IS_REPLY, IS_FORWARD, REPLY_PARENT) " +
+					" VALUES (" + data.MSG_TYPE + ",'" + data.CREATED_DATE + "','" + data.CREATED_TIME + "','" + data.CHAT_ROOM_JID + "','" + data.CREATOR_JID + "'," + data.JEWEL_TYPE + ",'" + data.MSG_TEXT + "'," + data.SENDER_MSG_ID + "," + data.IS_REPLY + "," + data.IS_FORWARD + ",'" + data.REPLY_PARENT + "')"
 				console.log(sql)
 				txn.executeSql(sql).then((results) => {
 					console.log('ChatMessage insert Query COMPLETED for');
@@ -327,7 +333,7 @@ function insertContactData(data) {
 	})
 }
 
-function updatePhoneContact(contactData){
+function updatePhoneContact(contactData) {
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
 			jcdb = instance;

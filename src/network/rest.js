@@ -8,7 +8,9 @@ export default {
     updateStatus: '/updateProfileStatus',
     updateProfilepic: '/updateProfilePic',
     getLeaderBoard: '/getLeaderboard',
-    getUserPtofile: '/getUserProfile'
+    updateProfileName:'/updateProfileName',
+    getUserPtofile: '/getUserProfile',
+    awsToken: '/awsToken'
 }
 
 

@@ -39,11 +39,12 @@ class Contacts extends React.Component {
     }
   }
   componentDidMount() {
+    this.getContactsCallback()
     getContacts(this.getContactsCallback)
   }
   getContactsCallback = () => {
     console.log('came to callback')
-    db.getContactList().then(results => {
+    db.getContactList('Contact').then(results => {
       let chatList = []
       for (let i = 0; i < results.rows.length; i++) {
         chatList.push(results.rows.item(i))

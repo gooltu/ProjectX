@@ -24,23 +24,25 @@ import { connect } from 'react-redux';
 import Logo from '../../../svg_components/Logo';
 import Diamond from '../../../svg_components/Diamond'
 import { Button } from 'react-native-paper'
+import Icon from 'react-native-vector-icons/FontAwesome5'
+import Icon1 from 'react-native-vector-icons/Ionicons'
 
 
 const scrollBarData = [
   {
-    'image': JCImages.wallet,
+    'image': <Icon name='wallet' size={35} color='white'/>,
     'text': 'WALLET'
   },
   {
-    'image': JCImages.trophy,
+    'image': <Icon name='trophy' size={35} color='white'/>,
     'text': 'LEADERBOARD'
   },
   {
-    'image': JCImages.setting,
+    'image': <Icon1 name='md-settings' size={35} color='white'/>,
     'text': 'SETTINGS'
   },
   {
-    'image': JCImages.share,
+    'image': <Icon name='share-alt' size={35} color='white'/>,
     'text': 'SHARE'
   }
 ]
@@ -78,7 +80,7 @@ class Profile extends React.Component {
                   <Text style={{ color: 'white' }}>1000</Text>
                 </View>
               </View>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={()=> this.props.navigation.navigate('UserProfile')}>
                 <Image style={styles.ProfilePicture} resizeMode="contain" source={JCImages.placeholderImage} />
               </TouchableOpacity>
               <View style={styles.SecondDiamond}>
@@ -98,7 +100,8 @@ class Profile extends React.Component {
                 scrollBarData.map((object) => (
                   <View style={styles.scrollBar}>
                     <TouchableOpacity style={styles.scrollBarItem} onPress={() => this.scrollBarNaviagtion(object.text)}>
-                      <Image style={styles.itemImage} source={object.image} />
+                      {/* <Image style={styles.itemImage} source={object.image} /> */}
+                      {object.image}
                       <Text style={styles.itemText}>{object.text}</Text>
                     </TouchableOpacity>
                   </View>

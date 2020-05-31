@@ -2,7 +2,7 @@ import XMPP from "../utilities/xmpp/strophe";
 import { store } from '../store'
 import actions from '../actions'
 import AsyncStorage from '@react-native-community/async-storage';
-import db from '../db/localdatabase' 
+import db from '../db/localdatabase'
 const URL = 'ws://13.127.197.210:5280/ws-xmpp';
 
 let connection = new XMPP.Strophe.Connection(URL);
@@ -59,53 +59,53 @@ export const realtimeConnect = () => {
 
 function onPresence(msg) {
 	console.log(msg.toString());
-	connection.roster.get( (result) => { 
+	connection.roster.get((result) => {
 		console.log('roster')
-        console.log(result);
-	  });
-	  _handlePresence(msg)
+		console.log(result);
+	});
+	_handlePresence(msg)
 	//  connection.roster.add( '3@jewelchat.net', 'nickname', [], function(){    });
 	//  connection.roster.authorize( '6@jewelchat.net' );
 	//  connection.roster.subscribe( '2@jewelchat.net' );
 	return true;
 }
 
-function _handlePresence(msg){
+function _handlePresence(msg) {
 	var type = msg.getAttribute('type')
 	var from = msg.getAttribute('from').split('/')[0]
 	var to = msg.getAttribute('to').split('/')[0]
 	console.log(type)
 	console.log(from)
 	console.log(to)
-	connection.roster.add( '7@jewelchat.net', 'nickname', [], function(){    })
-	if((type=='' || type=='unavailable') && from != to){
+	connection.roster.add('7@jewelchat.net', 'nickname', [], function () { })
+	if ((type == '' || type == 'unavailable') && from != to) {
 		let presenceData = JSON.parse(JSON.stringify(store.getState().chatslist.presence))
-		if(type=='unavailable')
-		presenceData[from] = 'offline'
+		if (type == 'unavailable')
+			presenceData[from] = 'offline'
 		else
-		presenceData[from] = 'online'
+			presenceData[from] = 'online'
 		store.dispatch(actions.setPresence(presenceData))
 	}
-	else if(type=='subscribe'){
-		db.checkIfRowExist(from).then(result=>{
-			if(result.rows.length>0){
+	else if (type == 'subscribe') {
+		db.checkIfRowExist(from).then(result => {
+			if (result.rows.length > 0) {
 				var contact = result.rows.item(0)
-				if(contact.IS_PHONEBOOK_CONTACT==1){
+				if (contact.IS_PHONEBOOK_CONTACT == 1) {
 					connection.roster.authorize(from)
 				}
 			}
-			else{
+			else {
 				connection.roster.unauthorize(from)
 			}
 		})
 	}
-	else if(type=='subscribed'){
+	else if (type == 'subscribed') {
 		connection.roster.authorize(from)
 	}
 }
 
-export const sendSubscriptionRequest = (JID) =>{
-	return(dispatch, getState) =>{
+export const sendSubscriptionRequest = (JID) => {
+	return (dispatch, getState) => {
 		connection.roster.subscribe(JID);
 	}
 }
@@ -290,8 +290,14 @@ function getFromattedReceipt(msg, type, time = (new Date()).getTime() + global.T
 	return receipt
 }
 function getFormattedMessages(msg, createdDateTime) {
+	console.log(msg.toString())
 	var jewel = msg.getElementsByTagName('jewel')
 	var jewelType = jewel[0].getAttribute('number')
+	var subtype = msg.getAttribute('subtype')
+	console.log(subtype)
+	var reply = subtype == 'reply' ? 1 : 0
+	var forward = subtype == 'forward' ? 1 : 0
+	var parent = msg.getAttribute('parent')
 	var body = msg.getElementsByTagName('body')
 	var message = Strophe.getText(body[0]);
 
@@ -304,7 +310,10 @@ function getFormattedMessages(msg, createdDateTime) {
 		CREATED_TIME: createdDateTime.time,
 		SENDER_MSG_ID: msg.getAttribute('id'),
 		MSG_TYPE: 0,
-		SEQUENCE: -1
+		SEQUENCE: -1,
+		IS_REPLY: reply,
+		IS_FORWARD: forward,
+		REPLY_PARENT: parent
 	}
 	return incomingMessage
 }
@@ -348,11 +357,13 @@ export const updateChatData = (type, id, time) => {
 }
 
 //function to handle messages send as a reply to any JID
-export const sendReply = (messageText, chatroom) => {
+export const sendReply = (messageText, chatroom, type, parent) => {
 
 	return (dispatch, getState) => {
 		var createdDateTime = (new Date()).getTime() + global.TimeDelta
 		var date = _dateToYMD(createdDateTime);
+		var reply = type == 'reply' ? 1 : 0
+		var forward = type == 'forward' ? 1 : 0
 		var message = {
 			CHAT_ROOM_JID: chatroom,
 			MSG_TEXT: messageText,
@@ -361,14 +372,18 @@ export const sendReply = (messageText, chatroom) => {
 			CREATED_DATE: date.date,
 			CREATED_TIME: date.time,
 			MSG_TYPE: 0,
-			SENDER_MSG_ID: null
+			SENDER_MSG_ID: null,
+			IS_REPLY: reply,
+			IS_FORWARD: forward,
+			REPLY_PARENT: parent
 		}
+		console.log(message)
 		db.insertStropheChatData(message).then((result) => {
 			message['_ID'] = result
 			message['SENDER_MSG_ID'] = result
 			dispatch(actions.addChatMessage(message))
 
-			var reply = $msg({ to: message.CHAT_ROOM_JID, from: message.CREATOR_JID, type: 'chat', id: message._ID })
+			var reply = $msg({ to: message.CHAT_ROOM_JID, from: message.CREATOR_JID, type: 'chat', subtype: type, parent: parent, id: message._ID })
 				.cnode(Strophe.xmlElement('body', message.MSG_TEXT))
 				.up()
 				.c('active', { xmlns: "http://jabber.org/protocol/chatstates" });
@@ -387,9 +402,19 @@ export const sendReply = (messageText, chatroom) => {
 
 // function to convert date in ms to specified format ('YYYY-DD-MM' & 'HH:MM:SS')
 function _dateToYMD(createdDateTime) {
+	console.log(createdDateTime)
 	var d = new Date(parseInt(createdDateTime))
-	var date = d.toLocaleString().split(', ')[0].split('/').reverse().join("-")
-	var time = d.toLocaleString().split(', ')[1]
+	//	var date = new Date(1590419829139)
+	var day = d.getDate()
+	var month = d.getMonth() + 1
+	var year = d.getFullYear()
+	var hour = d.getHours()
+	var mins = d.getMinutes()
+	var seconds = d.getSeconds()
+	var date = (day < 10 ? '0' + day : day) + '-' + (month < 10 ? '0' + month : month) + '-' + year
+	var time = (hour < 10 ? '0' + hour : hour) + ':' + (mins < 10 ? '0' + mins : mins) + ':' + (seconds < 10 ? '0' + seconds : seconds)
+	// var date = d.toLocaleString().split(', ')[0].split('/').reverse().join("-")
+	// var time = d.toLocaleString().split(', ')[1]
 	return { date: date, time: time };
 }
 
@@ -407,7 +432,7 @@ export const insertIncomingMessage = (incomingMessage) => {
 
 				var received = $msg({ to: incomingMessage.CHAT_ROOM_JID, from: getState().mytoken.myphone + '@jewelchat.net' })
 					.c('received', { xmlns: 'urn:xmpp:chat-markers:0', id: incomingMessage.SENDER_MSG_ID, time: createdDateTime })
-					db.updateDeliveryAndReadRecipt('Delivery', result, createdDateTime)
+				db.updateDeliveryAndReadRecipt('Delivery', result, createdDateTime)
 				connection.send(received.tree(), () => {
 				});
 				var read = $msg({ to: incomingMessage.CHAT_ROOM_JID, from: getState().mytoken.myphone + '@jewelchat.net' })

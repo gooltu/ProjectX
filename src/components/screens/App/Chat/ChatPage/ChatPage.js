@@ -167,6 +167,7 @@ class ChatPage extends React.Component {
             <Icon1 name='content-copy' size={25} color={'white'} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => {
+            this.props.navigation.navigate('ForwardMessage', { messages: Object.values(this.state.selectedMessages) })
             this.setState({
               longPressMessage: false,
               selectedParent: {}
@@ -240,6 +241,9 @@ class ChatPage extends React.Component {
           style={this.state.chattextboxstyle}
           //style={{overflow:'scroll'}}                 
           editable={true}
+          ref={ref => {
+            this.textInput = ref;
+          }}
           multiline={true}
           autogrow={true}
           maxHeight={95}
@@ -250,6 +254,9 @@ class ChatPage extends React.Component {
         {Platform.OS !== 'ios' && <JCTextInput
           placeholder="Type here Android"
           placeholderTextColor="white"
+          ref={ref => {
+            this.textInput = ref;
+          }}
           onContentCommitEvent={(event) => { this.submitChatToChannel(event.nativeEvent); console.log(event.nativeEvent); console.log('Content Commit'); }}
           onChangeText={(value) => this.processChatText(value)}
           style={this.state.chattextboxstyle}
@@ -264,10 +271,19 @@ class ChatPage extends React.Component {
         {this.state.chatboxempty && <TouchableOpacity style={styles.secondItem}></TouchableOpacity>}
         {this.state.chatboxempty && <TouchableOpacity style={styles.thirdItem}></TouchableOpacity>}
         {!this.state.chatboxempty && <TouchableOpacity onPress={() => {
+          this.textInput.clear();
           if (this.props.activeChat.IS_PHONEBOOK_CONTACT == 1 && this.props.chatroom.length == 0) {
             this.props.sendSubscriptionRequest(this.props.activeChat.JID)
           }
-          this.props.sendReply(this.state.chatboxtext, this.props.activeChat.JID)
+          console.log(this.state.replyTriggered, this.state.selectedParent)
+          if (this.state.replyTriggered) {
+            this.props.sendReply(this.state.chatboxtext, this.props.activeChat.JID, 'reply', this.state.selectedParent._ID)
+            this.setState({
+              replyTriggered: false
+            })
+          }
+          else
+            this.props.sendReply(this.state.chatboxtext, this.props.activeChat.JID)
 
         }} style={styles.fourthItem}><Icon1 name='send' size={25} color='white' /></TouchableOpacity>}
       </View>)
@@ -457,7 +473,7 @@ class ChatItem extends React.Component {
         {!mychat &&
           <View style={styles.friendMsgContainer}>
             {state.longPressMessage ?
-              <View style={{ marginBottom: 10, paddingRight: 10 }}>
+              <View style={{ marginBottom: 10, marginRight: 17 }}>
                 <CheckBox onPress={() => onPress()} checked={state.selectedMessages.hasOwnProperty(item._ID) ? true : false} color='#4287f5' />
               </View>
               : null}
@@ -468,6 +484,18 @@ class ChatItem extends React.Component {
 
             <Animated.View style={[styles.msgContainer, this.state.position.getLayout()]} {...this.state.panResponder.panHandlers}>
               <AnimatedTouchable style={styles.friendMsgTextContainer} onLongPress={() => onLongPress()} onPress={() => onPress()}>
+                {item.IS_FORWARD == 1 ?
+                  <View style={{ flexDirection: 'row', paddingLeft: 5, paddingTop: 5, alignItems: 'center' }}>
+                    <Icon2 name='mail-forward' size={10} color={'white'} />
+                    <Text style={{ color: 'white', paddingLeft: 5, fontSize: 10 }}>Forwarded</Text>
+                  </View>
+                  : null}
+                {item.IS_REPLY == 1 ?
+                  <View style={{ flexDirection: 'row', paddingLeft: 5, paddingTop: 5, alignItems: 'center' }}>
+                    <Icon2 name='mail-forward' size={10} color={'white'} />
+                    <Text style={{ color: 'white', paddingLeft: 5, fontSize: 10 }}>Reply of {item.REPLY_PARENT}</Text>
+                  </View>
+                  : null}
                 <Text style={styles.friendMsgText}>{item.MSG_TEXT}</Text>
               </AnimatedTouchable>
               <Text style={styles.msgTime}>{item.CREATED_TIME}</Text>
@@ -486,6 +514,18 @@ class ChatItem extends React.Component {
             <View style={styles.myMsgContainer}>
               <Animated.View style={[styles.msgContainer, this.state.position.getLayout()]} {...this.state.panResponder.panHandlers}>
                 <AnimatedTouchable style={styles.myMsgTextConatiner} onLongPress={() => onLongPress()} onPress={() => onPress()}>
+                  {item.IS_FORWARD == 1 ?
+                    <View style={{ flexDirection: 'row', paddingLeft: 5, paddingTop: 5, alignItems: 'center' }}>
+                      <Icon2 name='mail-forward' size={10} color={'white'} />
+                      <Text style={{ color: 'white', paddingLeft: 5, fontSize: 10 }}>Forwarded</Text>
+                    </View>
+                    : null}
+                  {item.IS_REPLY == 1 ?
+                    <View style={{ flexDirection: 'row', paddingLeft: 5, paddingTop: 5, alignItems: 'center' }}>
+                      <Icon2 name='mail-forward' size={10} color={'white'} />
+                      <Text style={{ color: 'white', paddingLeft: 5, fontSize: 10 }}>Reply of {item.REPLY_PARENT}</Text>
+                    </View>
+                    : null}
                   <Text style={styles.myMsgText}>{item.MSG_TEXT}</Text>
                 </AnimatedTouchable>
                 <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
@@ -523,7 +563,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    sendReply: (message, JID) => dispatch(sendReply(message, JID)),
+    sendReply: (message, JID, type = 'normal', parent = null) => dispatch(sendReply(message, JID, type, parent)),
     addChatMessage: (chatData) => dispatch(actions.addChatMessage(chatData)),
     sendReadReceipt: (JID) => dispatch(sendReadReceipt(JID)),
     setChatData: (id, offset) => dispatch(actions.setChatData(id, offset)),

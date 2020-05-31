@@ -92,18 +92,30 @@ export default class App extends React.Component {
   getStoragePermission() {
     if (Platform.OS == 'android') {
       try {
-        // const granted = PermissionsAndroid.request(
-        //   PermissionsAndroid.PERMISSIONS.CAMERA,
-        //   {
-        //     title: 'JewelChat Camera Permission',
-        //     message:
-        //       'JewelChat needs access to your camera ' +
-        //       'so you can take awesome pictures.',
-        //     buttonNeutral: 'Ask Me Later',
-        //     buttonNegative: 'Cancel',
-        //     buttonPositive: 'OK',
-        //   },
-        // );
+        const granted = PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: 'JewelChat Camera Permission',
+            message:
+              'JewelChat needs access to your camera ' +
+              'so you can take awesome pictures.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        const granted1 = PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'JewelChat Storage Permission',
+            message:
+              'JewelChat needs access to your Storage ' +
+              'so you can take awesome pictures.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
         const grantedStorage = PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
           {

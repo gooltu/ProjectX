@@ -51,6 +51,9 @@ const Create_ChatMessage = "CREATE TABLE if not exists ChatMessage (" +
     "VIDEO_PATH_LOCAL  TEXT ," +
     "VIDEO_PATH_CLOUD   TEXT ," +
     "SEQUENCE  INTEGER DEFAULT 0," +
+    "IS_REPLY INTEGER DEFAULT 0," +
+    "REPLY_PARENT INTEGER DEFAULT NULL," +
+    "IS_FORWARD INTEGER DEFAULT 0," +
     "UNIQUE(" + "SENDER_MSG_ID" + "," + "CHAT_ROOM_JID" + "))"
 
 const Sequence_Trigger = "CREATE TRIGGER IF NOT EXISTS Update_Sequence " +
@@ -66,4 +69,5 @@ export default {
     Sequence_Trigger
 };
 
-
+// reply parent & crreator jid
+// 

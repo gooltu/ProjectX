@@ -86,7 +86,7 @@ export default styles = StyleSheet.create({
     msgContainer: {
         flex: 1,
         flexDirection: 'column',
-        maxWidth: 200
+        maxWidth: 250
     },
     myMsgContainer: {
         flex: 1,

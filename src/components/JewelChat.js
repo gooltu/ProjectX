@@ -31,8 +31,10 @@ import LeaderBoard from './screens/App/Profile/LeaderBoard/LeaderBoard'
 import Wallet from './screens/App/Profile/Wallet/WalletScreen'
 
 import FriendProfile from './screens/App/FriendProfile/FriendProfile'
+import UserProfile from './screens/App/Profile/UserProfile/UserProfile'
 
 import ChatPage from "./screens/App/Chat/ChatPage/ChatPage";
+import ForwardMessage from './screens/App/Chat/ForwardMessage/ForwardMessage'
 import NewGroup from "./screens/App/NewGroup";
 import JewelFactory from "./screens/App/JewelFactory";
 
@@ -45,8 +47,6 @@ import db from "../db/localdatabase";
 import { realtimeConnect, realtimeDisconnect } from "../network/realtime"
 import actions from '../actions'
 import ContactsScreen from '../components/screens/App/Contacts/Contacts'
-import RNRestart from 'react-native-restart';
-import Contacts from 'react-native-contacts';
 
 
 const MainTabs = createBottomTabNavigator({
@@ -192,6 +192,22 @@ const AppMainStack = createStackNavigator({
     },
     Contacts:{
         screen: ContactsScreen,
+        navigationOptions: ({ navigation }) => {
+            return {
+                header: <CustomHeader navigation={navigation} />
+            };
+        }
+    },
+    UserProfile:{
+        screen: UserProfile,
+        navigationOptions: ({ navigation }) => {
+            return {
+                header: <CustomHeader navigation={navigation} />
+            };
+        }
+    },
+    ForwardMessage:{
+        screen: ForwardMessage,
         navigationOptions: ({ navigation }) => {
             return {
                 header: <CustomHeader navigation={navigation} />

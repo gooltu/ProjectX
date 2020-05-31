@@ -19,8 +19,8 @@ export default class phoneContactModal {
     "SMALL_IMAGE" = ''
     "IMAGE_PATH" = ''
 
-    constructor(jsonObj){
-        this.PHONEBOOK_CONTACT_NAME = jsonObj.givenName +" "+ jsonObj.middleName +" "+ jsonObj.familyName
+    constructor(jsonObj) {
+        this.PHONEBOOK_CONTACT_NAME = jsonObj.givenName + " " + jsonObj.middleName + " " + jsonObj.familyName
         this.CONTACT_NUMBER = _formatNumber(jsonObj.phoneNumbers[0].number)
         this.JID = _formatNumber(jsonObj.phoneNumbers[0].number) + '@jewelchat.net'
         this.IS_PHONEBOOK_CONTACT = 1
@@ -30,20 +30,27 @@ export default class phoneContactModal {
 }
 
 function _formatNumber(number) {
-	var formattedNumber
-	if (number.includes('(')) {
-		formattedNumber = '91' + number.split('-')[0].split(') ')[0].split('(')[1] + number.split('-')[0].split(') ')[1] + number.split('-')[1]
-		console.log(formattedNumber)
-	}
-	else if (number.includes('+')) {
-		formattedNumber = number.split(' ')[0].split('+')[1] + number.split(' ')[1] + number.split(' ')[2]
-		console.log(formattedNumber)
+    var formattedNumber = ''
+    // if (number.includes('(')) {
+    // 	formattedNumber = '91' + number.split('-')[0].split(') ')[0].split('(')[1] + number.split('-')[0].split(') ')[1] + number.split('-')[1]
+    // 	console.log(formattedNumber)
+    // }
+    // else if (number.includes('+')) {
+    // 	formattedNumber = number.split(' ')[0].split('+')[1] + number.split(' ')[1] + number.split(' ')[2]
+    // 	console.log(formattedNumber)
+    // }
+    // else if(number.includes('-')){
+    //     formattedNumber = '91' + number.split('-')[0] + number.split('-')[1] + number.split('-')[2]
+    // }
+    // else
+    // 	formattedNumber = number
+    for (let i = 0; i < number.length; i++) {
+        if (!isNaN(number[i]) && number[i]!=' ')
+            formattedNumber = formattedNumber + number[i]
     }
-    else if(number.includes('-')){
-        formattedNumber = '91' + number.split('-')[0] + number.split('-')[1] + number.split('-')[2]
+    if(formattedNumber.length==10){
+        formattedNumber ='91'+ formattedNumber
     }
-	else
-		formattedNumber = number
 
-	return formattedNumber
+    return formattedNumber
 }

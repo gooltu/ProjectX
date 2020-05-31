@@ -81,7 +81,6 @@ let initialState = {
             count: 0,
             total_count:0
         }
-
     ]
 }   
 

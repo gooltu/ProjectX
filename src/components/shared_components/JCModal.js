@@ -16,51 +16,57 @@ import ChatPage_ShareOptions from './modals/ChatPage_ShareOptions';
 import ChatPage_Giphy from './modals/ChatPage_Giphy';
 import JewelStore from './modals/JewelStore';
 import ChatPageOptions from './modals/ChatPageOptions'
+import UpdateStatus from './modals/UpdateStatus';
 
 
 
 export default class JCModal extends React.Component {
 
     state = {
-        type :'JStore'
+        type: 'JStore'
     }
 
     componentDidMount() {
 
-        console.log('MOUNT MODAL');        
-        this.setState({ type: this.props.navigation.getParam('modal_name') })    
-        
+        console.log('MOUNT MODAL');
+        this.setState({ type: this.props.navigation.getParam('modal_name') })
+
     }
-    
+
     componentWillUnmount() {
 
-        console.log('UNMOUNT MODAL')        
+        console.log('UNMOUNT MODAL')
 
     }
 
     render() {
         console.log(this.props);
 
-        if(this.state.type === 'JStore'){
+        if (this.state.type === 'JStore') {
 
-            return ( <JewelStore modalprops = {this.props} />  );
+            return (<JewelStore modalprops={this.props} />);
 
-        }else if(this.state.type === 'chatlist_longpress'){
+        } else if (this.state.type === 'chatlist_longpress') {
 
-            return ( <ChatList_LongPress modalprops = {this.props} /> );
+            return (<ChatList_LongPress modalprops={this.props} />);
 
-        }else if(this.state.type === 'chatpage_shareoptions'){
+        } else if (this.state.type === 'chatpage_shareoptions') {
 
-            return ( <ChatPage_ShareOptions modalprops = {this.props} />  );
+            return (<ChatPage_ShareOptions modalprops={this.props} />);
 
-        } else if(this.state.type === 'chatpage_giphy'){
+        } else if (this.state.type === 'chatpage_giphy') {
 
-            return ( <ChatPage_Giphy modalprops = {this.props} />);
+            return (<ChatPage_Giphy modalprops={this.props} />);
 
-        }     
+        } else if (this.state.type === 'ChatPageOptions') {
 
-        else if(this.state.type==='ChatPageOptions'){
-            return (<ChatPageOptions modalprops = {this.props}/>)
+            return (<ChatPageOptions modalprops={this.props} />)
+
+        }
+        else if (this.state.type === 'UpdateStatus') {
+
+            return (<UpdateStatus modalprops={this.props} />)
+
         }
 
     }
