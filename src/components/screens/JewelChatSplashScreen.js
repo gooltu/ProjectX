@@ -8,34 +8,20 @@ import {
   View,
   Text
 } from 'react-native';
-
 import { connect } from 'react-redux';
 import AsyncStorage from '@react-native-community/async-storage';
-
 import colors from '../shared_styles/colors';
 import Logo from '../svg_components/Logo';
-
 import * as realtime from '../../network/realtime'
-
 import * as jcdb from '../../db/localdatabase'
 import * as game from '../../db/localdatabase'
-
-
-
-
-
-
-
 
 class JewelChatSplashScreen extends React.Component {
   constructor() {
     super();
     this._bootstrapAsync();
   }
-
-
   componentDidUpdate(prevProps, prevState) {
-
     if (!this.props.mytoken.isLoading && this.props.mytoken.token == null) {
       this.splashScreenDelay().then(() => this.props.navigation.navigate('Auth'))
     } else if (!this.props.mytoken.isLoading && this.props.mytoken.token !== null) {
@@ -61,8 +47,6 @@ class JewelChatSplashScreen extends React.Component {
     AsyncStorage.multiGet(['myid', 'myphone', 'token', 'cookie'])
       //AsyncStorage.getItem('userToken')
       .then(results => {
-
-
         myTokens = results.reduce((acc, curr) => {
           console.log('>>', curr[1])
           if (curr[0] === 'myid') acc.myid = curr[1]
@@ -75,12 +59,11 @@ class JewelChatSplashScreen extends React.Component {
         }, {})
 
         // myTokens.isLoading = false;
-        myTokens.myphone = 1
-        myTokens.token = 'token';
-        myTokens.isLoading = false
+        // myTokens.myphone = 1
+        // myTokens.token = 'token';
+         myTokens.isLoading = false
 
         this.props.tokenLoad(myTokens)
-
 
       })
 

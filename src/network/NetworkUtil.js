@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Constants from './rest';
-
-/**
+import { store } from '../store'
+/**s
  * Create an Axios Client with defaults
  */
 const client = axios.create({
@@ -12,10 +12,10 @@ const client = axios.create({
  * Request Wrapper with default success/error actions
  */
 const NetworkUtil = async function (options, requireAuth) {
-
+    console.log(store.getState())
     if (requireAuth) {
         client.defaults.baseURL = Constants.baseURL;
-        client.defaults.headers.common['jcookie'] = "connect.sid=s%3A3%3A%3A%3A%3A347416.4VEzq6Dxea%2FFZWOOCB%2FOMqgLOP%2FNSx1p%2FJHT1o0CMko"
+        client.defaults.headers.common['jcookie'] = store.getState().mytoken.cookie
         client.defaults.headers.common['Accept'] = "application/json"
         client.defaults.headers.common['Content-Type'] = "application/json"
     }

@@ -18,7 +18,7 @@ import Logo from '../../../../svg_components/Logo';
 import Coin from '../../../../svg_components/Coin';
 import Diamond from '../../../../svg_components/Diamond';
 import J3 from '../../../../svg_components/J3';
-import J6 from '../../../../svg_components/J6';
+import J6 from '../../../../svg_components/J12';
 import TabIcon from "../../../../svg_components/TabIcons";
 import colors from "../../../../shared_styles/colors";
 import db from '../../../../../db/localdatabase'
@@ -26,7 +26,6 @@ import actions from '../../../../../actions'
 import { setActiveChat } from '../../../../../actions/chatListActions'
 
 function Item({ item, onpressitem, onlongpressitem }) {
-
 
   return (
     <TouchableOpacity
@@ -207,7 +206,6 @@ function mapStateToProps(state) {
     chatslist: state.chatslist.chatList
   }
 }
-
 
 function mapDispatchToProps(dispatch) {
   return {

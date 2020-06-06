@@ -31,9 +31,10 @@ export default styles = StyleSheet.create({
         width: PixelRatio.roundToNearestPixel(20 * global.scaleFactor)
     },
     ProfilePicture: {
-        width: PixelRatio.roundToNearestPixel(95 * global.scaleFactor),
+        borderRadius: PixelRatio.roundToNearestPixel(100 * global.scaleFactor),
+        width: PixelRatio.roundToNearestPixel(100 * global.scaleFactor),
         height: PixelRatio.roundToNearestPixel(100 * global.scaleFactor),
-        top: -15
+        top:-15
     },
     SecondDiamond: {
         justifyContent: "center",

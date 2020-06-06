@@ -11,14 +11,12 @@ const persistConfig = {
     // Storage Method (React Native)
     storage: AsyncStorage,
     // Whitelist (Save Specific Reducers)
-    whitelist: [],
+    whitelist: ['game'],
     // Blacklist (Don't Save Specific Reducers)
     blacklist: [],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
-
-
 
 
 const store = createStore(persistedReducer, applyMiddleware(thunk))

@@ -39,7 +39,8 @@ import db from '../../../../../db/localdatabase'
 import rest from '../../../../../network/rest';
 import axios from 'axios'
 import NetworkManager from '../../../../../network/NetworkManager'
-import { getContacts } from '../../../../JCUtils/CommonUtils'
+import { getContacts, renderJewel } from '../../../../JCUtils/CommonUtils'
+import { Snackbar } from 'react-native-paper';
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
@@ -96,13 +97,16 @@ class ChatPage extends React.Component {
   state = {
     replyTriggered: false,
     longPressMessage: false,
+    visible: false,
     chatboxtext: '',
     selectedCount: 0,
     selectedParent: {},
     selectedMessages: {},
     chatboxempty: true,
     replybarshow: false,
+    collectingJewel: false,
     longpressbarshow: false,
+    collectionId: null,
     chatbarstyle: { width: '100%', height: 36, backgroundColor: colors.darkcolor3 },
     chattextboxstyle: { flexGrow: 1, maxWidth: '80%', height: 24, borderColor: colors.lightcolor1, borderWidth: 1, borderRadius: 10, color: 'white', fontSize: 14, backgroundColor: colors.darkcolor3, padding: 5, overflow: 'scroll', textAlignVertical: 'top', marginLeft: 4, marginRight: 4 }
   }
@@ -290,8 +294,50 @@ class ChatPage extends React.Component {
   }
 
 
-  onJewelPress(id) {
-    console.log('wow>' + id);
+  onJewelPress(item) {
+    if (!this.state.collectingJewel) {
+      if (this.jewelCount() >= 25) {
+        this.setState({
+          visible: true
+        })
+      }
+      else {
+        this.setState({
+          collectingJewel: true,
+          collectionId: item._ID
+        })
+        let data = {
+          jeweltype: item.JEWEL_TYPE
+        }
+        NetworkManager.callAPI(rest.pickJewel, 'POST', data).then(response => {
+          db.updatePickedJewel(item._ID).then(resutl => {
+            db.getChats(item.CHAT_ROOM_JID, 0)
+              .then(results => {
+                console.log('FROM JEWELCHAT COMPONENT GETCHAT SUCCESS')
+                console.log(results.rows.length)
+                let chatroom = []
+                for (let i = 0; i < results.rows.length; i++) {
+                  chatroom.push(results.rows.item(i))
+                }
+                this.props.setChatData(chatroom)
+              })
+              .catch(err => {
+                console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
+                console.log(err)
+              })
+          })
+          this.setState({
+            collectingJewel: false,
+            collectionId: null
+          })
+          this.props.game.jewels[item.JEWEL_TYPE].count = this.props.game.jewels[item.JEWEL_TYPE].count + 1
+          this.props.loadGameState(this.props.game)
+        }).catch(error => {
+
+        })
+      }
+
+    }
   }
 
   onListEndReached() {
@@ -313,7 +359,14 @@ class ChatPage extends React.Component {
         console.log(err)
       })
   }
-
+  jewelCount() {
+    let jewelCount = 0
+    for (let i = 3; i < this.props.game.jewels.length; i++) {
+      jewelCount = jewelCount + this.props.game.jewels[i].count
+    }
+    return jewelCount
+  }
+  _onDismissSnackBar = () => this.setState({ visible: false });
 
 
   render() {
@@ -380,7 +433,8 @@ class ChatPage extends React.Component {
                     }
                   }}
                   state={this.state}
-                  allchats={this.props.chatroom} onjewelpress={() => { this.onJewelPress(index) }} />
+                  allchats={this.props.chatroom}
+                  onjewelpress={() => { this.onJewelPress(item) }} />
               )}
               onEndReached={() => {
                 console.log('end reached')
@@ -388,7 +442,15 @@ class ChatPage extends React.Component {
               }}
               keyExtractor={item => item._ID + ''}
             />
+            <Snackbar
+              duration={1000}
+              style={{ backgroundColor: colors.lightcolor1, alignItems: 'center'}}
+              visible={this.state.visible}
+              onDismiss={this._onDismissSnackBar}>
+              Jewel Store is FULL.
+              </Snackbar>
           </View>
+
         </SafeAreaView>
       </KeyboardAvoidingView>
     );
@@ -434,8 +496,6 @@ class ChatItem extends React.Component {
           }
           ).start(() => {
             props.onReplyTriggered()
-            console.log('triggered')
-            Alert.alert('JewelChat', 'Reply Triggered')
           })
         }
         else {
@@ -469,7 +529,6 @@ class ChatItem extends React.Component {
             {item.CREATED_DATE}
           </Text>
         }
-
         {!mychat &&
           <View style={styles.friendMsgContainer}>
             {state.longPressMessage ?
@@ -477,9 +536,9 @@ class ChatItem extends React.Component {
                 <CheckBox onPress={() => onPress()} checked={state.selectedMessages.hasOwnProperty(item._ID) ? true : false} color='#4287f5' />
               </View>
               : null}
-            {item.MAX_SEQUENCE - item.SEQUENCE < 5 || item.SEQUENCE == -1 ?
-              <TouchableOpacity style={styles.jewelContainer} onPress={onjewelpress}>
-                <J3 height="75%" width="75%" style={styles.jewelStyle} />
+            {(item.MAX_SEQUENCE - item.SEQUENCE < 25 || item.SEQUENCE == -1) && !item.IS_JEWEL_PICKED ?
+              <TouchableOpacity style={(state.collectingJewel && item._ID == state.collectionId) ? styles.collectingJewel : styles.jewelContainer} onPress={onjewelpress}>
+                {renderJewel(item.JEWEL_TYPE, "75%", "75%", styles.jewelStyle)}
               </TouchableOpacity> : null}
 
             <Animated.View style={[styles.msgContainer, this.state.position.getLayout()]} {...this.state.panResponder.panHandlers}>
@@ -490,12 +549,12 @@ class ChatItem extends React.Component {
                     <Text style={{ color: 'white', paddingLeft: 5, fontSize: 10 }}>Forwarded</Text>
                   </View>
                   : null}
-                {item.IS_REPLY == 1 ?
+                {/* {item.IS_REPLY == 1 ?
                   <View style={{ flexDirection: 'row', paddingLeft: 5, paddingTop: 5, alignItems: 'center' }}>
                     <Icon2 name='mail-forward' size={10} color={'white'} />
                     <Text style={{ color: 'white', paddingLeft: 5, fontSize: 10 }}>Reply of {item.REPLY_PARENT}</Text>
                   </View>
-                  : null}
+                  : null} */}
                 <Text style={styles.friendMsgText}>{item.MSG_TEXT}</Text>
               </AnimatedTouchable>
               <Text style={styles.msgTime}>{item.CREATED_TIME}</Text>
@@ -520,12 +579,12 @@ class ChatItem extends React.Component {
                       <Text style={{ color: 'white', paddingLeft: 5, fontSize: 10 }}>Forwarded</Text>
                     </View>
                     : null}
-                  {item.IS_REPLY == 1 ?
+                  {/* {item.IS_REPLY == 1 ?
                     <View style={{ flexDirection: 'row', paddingLeft: 5, paddingTop: 5, alignItems: 'center' }}>
                       <Icon2 name='mail-forward' size={10} color={'white'} />
                       <Text style={{ color: 'white', paddingLeft: 5, fontSize: 10 }}>Reply of {item.REPLY_PARENT}</Text>
                     </View>
-                    : null}
+                    : null} */}
                   <Text style={styles.myMsgText}>{item.MSG_TEXT}</Text>
                 </AnimatedTouchable>
                 <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
@@ -557,6 +616,7 @@ function mapStateToProps(state) {
   return {
     chatroom: state.chatroom.chatroom,
     activeChat: state.chatslist.activeChat,
+    game: state.game
   }
 }
 
@@ -568,7 +628,8 @@ function mapDispatchToProps(dispatch) {
     sendReadReceipt: (JID) => dispatch(sendReadReceipt(JID)),
     setChatData: (id, offset) => dispatch(actions.setChatData(id, offset)),
     setChatListData: (chatlistData) => dispatch(actions.setChatListData(chatlistData)),
-    sendSubscriptionRequest: (JID) => dispatch(sendSubscriptionRequest(JID))
+    sendSubscriptionRequest: (JID) => dispatch(sendSubscriptionRequest(JID)),
+    loadGameState: (gamestate) => dispatch(actions.loadGameState(gamestate))
   }
 }
 

@@ -20,6 +20,7 @@ import colors from "../../shared_styles/colors";
 import CustomLoader from '../../shared_components/CustomLoader';
 import axios from 'axios'
 import { createDatabaseTables } from "../../../db/localdatabase";
+import actions from '../../../actions';
 
 
 class EnterOTP extends React.Component {
@@ -114,7 +115,6 @@ class EnterOTP extends React.Component {
       // Loader modal
       //network call
       this.setState({ networkloading: true })
-
       axios({
         method: 'post',
         url:'https://testjc1984.herokuapp.com/verifyCode', 
@@ -132,6 +132,7 @@ class EnterOTP extends React.Component {
         let responseheader = response.headers;
         console.log(responseheader)
         let cookie = responseheader["jc-cookie"];
+        global.cookie = cookie
         console.log(cookie)
         let token = cookie.split('=')[1];
         console.log(token)
@@ -144,12 +145,13 @@ class EnterOTP extends React.Component {
 
         AsyncStorage.multiSet([ ['myid',myTokens.myid+''],['myphone',myTokens.myphone],['token',myTokens.token],['cookie', myTokens.cookie] ])
         .then( () => {
+
           this.props.tokenLoad(myTokens);
-          
         })
         this.setState({ networkloading: false })
         if(!response.data.error){
           this.props.navigation.navigate('EnterDetails', response.data);
+          this.props.loadGameData()
         }else
           throw(new Error(error.message))  
       })
@@ -221,11 +223,10 @@ function mapStateToProps(state) {
 	}
 }
 
-
-
 function mapDispatchToProps(dispatch) {
 	return {    
     tokenLoad: (myTokens) => dispatch({ type:'USER_TOKEN_LOADED', myTokens }),
+    loadGameData: () => dispatch(actions.loadGameState())
     //createTables: () => dispatch(createDatabaseTables()),
 	}
 }

@@ -1,248 +1,204 @@
-import React from 'react'
-import Svg, { LinearGradient, Stop, Path } from 'react-native-svg'
+import React from "react";
+import Svg, { LinearGradient, Stop, Path, G } from "react-native-svg";
 
-const J3 = props => (
-  <Svg {...props} viewBox="0 0 1000 1000">
+const SvgComponent = props => (
+  <Svg
+    x="0px"
+    y="0px"
+    viewBox="0 0 1000 1000"
+    xmlSpace="preserve"
+    enableBackground="new 0 0 1000 1000"
+    {...props}
+  >
     <LinearGradient
-      id="prefix__a"
+      id="a"
       gradientUnits="userSpaceOnUse"
       x1={76.4}
-      y1={500}
+      y1={478}
       x2={923.6}
-      y2={500}
-      gradientTransform="matrix(1 0 0 -1 0 1000)"
+      y2={478}
+      gradientTransform="matrix(1 0 0 -1 0 978)"
     >
       <Stop offset={0} stopColor="#fff" />
       <Stop offset={0.174} stopColor="#f4f4f4" />
-      <Stop offset={0.477} stopColor="#d8d8d8" />
-      <Stop offset={0.869} stopColor="#aaa" />
+      <Stop offset={0.4766} stopColor="#d8d8d8" />
+      <Stop offset={0.8691} stopColor="#aaa" />
       <Stop offset={1} stopColor="#999" />
     </LinearGradient>
     <Path
       d="M901.3 923.6H98.7c-12.3 0-22.3-10-22.3-22.3V98.7c0-12.3 10-22.3 22.3-22.3h802.6c12.3 0 22.3 10 22.3 22.3v802.6c0 12.3-10 22.3-22.3 22.3zM121 879h758V121H121v758z"
-      fill="url(#prefix__a)"
+      fill="url(#a)"
       stroke="gray"
       strokeWidth={5}
       strokeMiterlimit={10}
     />
     <LinearGradient
-      id="prefix__b"
+      id="b"
       gradientUnits="userSpaceOnUse"
-      x1={165.436}
-      y1={659.953}
-      x2={38.326}
-      y2={113.702}
-      gradientTransform="translate(0 9.5)"
+      x1={177.9858}
+      y1={680.1326}
+      x2={50.8759}
+      y2={133.8816}
+      gradientTransform="translate(0 -12.5)"
     >
       <Stop offset={0} stopColor="red" />
-      <Stop offset={0.164} stopColor="#f50404" />
-      <Stop offset={0.444} stopColor="#da0d10" />
-      <Stop offset={0.805} stopColor="#ae1d22" />
+      <Stop offset={0.1641} stopColor="#f50404" />
+      <Stop offset={0.4444} stopColor="#da0d10" />
+      <Stop offset={0.8048} stopColor="#ae1d22" />
       <Stop offset={1} stopColor="#93272d" />
     </LinearGradient>
-    <Path fill="url(#prefix__b)" d="M100.4 900.2l77.9-79V214.5L100.4 97.6z" />
+    <Path d="M100.4 901.3L209 796.7 209 233.9 100.4 98.7z" fill="url(#b)" />
     <LinearGradient
-      id="prefix__c"
+      id="c"
       gradientUnits="userSpaceOnUse"
-      x1={498.416}
-      y1={696.025}
-      x2={501.522}
-      y2={1077.752}
-      gradientTransform="translate(0 9.5)"
+      x1={497.9337}
+      y1={659.9217}
+      x2={501.9698}
+      y2={1155.8298}
+      gradientTransform="translate(0 -12.5)"
     >
       <Stop offset={0} stopColor="red" stopOpacity={0.9} />
       <Stop offset={1} stopColor="#93272d" />
     </LinearGradient>
-    <Path fill="url(#prefix__c)" d="M100.4 900.2l77.9-79H785l114.6 79z" />
+    <Path d="M100.4 901.3L209 796.7 771.8 796.7 899.6 901.3z" fill="url(#c)" />
     <LinearGradient
-      id="prefix__d"
+      id="d"
       gradientUnits="userSpaceOnUse"
-      x1={785}
-      y1={489.4}
+      x1={771.7532}
+      y1={512.5}
       x2={899.6}
-      y2={489.4}
-      gradientTransform="translate(0 9.5)"
+      y2={512.5}
+      gradientTransform="translate(0 -12.5)"
     >
       <Stop offset={0} stopColor="red" stopOpacity={0.9} />
       <Stop offset={1} stopColor="#93272d" />
     </LinearGradient>
-    <Path fill="url(#prefix__d)" d="M785 821.2V214.5L899.6 97.6v802.6z" />
+    <Path d="M771.8 796.7L771.8 233.9 899.6 98.7 899.6 901.3z" fill="url(#d)" />
     <LinearGradient
-      id="prefix__e"
+      id="e"
       gradientUnits="userSpaceOnUse"
-      x1={500.064}
-      y1={187.337}
-      x2={499.916}
-      y2={-43.09}
-      gradientTransform="translate(0 9.5)"
+      x1={500.0738}
+      y1={225.9774}
+      x2={499.9024}
+      y2={-40.4407}
+      gradientTransform="translate(0 -12.5)"
     >
       <Stop offset={0} stopColor="red" stopOpacity={0.9} />
       <Stop offset={1} stopColor="#93272d" />
     </LinearGradient>
-    <Path fill="url(#prefix__e)" d="M178.3 214.5H785L899.6 97.6H100.4z" />
+    <Path d="M209 233.9L771.8 233.9 899.6 98.7 100.4 98.7z" fill="url(#e)" />
     <LinearGradient
-      id="prefix__f"
+      id="f"
       gradientUnits="userSpaceOnUse"
-      x1={178.3}
-      y1={508.35}
-      x2={922.579}
-      y2={508.35}
-      gradientTransform="translate(0 9.5)"
+      x1={209.026}
+      y1={527.8002}
+      x2={899.361}
+      y2={527.8002}
+      gradientTransform="translate(0 -12.5)"
     >
       <Stop offset={0} stopColor="red" stopOpacity={0.9} />
       <Stop offset={1} stopColor="#93272d" />
     </LinearGradient>
-    <Path fill="url(#prefix__f)" d="M178.3 214.5H785v606.7H178.3z" />
-    <LinearGradient
-      id="prefix__g"
-      gradientUnits="userSpaceOnUse"
-      x1={207.664}
-      y1={517.346}
-      x2={64.187}
-      y2={495.615}
-      gradientTransform="matrix(1 0 0 -1 0 1000)"
-    >
-      <Stop offset={0} stopColor="#fff" stopOpacity={0.6} />
-      <Stop offset={1} stopOpacity={0} />
-    </LinearGradient>
-    <Path fill="url(#prefix__g)" d="M100.4 900.2l77.9-79V214.5L100.4 97.6z" />
-    <LinearGradient
-      id="prefix__h"
-      gradientUnits="userSpaceOnUse"
-      x1={291.919}
-      y1={677.687}
-      x2={509.036}
-      y2={912.158}
-      gradientTransform="matrix(1 0 0 -1 0 1000)"
-    >
-      <Stop offset={0} stopColor="#fff" stopOpacity={0.6} />
-      <Stop offset={1} stopOpacity={0} />
-    </LinearGradient>
-    <Path fill="url(#prefix__h)" d="M178.3 214.5H785L899.6 97.6H100.4z" />
-    <LinearGradient
-      id="prefix__i"
-      gradientUnits="userSpaceOnUse"
-      x1={150.029}
-      y1={818.475}
-      x2={575.986}
-      y2={386.476}
-      gradientTransform="matrix(1 0 0 -1 0 1000)"
-    >
-      <Stop offset={0} stopColor="#fff" />
-      <Stop offset={1} stopOpacity={0} />
-    </LinearGradient>
-    <Path fill="url(#prefix__i)" d="M178.3 214.5H785v606.7H178.3z" />
-    <Path
-      d="M103.7 108.6L175 215.5v604.3L103.7 892V108.6m-3.3-11v802.6l77.9-79V214.5L100.4 97.6z"
-      fill="#fff"
-    />
-    <Path
-      d="M783.9 824.5l105 72.4H108.4l71.3-72.4h604.2m1.1-3.3H178.3l-77.9 79h799.3l-114.7-79z"
-      fill="#fff"
-    />
-    <Path
-      d="M896.3 105.8v788.1l-108-74.4V215.8l108-110m3.3-8.2L785 214.5v606.7l114.7 79V97.6h-.1z"
-      fill="#fff"
-    />
-    <Path
-      d="M891.7 100.9L783.6 211.1H180.1l-73.5-110.2h785.1m7.9-3.3zm0 0H100.4l77.9 116.9H785L899.6 97.6z"
-      fill="#fff"
-    />
-    <Path
-      d="M781.6 217.8v600h-600v-600h600m3.4-3.3H178.3v606.7H785V214.5z"
-      fill="#fff"
-    />
-    <LinearGradient
-      id="prefix__j"
-      gradientUnits="userSpaceOnUse"
-      x1={213.904}
-      y1={778.125}
-      x2={714.041}
-      y2={306.253}
-      gradientTransform="rotate(180 503.5 499.75)"
-    >
-      <Stop offset={0} stopColor="red" stopOpacity={0.9} />
-      <Stop offset={1} stopColor="#93272d" />
-    </LinearGradient>
-    <Path
-      opacity={0.33}
-      fill="url(#prefix__j)"
-      d="M261.2 178.3h560.5v561H261.2z"
-    />
-    <LinearGradient
-      id="prefix__k"
-      gradientUnits="userSpaceOnUse"
-      x1={876.122}
-      y1={810.5}
-      x2={73.522}
-      y2={810.5}
-      gradientTransform="translate(0 9.5)"
-    >
-      <Stop offset={0} stopColor="red" stopOpacity={0.9} />
-      <Stop offset={1} stopColor="#93272d" />
-    </LinearGradient>
-    <Path
-      opacity={0.33}
-      fill="url(#prefix__k)"
-      d="M98.7 900.7l162.5-161.4h561.1l79 161.4z"
-    />
-    <LinearGradient
-      id="prefix__l"
-      gradientUnits="userSpaceOnUse"
-      x1={184.221}
-      y1={850.981}
-      x2={174.487}
-      y2={119.409}
-      gradientTransform="translate(0 9.5)"
-    >
-      <Stop offset={0} stopColor="red" stopOpacity={0.9} />
-      <Stop offset={1} stopColor="#93272d" />
-    </LinearGradient>
-    <Path
-      opacity={0.33}
-      fill="url(#prefix__l)"
-      d="M261.2 739.3v-561L98.7 98.1v802.6z"
-    />
-    <LinearGradient
-      id="prefix__m"
-      gradientUnits="userSpaceOnUse"
-      x1={861.8}
-      y1={116.047}
-      x2={861.8}
-      y2={855.223}
-      gradientTransform="translate(0 9.5)"
-    >
-      <Stop offset={0} stopColor="red" stopOpacity={0.9} />
-      <Stop offset={1} stopColor="#93272d" />
-    </LinearGradient>
-    <Path
-      opacity={0.33}
-      fill="url(#prefix__m)"
-      d="M822.3 739.3l79 161.4V98.1l-79 80.2z"
-    />
-    <LinearGradient
-      id="prefix__n"
-      gradientUnits="userSpaceOnUse"
-      x1={98.7}
-      y1={128.7}
-      x2={901.3}
-      y2={128.7}
-      gradientTransform="translate(0 9.5)"
-    >
-      <Stop offset={0} stopColor="red" stopOpacity={0.9} />
-      <Stop offset={1} stopColor="#93272d" />
-    </LinearGradient>
-    <Path
-      opacity={0.33}
-      fill="url(#prefix__n)"
-      d="M261.2 178.3h561.1l79-80.2H98.7z"
-    />
-    <Path
-      opacity={0.26}
-      fill="#fff"
-      d="M208.2 255.9L176.8 223l-40.5 20.8 32.9-31.4-20.8-40.5 31.4 33 40.5-20.9-32.9 31.4z"
-    />
+    <Path d="M209 233.9H771.7V796.6H209z" fill="url(#f)" />
+    <G opacity={0.21}>
+      <LinearGradient
+        id="g"
+        gradientUnits="userSpaceOnUse"
+        x1={177.9858}
+        y1={680.1326}
+        x2={50.8759}
+        y2={133.8816}
+        gradientTransform="rotate(180 500 506.25)"
+      >
+        <Stop offset={0} stopColor="red" />
+        <Stop offset={0.1641} stopColor="#f50404" />
+        <Stop offset={0.4444} stopColor="#da0d10" />
+        <Stop offset={0.8048} stopColor="#ae1d22" />
+        <Stop offset={1} stopColor="#93272d" />
+      </LinearGradient>
+      <Path d="M899.6 98.7L791 203.3 791 766.1 899.6 901.3z" fill="url(#g)" />
+      <LinearGradient
+        id="h"
+        gradientUnits="userSpaceOnUse"
+        x1={497.9337}
+        y1={659.9217}
+        x2={501.9698}
+        y2={1155.8298}
+        gradientTransform="rotate(180 500 506.25)"
+      >
+        <Stop offset={0} stopColor="red" stopOpacity={0.9} />
+        <Stop offset={1} stopColor="#93272d" />
+      </LinearGradient>
+      <Path d="M899.6 98.7L791 203.3 228.2 203.3 100.4 98.7z" fill="url(#h)" />
+      <LinearGradient
+        id="i"
+        gradientUnits="userSpaceOnUse"
+        x1={771.7532}
+        y1={512.5}
+        x2={899.6}
+        y2={512.5}
+        gradientTransform="rotate(180 500 506.25)"
+      >
+        <Stop offset={0} stopColor="red" stopOpacity={0.9} />
+        <Stop offset={1} stopColor="#93272d" />
+      </LinearGradient>
+      <Path
+        d="M228.2 203.3L228.2 766.1 100.4 901.3 100.4 98.7z"
+        fill="url(#i)"
+      />
+      <LinearGradient
+        id="j"
+        gradientUnits="userSpaceOnUse"
+        x1={500.0738}
+        y1={225.9774}
+        x2={499.9024}
+        y2={-40.4407}
+        gradientTransform="rotate(180 500 506.25)"
+      >
+        <Stop offset={0} stopColor="red" stopOpacity={0.9} />
+        <Stop offset={1} stopColor="#93272d" />
+      </LinearGradient>
+      <Path
+        d="M791 766.1L228.2 766.1 100.4 901.3 899.6 901.3z"
+        fill="url(#j)"
+      />
+      <LinearGradient
+        id="k"
+        gradientUnits="userSpaceOnUse"
+        x1={209.026}
+        y1={527.8002}
+        x2={899.361}
+        y2={527.8002}
+        gradientTransform="rotate(180 500 506.25)"
+      >
+        <Stop offset={0} stopColor="red" stopOpacity={0.9} />
+        <Stop offset={1} stopColor="#93272d" />
+      </LinearGradient>
+      <Path d="M228.2 203.3H790.9000000000001V766H228.2z" fill="url(#k)" />
+    </G>
+    <G opacity={0.47}>
+      <Path
+        d="M103.4 107.2L206 235v560.4l-102.6 98.9V107.2m-3-8.5v802.6L209 796.7V233.9L100.4 98.7z"
+        fill="#fff"
+      />
+      <Path
+        d="M770.7 799.7l120.5 98.6H107.8l102.4-98.6h560.5m1.1-3H209L100.4 901.3h799.2L771.8 796.7zM896.6 106.2V895l-121.8-99.7V235.1l121.8-128.9m3-7.5L771.8 233.9v562.7l127.8 104.6V98.7z"
+        fill="#fff"
+      />
+      <Path
+        d="M892.6 101.7L770.5 230.9h-560L106.7 101.7h785.9m7-3zm0 0H100.4L209 233.9h562.7L899.6 98.7zM768.8 236.9v556.7H212V236.9h556.8m3-3H209v562.7h562.7V233.9h.1z"
+        fill="#fff"
+      />
+    </G>
+    <G>
+      <Path
+        d="M238.9 275.9L207.5 243 167 263.8 199.9 232.4 179.1 191.9 210.5 224.9 251 204 218.1 235.4z"
+        opacity={0.26}
+        fill="#fff"
+        enableBackground="new"
+      />
+    </G>
   </Svg>
-)
+);
 
-export default J3
+export default SvgComponent;

@@ -20,6 +20,7 @@ export default class App extends React.Component {
     super(props)
     global.Contacts = []
     global.TimeDelta = 0
+    global.cookie = ''
   }
   componentDidMount() {
     this.handleBackgroundState = messaging().onNotificationOpenedApp(remoteMessage => {

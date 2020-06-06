@@ -1,7 +1,6 @@
 import React from "react";
 import {
   ActivityIndicator,
-  AsyncStorage,
   StatusBar,
   StyleSheet,
   SafeAreaView,
@@ -13,7 +12,7 @@ import {
   ImageBackground,
   PixelRatio
 } from "react-native";
-
+import AsyncStorage from "@react-native-community/async-storage";
 import CustomHeader from "../../../shared_components/customHeader/CustomHeader";
 import styles from './Profile.styles'
 import strings from './Profiles.strings'
@@ -26,29 +25,29 @@ import Diamond from '../../../svg_components/Diamond'
 import { Button } from 'react-native-paper'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import Icon1 from 'react-native-vector-icons/Ionicons'
-
+import rest from "../../../../network/rest";
+import NetworkManager from "../../../../network/NetworkManager";
 
 const scrollBarData = [
   {
-    'image': <Icon name='wallet' size={35} color='white'/>,
+    'image': <Icon name='wallet' size={35} color='white' />,
     'text': 'WALLET'
   },
   {
-    'image': <Icon name='trophy' size={35} color='white'/>,
+    'image': <Icon name='trophy' size={35} color='white' />,
     'text': 'LEADERBOARD'
   },
   {
-    'image': <Icon1 name='md-settings' size={35} color='white'/>,
+    'image': <Icon1 name='md-settings' size={35} color='white' />,
     'text': 'SETTINGS'
   },
   {
-    'image': <Icon name='share-alt' size={35} color='white'/>,
+    'image': <Icon name='share-alt' size={35} color='white' />,
     'text': 'SHARE'
   }
 ]
 class Profile extends React.Component {
   /*static navigationOptions = ({ navigation }) => {
-    
     console.log('HERE');
     return {
       header: <CustomHeader levelbar="show" />
@@ -56,16 +55,59 @@ class Profile extends React.Component {
 };*/
   constructor(props) {
     super(props)
+    this.state = {
+      imagepath: '',
+      userProfile: {
+        name: 'test'
+      }
+    }
   }
   componentDidMount() {
-    console.log("xyghijlhvghb")
+    this.focusListener = this.props.navigation.addListener('didFocus', () => {
+      this.loadProfilePicture()
+    })
   }
+  loadProfilePicture = () => {
+    AsyncStorage.multiGet(["UserProfileImage", "UserProfile"]).then(profileData => {
+      if (profileData[0][1] && profileData[1][1]) {
+        this.setState({
+          imagepath: profileData[0][1],
+          userProfile: JSON.parse(profileData[1][1]),
+        })
+      }
+      else {
+        var data = {
+          'phone': '918756463536'
+      }
+        NetworkManager.callAPI(rest.downloadContact_Phone, 'post', data).then((responseJson) => {
+          console.log(responseJson)
+          if (responseJson.error == false) {
+            this.setState({
+              userProfile: responseJson.contact
+            })
+            AsyncStorage.setItem('UserProfileImage', responseJson.contact.large_pic)
+            AsyncStorage.setItem('UserProfile', JSON.stringify(responseJson.contact))
+          }
+        }).catch((error) => {
+          console.log(error)
+        })
+      }
+    })
+  }
+
+  componentWillUnmount() {
+    this.focusListener.remove()
+  }
+
   scrollBarNaviagtion(text) {
     if (text === 'LEADERBOARD') {
       this.props.navigation.navigate("LeaderBoard")
     }
     if (text === 'WALLET') {
       this.props.navigation.navigate("Wallet")
+    }
+    if (text === 'SETTINGS') {
+      this.props.navigation.navigate("UserProfile")
     }
   }
   render() {
@@ -80,8 +122,8 @@ class Profile extends React.Component {
                   <Text style={{ color: 'white' }}>1000</Text>
                 </View>
               </View>
-              <TouchableOpacity onPress={()=> this.props.navigation.navigate('UserProfile')}>
-                <Image style={styles.ProfilePicture} resizeMode="contain" source={JCImages.placeholderImage} />
+              <TouchableOpacity onPress={() => this.props.navigation.navigate('UserProfile')}>
+                <Image style={styles.ProfilePicture} key={this.state.imagepath} resizeMode="contain" source={this.state.imagepath ? { uri: this.state.imagepath } : JCImages.placeholderImage} />
               </TouchableOpacity>
               <View style={styles.SecondDiamond}>
                 <View style={styles.mainRightLayout}>
@@ -92,7 +134,7 @@ class Profile extends React.Component {
             </View>
           </View>
           <View style={{ alignItems: 'center', paddingTop: 20 }}>
-            <Text style={{ color: 'white' }}>Niteesh Kumar</Text>
+            <Text style={{ color: 'white' }}>{this.state.userProfile.name}</Text>
           </View>
           <View style={{ paddingBottom: 20, alignItems: 'center' }}>
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
@@ -137,14 +179,14 @@ class Profile extends React.Component {
                       <Diamond height='20' width='20' />
                     </View>
                     {
-                      this.props.game.score.level == this.props.userachievements[index].level ?
+                      this.props.game.scores.level == this.props.userachievements[index].level ?
                         <TouchableOpacity style={{ backgroundColor: color.lightcolor2, height: 22, width: 70, alignItems: 'center', justifyContent: 'center', borderRadius: 5 }}>
                           <Text style={{ color: 'white', fontSize: 12 }}>WIN</Text>
                         </TouchableOpacity> :
                         <TouchableOpacity style={{ backgroundColor: color.darkcolor1, height: 22, width: 65, alignItems: 'center', borderColor: color.lightcolor2, justifyContent: 'center', borderWidth: 1.5, borderRadius: 5 }}>
                           <Text style={{ color: color.jcgray, fontSize: 12 }}>LEVEL {this.props.userachievements[index].level}</Text>
                         </TouchableOpacity>
-                     // console.log(this.props.userachievements, index)
+                      // console.log(this.props.userachievements, index)
                     }
 
 

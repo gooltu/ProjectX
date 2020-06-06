@@ -21,7 +21,7 @@
 		AD3F7CA28DEF699AD676A594 /* libPods-JewelChat-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14AC3DC3F08BEC215EC663C4 /* libPods-JewelChat-tvOS.a */; };
 		C834264223F8543800C50D31 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = C834264123F8543800C50D31 /* File.swift */; };
 		D9FF3F7F753961DC74747470 /* libPods-JewelChatTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F7A4BD9071D62AE7E7296140 /* libPods-JewelChatTests.a */; };
-		E728286B2451F39D00F908A5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E728286A2451F39D00F908A5 /* GoogleService-Info.plist */; };
+		E75451AE248ACF7F0014393C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E75451AC248ACEA20014393C /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,7 +67,7 @@
 		C834264123F8543800C50D31 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		D6B32551DF22DB343FD779B7 /* Pods-JewelChat-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JewelChat-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-JewelChat-tvOSTests/Pods-JewelChat-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		D8B862EABEC9A64C86CA6B7D /* Pods-JewelChat-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JewelChat-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-JewelChat-tvOSTests/Pods-JewelChat-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
-		E728286A2451F39D00F908A5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		E75451AC248ACEA20014393C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E79B219C01773AD9ABEF503E /* libPods-JewelChat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JewelChat.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7C4B7392454BAB800AC8C11 /* JewelChat.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = JewelChat.entitlements; path = JewelChat/JewelChat.entitlements; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -131,8 +131,8 @@
 		13B07FAE1A68108700A75B9A /* JewelChat */ = {
 			isa = PBXGroup;
 			children = (
+				E75451AC248ACEA20014393C /* GoogleService-Info.plist */,
 				E7C4B7392454BAB800AC8C11 /* JewelChat.entitlements */,
-				E728286A2451F39D00F908A5 /* GoogleService-Info.plist */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -354,7 +354,7 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
-				E728286B2451F39D00F908A5 /* GoogleService-Info.plist in Resources */,
+				E75451AE248ACF7F0014393C /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -465,6 +465,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-JewelChat/Pods-JewelChat-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/PersonalizedAdConsent/PersonalizedAdConsent.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RNImageCropPicker/QBImagePicker.bundle",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
@@ -486,6 +487,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/PersonalizedAdConsent.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/QBImagePicker.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",

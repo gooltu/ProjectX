@@ -73,11 +73,14 @@ export default styles = StyleSheet.create({
         marginBottom: 10
     },
     jewelContainer: {
-        width: 32,
-        height: 32
+        width: 40,
+        height: 40
+    },
+    collectingJewel:{
+        width: 20,
+        height: 20
     },
     jewelStyle: {
-        marginHorizontal: 10,
         width: '100%',
         height: '100%',
         alignSelf: 'center',

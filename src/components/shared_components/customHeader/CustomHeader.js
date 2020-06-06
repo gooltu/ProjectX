@@ -13,7 +13,6 @@ import {
 } from "react-native";
 
 import { connect } from 'react-redux';
-
 import colors from "../../shared_styles/colors";
 import styles from './CustomHeader.styles'
 import Logo from '../../svg_components/Logo';
@@ -21,6 +20,7 @@ import XP from '../../svg_components/XP';
 import BackButton from "../../svg_components/BackButton";
 
 import { realtimeConnect, realtimeDisconnect } from "../../../network/realtime"
+import actions from "../../../actions";
 
 class CustomHeader extends React.Component {
     componentDidMount() {
@@ -131,8 +131,8 @@ class CustomHeader extends React.Component {
         let titleView
         if (this.props.navigation.state.routeName == 'ChatPage')
             titleView = <TouchableOpacity onPress={() => this.props.navigation.navigate('FriendProfile')} style={{ flexDirection: 'column', paddingLeft: 5, height: 32, justifyContent: 'center' }}>
-                <Text style={{ fontSize: 14, color: 'white', fontWeight: 'bold' }}>{this.props.activeChat.PHONEBOOK_CONTACT_NAME?this.props.activeChat.PHONEBOOK_CONTACT_NAME: '+' + this.props.activeChat.CONTACT_NUMBER}</Text>
-                <Text style={{ fontSize: 11, color: 'white' }}>{this.props.presence.hasOwnProperty(this.props.activeChat.JID)?this.props.presence[this.props.activeChat.JID]:this.props.activeChat.IS_PHONEBOOK_CONTACT==1?'offine':null}</Text>
+                <Text style={{ fontSize: 14, color: 'white', fontWeight: 'bold' }}>{this.props.activeChat.PHONEBOOK_CONTACT_NAME ? this.props.activeChat.PHONEBOOK_CONTACT_NAME : '+' + this.props.activeChat.CONTACT_NUMBER}</Text>
+                <Text style={{ fontSize: 11, color: 'white' }}>{this.props.presence.hasOwnProperty(this.props.activeChat.JID) ? this.props.presence[this.props.activeChat.JID] : this.props.activeChat.IS_PHONEBOOK_CONTACT == 1 ? 'offine' : null}</Text>
             </TouchableOpacity>
         else if (this.props.navigation.state.routeName == 'FriendProfile') {
             titleView = <Text style={{ fontSize: 16, color: 'white', paddingLeft: 10, fontWeight: 'bold' }}>{this.props.activeChat.PHONEBOOK_CONTACT_NAME}</Text>
@@ -165,7 +165,7 @@ class CustomHeader extends React.Component {
                 <View style={styles.levelProgressContainer}>
                     <View style={styles.levelCount}>
                         <ImageBackground source={require('../../../assets/ColorGrad.jpg')} style={styles.imageBackground}>
-                            <Text style={styles.count}>001</Text>
+                            <Text style={styles.count}>{this.props.scores.level<9?'00'+this.props.scores.level:this.props.scores.level}</Text>
                         </ImageBackground>
                     </View>
                     <View style={styles.barContainer}>
@@ -174,12 +174,12 @@ class CustomHeader extends React.Component {
                         </View>
                         <View style={styles.progressBarOuterContainer}>
                             <View style={styles.progressBarInnerContainer}>
-                                <View style={{ width: '75%', height: '100%' }}>
+                                <View style={{ width: this.props.scores.level / 10 + '%', height: '100%' }}>
                                     <ImageBackground source={require('../../../assets/ColorGrad.jpg')} style={styles.progressBackground}></ImageBackground>
                                 </View>
                             </View>
                             <View style={styles.levelData}>
-                                <Text style={styles.levelDataText}>444/1000</Text>
+                                <Text style={styles.levelDataText}>{this.props.scores.level<9?'00'+this.props.scores.level:this.props.scores.level}/1000</Text>
                             </View>
 
                         </View>
@@ -204,7 +204,9 @@ function mapStateToProps(state) {
         network: state.network,
         game: state.game,
         presence: state.chatslist.presence,
-        activeChat: state.chatslist.activeChat
+        activeChat: state.chatslist.activeChat,
+        scores: state.game.scores,
+        jewels: state.game.jewels
     }
 }
 

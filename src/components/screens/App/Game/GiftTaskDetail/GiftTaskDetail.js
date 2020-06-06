@@ -123,7 +123,7 @@ class TaskDetail extends React.Component {
 
 
         {
-          this.props.game.score.level < this.props.usergifttasks[this.giftTask.id].level ?
+          this.props.game.scores.level < this.props.usergifttasks[this.giftTask.id].level ?
             <View style={{ alignItems: 'center', paddingTop: 10 }}>
               <View style={{ justifyContent: 'center', width: 150, alignItems: 'center', backgroundColor: color.darkcolor2, borderRadius: 5, borderWidth: 1, borderColor: color.jcgray, paddingHorizontal: 25, paddingVertical: 10 }}>
                 <Text style={{ color: color.jcgray }}>LEVEL {this.props.usergifttasks[this.giftTask.id].level}</Text>

@@ -9,7 +9,7 @@ SQLite.enablePromise(true);
 let _jcdb
 
 export default {
-	getChats, getChatList, updatePhoneContact, insertStropheChatData, updateDeliveryAndReadRecipt, getContactList,
+	getChats, getChatList, updatePhoneContact, insertStropheChatData, updateDeliveryAndReadRecipt, getContactList,updatePickedJewel,
 	updateLastMessageAndText, selectUnreadMessages, selectUnsendMessages, updateContact, insertContactData, checkIfRowExist
 };
 
@@ -175,6 +175,28 @@ function insertStropheChatData(data) {
 					console.log('ChatMessage insert Query COMPLETED for');
 					console.log(results[1].insertId)
 					resolve(results[1].insertId)
+				}).catch(err => {
+					reject(err)
+				})
+			})
+		}).then(result => {
+		}).catch(error => {
+			reject(error)
+		})
+	})
+}
+
+function updatePickedJewel(id) {
+	return new Promise((resolve, reject) => {
+		_initDb().then(instance => {
+			jcdb = instance;
+			jcdb.transaction((txn) => {
+				let sql;
+				sql = "UPDATE ChatMessage SET IS_JEWEL_PICKED = 1  WHERE _ID =  " + id
+				console.log(sql)
+				txn.executeSql(sql).then((results) => {
+					console.log('Chat updated for picked Jewel');
+					resolve('success')
 				}).catch(err => {
 					reject(err)
 				})

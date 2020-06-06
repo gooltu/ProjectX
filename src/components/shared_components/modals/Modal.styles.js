@@ -49,4 +49,11 @@ export default styles = StyleSheet.create({
         color:'white',
         letterSpacing: PixelRatio.roundToNearestPixel(1.27 * global.scaleFactor)
     },
+    jewelStyle: {
+        marginHorizontal: 10,
+        width: '100%',
+        height: '100%',
+        alignSelf: 'center',
+        overflow: 'hidden'
+    }
 })

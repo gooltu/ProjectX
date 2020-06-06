@@ -32,6 +32,7 @@ import Wallet from './screens/App/Profile/Wallet/WalletScreen'
 
 import FriendProfile from './screens/App/FriendProfile/FriendProfile'
 import UserProfile from './screens/App/Profile/UserProfile/UserProfile'
+import ImageEdit from './screens/App/Profile/UserProfile/ImageEdit'
 
 import ChatPage from "./screens/App/Chat/ChatPage/ChatPage";
 import ForwardMessage from './screens/App/Chat/ForwardMessage/ForwardMessage'
@@ -208,6 +209,14 @@ const AppMainStack = createStackNavigator({
     },
     ForwardMessage:{
         screen: ForwardMessage,
+        navigationOptions: ({ navigation }) => {
+            return {
+                header: <CustomHeader navigation={navigation} />
+            };
+        }
+    },
+    ImageEdit:{
+        screen: ImageEdit,
         navigationOptions: ({ navigation }) => {
             return {
                 header: <CustomHeader navigation={navigation} />

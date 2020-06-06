@@ -1,8 +1,14 @@
+import React from 'react'
 import store from '../../store'
 import Contacts from 'react-native-contacts'
 import db from '../../db/localdatabase'
 import { Platform, PermissionsAndroid } from "react-native";
 import phoneContactModal from '../../db/phoneContactModal'
+import J6 from '../svg_components/J6'
+import J3 from '../svg_components/J3'
+import J9 from '../svg_components/J9'
+import J12 from '../svg_components/J12'
+import J15 from '../svg_components/J15'
 
 export const getContacts = (callback) => {
     if (Platform.OS == 'android') {
@@ -72,4 +78,23 @@ function insertContacts(Contacts, callback) {
             }
         }
     }
+}
+
+
+export const renderJewel = (id, width, height, style) => {
+    let jewelView = <J15 width={width} height={height} style={style} />
+    if (id == 3 || id == 4 || id == 5)
+        jewelView = <J3 width={width} height={height} style={style} />
+    if (id == 6 || id == 7 || id == 8)
+        jewelView = <J6 width={width} height={height} style={style} />
+    if (id == 9 || id == 10 || id == 11)
+        jewelView = <J9 width={width} height={height} style={style} />
+    if (id == 12 || id == 13 || id == 14)
+        jewelView = <J12 width={width} height={height} style={style} />
+    if (id == 15 || id == 16 || id == 17)
+        jewelView = <J15 width={width} height={height} style={style} />
+
+
+    return jewelView
+
 }
