@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   Image,
+  ScrollView,
   FlatList,
   ImageBackground,
   PixelRatio
@@ -18,15 +19,15 @@ import styles from './Profile.styles'
 import strings from './Profiles.strings'
 import color from '../../../shared_styles/colors'
 import JCImages from '../../../../assets/JCImages'
-import { ScrollView } from "react-native-gesture-handler";
 import { connect } from 'react-redux';
-import Logo from '../../../svg_components/Logo';
 import Diamond from '../../../svg_components/Diamond'
-import { Button } from 'react-native-paper'
+import Coin from '../../../svg_components/Coin'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import Icon1 from 'react-native-vector-icons/Ionicons'
 import rest from "../../../../network/rest";
 import NetworkManager from "../../../../network/NetworkManager";
+import { renderJewel } from "../../../JCUtils/CommonUtils";
+import actions from "../../../../actions";
 
 const scrollBarData = [
   {
@@ -66,6 +67,21 @@ class Profile extends React.Component {
     this.focusListener = this.props.navigation.addListener('didFocus', () => {
       this.loadProfilePicture()
     })
+    this.getAchievements()
+  }
+  getAchievements() {
+    if (!this.props.userachievements.length > 0)
+      NetworkManager.callAPI(rest.getUsersAchievement, 'POST', null).then(result => {
+        this.props.setUserAchievement(result.userachievements)
+      }).catch(error => {
+
+      })
+    if (!this.props.achievements.length > 0)
+      NetworkManager.callAPI(rest.getAchievements, 'POST', null).then(result => {
+        this.props.setAchievements(result.achievements)
+      }).catch(error => {
+
+      })
   }
   loadProfilePicture = () => {
     AsyncStorage.multiGet(["UserProfileImage", "UserProfile"]).then(profileData => {
@@ -78,7 +94,7 @@ class Profile extends React.Component {
       else {
         var data = {
           'phone': '918756463536'
-      }
+        }
         NetworkManager.callAPI(rest.downloadContact_Phone, 'post', data).then((responseJson) => {
           console.log(responseJson)
           if (responseJson.error == false) {
@@ -93,6 +109,20 @@ class Profile extends React.Component {
         })
       }
     })
+  }
+  getPercentage(item) {
+    if (item.text.includes('img')) {
+      let jewel = parseInt(item.text.replace(/\D/g, ''))
+      let percent = (this.props.game.jewels[jewel].total_count) / (this.props.game.scores.level * 5)
+      if (percent > 1) {
+        return 100
+      }
+      else {
+        return percent * 100
+      }
+    }
+    else
+      return 10
   }
 
   componentWillUnmount() {
@@ -118,8 +148,8 @@ class Profile extends React.Component {
             <View style={styles.profileSection}>
               <View style={styles.firstDiamond}>
                 <View style={styles.mainLeftLayout}>
-                  <Logo width={PixelRatio.roundToNearestPixel(35 * global.scaleFactor)} height={PixelRatio.roundToNearestPixel(30 * global.scaleFactor)} />
-                  <Text style={{ color: 'white' }}>1000</Text>
+                  <Diamond width={PixelRatio.roundToNearestPixel(35 * global.scaleFactor)} height={PixelRatio.roundToNearestPixel(30 * global.scaleFactor)} />
+                  <Text style={{ color: 'white' }}>{this.props.game.jewels[0].count}</Text>
                 </View>
               </View>
               <TouchableOpacity onPress={() => this.props.navigation.navigate('UserProfile')}>
@@ -127,8 +157,8 @@ class Profile extends React.Component {
               </TouchableOpacity>
               <View style={styles.SecondDiamond}>
                 <View style={styles.mainRightLayout}>
-                  <Logo width={PixelRatio.roundToNearestPixel(35 * global.scaleFactor)} height={PixelRatio.roundToNearestPixel(30 * global.scaleFactor)} />
-                  <Text style={{ color: 'white' }}>1000</Text>
+                  <Coin width={PixelRatio.roundToNearestPixel(35 * global.scaleFactor)} height={PixelRatio.roundToNearestPixel(30 * global.scaleFactor)} />
+                  <Text style={{ color: 'white' }}>{this.props.game.jewels[1].count}</Text>
                 </View>
               </View>
             </View>
@@ -154,49 +184,54 @@ class Profile extends React.Component {
           <View style={styles.diamondContainer} >
             <Text style={styles.buyText}>WIN GAME DIAMONDS</Text>
           </View>
-
-          <FlatList
-            data={this.props.achievements}
-            renderItem={({ item, index }) =>
-              <View>
-                <View style={{ padding: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <View style={{ width: '75%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                    <View style={{ padding: 5 }}>
-                      <Text style={{ color: 'white' }}>{item.text}</Text>
-                    </View>
-                    <View style={{ width: '100%', height: 5, zIndex: 1, backgroundColor: color.darkcolor3, borderColor: color.darkcolor3, borderRadius: 3, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
-                      <View style={{ width: "" + 644 / 10 + "%", height: '100%' }}>
-                        <ImageBackground source={JCImages.colorGrad} style={{
-                          width: '100%', height: '100%', justifyContent: 'center',
-                          alignItems: 'center', overflow: 'hidden'
-                        }}></ImageBackground>
+          {this.props.achievements.length > 0 && this.props.userachievements.length > 0 ?
+            <FlatList
+              scrollEnabled={false}
+              data={this.props.achievements}
+              renderItem={({ item, index }) =>
+                <View>
+                  <View style={{ padding: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <View style={{ width: '75%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                      <View style={{ padding: 5 }}>
+                        {item.text.includes('img') ?
+                          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Text style={{ color: 'white', paddingRight: 10 }}>{item.text.split('<x>')[0]} 5</Text>
+                            {renderJewel(item.text.replace(/\D/g, ''), 30, 35, styles.jewelStyle)}
+                          </View>
+                          :
+                          <Text style={{ color: 'white' }}>{item.text.replace('<x>', '5')}</Text>}
+                      </View>
+                      <View style={{ width: '100%', height: 5, zIndex: 1, backgroundColor: color.darkcolor3, borderColor: color.darkcolor3, borderRadius: 3, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
+                        <View style={{ width: "" + this.getPercentage(item) + "%", height: '100%' }}>
+                          <ImageBackground source={JCImages.colorGrad} style={{
+                            width: '100%', height: '100%', justifyContent: 'center',
+                            alignItems: 'center', overflow: 'hidden'
+                          }}></ImageBackground>
+                        </View>
                       </View>
                     </View>
-                  </View>
-                  <View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'center', paddingBottom: 5 }}>
-                      <Text style={{ color: 'white', paddingRight: 5, fontSize: 16 }}>{item.diamond}</Text>
-                      <Diamond height='20' width='20' />
+                    <View>
+                      <View style={{ flexDirection: 'row', justifyContent: 'center', paddingBottom: 5 }}>
+                        <Text style={{ color: 'white', paddingRight: 5, fontSize: 16 }}>{item.diamond}</Text>
+                        <Diamond height='20' width='20' />
+                      </View>
+                      {
+                        this.props.game.scores.level == this.props.userachievements[index].level ?
+                          <TouchableOpacity style={{ backgroundColor: color.lightcolor2, height: 22, width: 70, alignItems: 'center', justifyContent: 'center', borderRadius: 5 }}>
+                            <Text style={{ color: 'white', fontSize: 12 }}>WIN</Text>
+                          </TouchableOpacity> :
+                          <TouchableOpacity style={{ backgroundColor: color.darkcolor1, height: 22, width: 65, alignItems: 'center', borderColor: color.lightcolor2, justifyContent: 'center', borderWidth: 1.5, borderRadius: 5 }}>
+                            <Text style={{ color: color.jcgray, fontSize: 12 }}>LEVEL {this.props.userachievements[index].level}</Text>
+                          </TouchableOpacity>
+                        // console.log(this.props.userachievements, index)
+                      }
                     </View>
-                    {
-                      this.props.game.scores.level == this.props.userachievements[index].level ?
-                        <TouchableOpacity style={{ backgroundColor: color.lightcolor2, height: 22, width: 70, alignItems: 'center', justifyContent: 'center', borderRadius: 5 }}>
-                          <Text style={{ color: 'white', fontSize: 12 }}>WIN</Text>
-                        </TouchableOpacity> :
-                        <TouchableOpacity style={{ backgroundColor: color.darkcolor1, height: 22, width: 65, alignItems: 'center', borderColor: color.lightcolor2, justifyContent: 'center', borderWidth: 1.5, borderRadius: 5 }}>
-                          <Text style={{ color: color.jcgray, fontSize: 12 }}>LEVEL {this.props.userachievements[index].level}</Text>
-                        </TouchableOpacity>
-                      // console.log(this.props.userachievements, index)
-                    }
-
-
                   </View>
+                  <View style={{ backgroundColor: color.darkcolor3, height: 0.4, width: '100%' }}></View>
                 </View>
-                <View style={{ backgroundColor: color.darkcolor3, height: 0.4, width: '100%' }}></View>
-              </View>
-            }
-            keyExtractor={item => item.id}
-          />
+              }
+              keyExtractor={item => item.id}
+            /> : null}
 
           <StatusBar barStyle="light-content" hidden={false} translucent={true} />
         </ScrollView>
@@ -218,7 +253,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-
+    setAchievements: (payload) => dispatch(actions.setAchievements(payload)),
+    setUserAchievement: (payload) => dispatch(actions.setUserAchievement(payload))
   }
 }
 

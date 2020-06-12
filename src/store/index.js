@@ -7,11 +7,12 @@ import { persistStore, persistReducer } from 'redux-persist'
 
 const persistConfig = {
     // Root
+    timeout: 0,
     key: 'root',
     // Storage Method (React Native)
     storage: AsyncStorage,
     // Whitelist (Save Specific Reducers)
-    whitelist: ['game'],
+    whitelist: ['game','tasks','taskdetails','gifttasks','gifttaskdetails','usergifttasks', 'userachievements', 'achievements'],
     // Blacklist (Don't Save Specific Reducers)
     blacklist: [],
 };

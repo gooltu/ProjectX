@@ -21,8 +21,11 @@ import color from '../../../../shared_styles/colors'
 import XP from '../../../../svg_components/XP';
 import { FlatList } from 'react-native-gesture-handler';
 import JCImages from '../../../../../assets/JCImages'
-
-
+import NetworkManager from '../../../../../network/NetworkManager';
+import rest from '../../../../../network/rest';
+import { renderJewel } from '../../../../JCUtils/CommonUtils'
+import actions from '../../../../../actions';
+import Icon from 'react-native-vector-icons/FontAwesome'
 
 class TaskDetail extends React.Component {
 
@@ -30,30 +33,47 @@ class TaskDetail extends React.Component {
         super(props)
         this.task = this.props.navigation.state.params.task
     }
+
+    componentDidMount() {
+        if (!this.props.taskdetails.hasOwnProperty(this.task.task_id))
+            this.getTaskDetails()
+    }
+    getTaskDetails() {
+        let data = {
+            'task_id': this.props.navigation.state.params.task.task_id
+        }
+        NetworkManager.callAPI(rest.getTaskElements, 'POST', data).then(result => {
+            let data = JSON.parse(JSON.stringify(this.props.taskdetails))
+            data[this.task.task_id] = result.taskdetails
+            this.props.setTaskDetails(data)
+        }).catch(error => {
+
+        })
+    }
     jewelView(jewel) {
+        console.log('jewel value')
+        console.log(jewel)
         let jewelView = []
         for (let i = 0; i < jewel.count; i++) {
             jewelView.push(
-                <View style={{ paddingHorizontal: 3 }}>
-                    <Logo height='25' width='25' />
-                </View>
+                renderJewel(jewel.jeweltype_id, 30, 30, styles.jewelStyle)
             )
         }
         return jewelView
     }
-    CheckAvailablity(RequiredJewel){
-    
-        let jewel =  this.props.game.jewels.filter((jewelType)=>{
-           return (RequiredJewel.jeweltype_id===jewelType.jeweltype_id)
-         })
-         console.log(RequiredJewel.count, jewel)
-         if(jewel[0].count<RequiredJewel.count){
-           return true
-         }
-         else
-         return false
-     
-       }
+    CheckAvailablity(RequiredJewel) {
+
+        let jewel = this.props.game.jewels.filter((jewelType) => {
+            return (RequiredJewel.jeweltype_id === jewelType.jeweltype_id)
+        })
+        console.log(RequiredJewel.count, jewel)
+        if (jewel[0].count < RequiredJewel.count) {
+            return true
+        }
+        else
+            return false
+
+    }
     render() {
         return (
             <SafeAreaView style={styles.mainContainer}>
@@ -73,28 +93,29 @@ class TaskDetail extends React.Component {
                 <View>
                     <Text style={styles.CollectText}>COLLECT JEWELS</Text>
                 </View>
-                <View style={{ paddingBottom: 20, flexDirection:'column' }}>
-                    {
-                        this.props.taskdetails[this.task.task_id].map((jewel) =>
-                            <View style={{ flexDirection: 'row',padding: 5 }}>
-                                <View style={{ flexDirection: 'row', width:'85%',paddingLeft:'15%', alignItems:'center', justifyContent:'center' }}>
-                                    {this.jewelView(jewel)}
+                {this.props.taskdetails.hasOwnProperty(this.task.task_id) ?
+                    <View style={{ paddingBottom: 20, flexDirection: 'column' }}>
+                        {
+                            this.props.taskdetails[this.task.task_id].map((jewel) =>
+                                <View style={{ flexDirection: 'row', padding: 5 }}>
+                                    <View style={{ flexDirection: 'row', width: '85%', paddingLeft: '15%', alignItems: 'center', justifyContent: 'center' }}>
+                                        {this.jewelView(jewel)}
+                                    </View>
+                                    <View style={{ width: '15%' }}>
+                                        {
+                                            this.CheckAvailablity(jewel) ? <Icon name='close' color='red' size={20} /> : <Icon name='check' color='green' size={20} />
+                                        }
+                                    </View>
                                 </View>
-                                <View style={{width:'15%'}}>
-                                    {
-                                         this.CheckAvailablity(jewel)?<Text>Less</Text>:<Text>Enough</Text>
-                                    }
-                                </View>
-                            </View>
-                        )
-                    }
+                            )
+                        }
 
-                </View>
+                    </View> : null}
 
                 <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
 
 
-                <TouchableOpacity style={{justifyContent: 'center', alignItems: 'center', marginTop:30 }}>
+                <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }}>
                     <View style={{ width: 220, height: 45, zIndex: 1, backgroundColor: color.darkcolor3, borderColor: color.darkcolor3, borderRadius: 8, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
                         <View style={{ width: "100%", height: '100%' }}>
                             <ImageBackground source={JCImages.colorGrad} style={{
@@ -127,7 +148,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-
+        setTaskDetails: (payload) => (dispatch(actions.setTaskDetails(payload)))
     }
 }
 

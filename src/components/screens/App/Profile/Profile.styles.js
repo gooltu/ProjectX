@@ -31,6 +31,8 @@ export default styles = StyleSheet.create({
         width: PixelRatio.roundToNearestPixel(20 * global.scaleFactor)
     },
     ProfilePicture: {
+        borderWidth:2,
+        borderColor: 'white',
         borderRadius: PixelRatio.roundToNearestPixel(100 * global.scaleFactor),
         width: PixelRatio.roundToNearestPixel(100 * global.scaleFactor),
         height: PixelRatio.roundToNearestPixel(100 * global.scaleFactor),
@@ -80,5 +82,11 @@ export default styles = StyleSheet.create({
     buyText: {
         color: 'grey',
         fontSize: PixelRatio.roundToNearestPixel(13*global.scaleFactor)
+    },
+    jewelStyle: {
+        width: '100%',
+        height: '100%',
+        alignSelf: 'center',
+        overflow: 'hidden'
     }
 })

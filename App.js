@@ -14,6 +14,7 @@ import { Provider } from 'react-redux';
 import colors from "./src/components/shared_styles/colors";
 import { PersistGate } from 'redux-persist/integration/react';
 import messaging from '@react-native-firebase/messaging';
+import admob, { MaxAdContentRating } from '@react-native-firebase/admob';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -23,6 +24,21 @@ export default class App extends React.Component {
     global.cookie = ''
   }
   componentDidMount() {
+    admob()
+      .setRequestConfiguration({
+        // Update all future requests suitable for parental guidance
+        maxAdContentRating: MaxAdContentRating.PG,
+
+        // Indicates that you want your content treated as child-directed for purposes of COPPA.
+        tagForChildDirectedTreatment: true,
+
+        // Indicates that you want the ad request to be handled in a
+        // manner suitable for users under the age of consent.
+        tagForUnderAgeOfConsent: true,
+      })
+      .then(() => {
+        // Request config successfully set!
+      });
     this.handleBackgroundState = messaging().onNotificationOpenedApp(remoteMessage => {
       console.log(
         'Notification caused app to open from background state:',

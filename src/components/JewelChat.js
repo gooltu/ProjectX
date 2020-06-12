@@ -167,18 +167,11 @@ const AppMainStack = createStackNavigator({
     },
     GiftTaskDetail: {
         screen: GiftTaskDetail,
-        navigationOptions: {
-            headerBackTitle: null,
-            headerStyle: {
-                backgroundColor: colors.darkcolor1,
-                shadowOpacity: 0,
-            },
+        navigationOptions: ({ navigation }) => {
+            return {
+                header: <CustomHeader navigation={navigation} />
+            };
         }
-        // ({ navigation }) => {
-        //     return {
-        //         header: <CustomHeader navigation={navigation} />
-        //     };
-        //}
     },
     SuccessFullGiftRedeem: {
         screen: SuccessFullGiftRedeem,

@@ -12,7 +12,14 @@ export default {
     getUserPtofile: '/getUserProfile',
     awsToken: '/awsToken',
     getGameState: '/getGameState',
-    pickJewel: '/pickJewel'
+    pickJewel: '/pickJewel',
+    getGiftTasks: '/getGiftTasks',
+    getGiftTasksElements: '/getGiftTasksElements',
+    getGiftTaskLevel:'/getGiftTaskLevel',
+    getTasks: '/getTasks',
+    getTaskElements: '/getTaskElements',
+    getAchievements: '/getAchievements',
+    getUsersAchievement: '/getUsersAchievement'
 }
 
 

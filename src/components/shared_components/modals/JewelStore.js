@@ -18,6 +18,12 @@ import { renderJewel } from '../../JCUtils/CommonUtils'
 import styles from './Modal.styles'
 import JCImages from '../../../assets/JCImages';
 import actions from '../../../actions';
+import { InterstitialAd, RewardedAd, RewardedAdEventType, BannerAdSize, BannerAd, TestIds } from '@react-native-firebase/admob';
+
+// const rewarded = RewardedAd.createForAdRequest(TestIds.REWARDED, {
+//     requestNonPersonalizedAdsOnly: true,
+//     keywords: ['fashion', 'clothing'],
+// });
 
 class JewelStore extends React.Component {
     constructor(props) {
@@ -25,8 +31,18 @@ class JewelStore extends React.Component {
     }
 
     componentDidMount() {
+        // rewarded.load();
+        // let eventListener = rewarded.onAdEvent((type, error, reward) => {
+        //     if (type === RewardedAdEventType.LOADED) {
+        //        console.log('loaded')
+        //     }
+
+        //     if (type === RewardedAdEventType.EARNED_REWARD) {
+        //         console.log('User earned reward of ', reward);
+        //     }
+        // });
         console.log('test mount')
-        if (!(Object.keys(this.props.game).length > 0))
+        if (!(Object.keys(this.props.game.scores).length > 0))
             this.props.loadGameState()
     }
 
@@ -118,11 +134,22 @@ class JewelStore extends React.Component {
                             }
                         />
                     </View>
-                    <View style={{flex:1, justifyContent: 'flex-end', width: '100%' }}>
-                        <View style={{ marginTop: 20, height: 100, backgroundColor: 'green' }}>
-                            <Text>Banner ad</Text>
+                    <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+                        <View style={{ padding: 20, height: 100 }}>
+                            {/* <BannerAd
+                                unitId={TestIds.BANNER}
+                                size={BannerAdSize.SMART_BANNER}
+                                requestOptions={{
+                                    requestNonPersonalizedAdsOnly: true,
+                                }} /> */}
                         </View>
                     </View>
+                    <Button
+                        title="Show Rewarded Ad"
+                        onPress={() => {
+                            rewarded.show();
+                        }}
+                    />
                 </View>
             </SafeAreaView>
         );
