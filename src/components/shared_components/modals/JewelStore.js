@@ -42,7 +42,7 @@ class JewelStore extends React.Component {
         //     }
         // });
         console.log('test mount')
-        if (!(Object.keys(this.props.game.scores).length > 0))
+      //  if (!(Object.keys(this.props.game.scores).length > 0))
             this.props.loadGameState()
     }
 

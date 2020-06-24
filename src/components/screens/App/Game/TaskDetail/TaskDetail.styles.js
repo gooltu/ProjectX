@@ -7,6 +7,31 @@ export default styles = StyleSheet.create({
         flex:1,
         backgroundColor: color.darkcolor1
     },
+    activityIndicatorWrapper: {
+        position: 'absolute',
+        top: '40%',
+        paddingHorizontal: '4%',
+        backgroundColor: color.lightcolor1,
+        //opacity: 0.8,
+        height: PixelRatio.roundToNearestPixel(100 * global.scaleFactor),
+        minWidth: PixelRatio.roundToNearestPixel(95 * global.scaleFactor),
+        justifyContent: 'center',
+        alignSelf: 'center',
+        borderRadius: PixelRatio.roundToNearestPixel(15 * global.moderateScaleFactor),
+        flex: 1,
+    },
+    activityIndicator: {
+        paddingTop: '15%',
+    },
+    loadingText: {
+        color: 'white',
+        fontSize: PixelRatio.roundToNearestPixel(17 * global.scaleFactor),
+        flexWrap: 'wrap',
+        alignSelf: 'center',
+        paddingTop: '1%',
+        paddingBottom: '2%',
+    },
+   
     scrollBarItem: {
         flexDirection: 'column',
         justifyContent: 'space-between',

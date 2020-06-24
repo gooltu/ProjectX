@@ -24,6 +24,7 @@ export default class App extends React.Component {
     global.cookie = ''
   }
   componentDidMount() {
+  
     admob()
       .setRequestConfiguration({
         // Update all future requests suitable for parental guidance
@@ -63,18 +64,19 @@ export default class App extends React.Component {
           // setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
         }
       });
-    this.messageListener = messaging().onMessage(async remoteMessage => {
-      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-    });
-
+   
     // return unsubscribe;
     this.getStoragePermission()
     console.log(this.getFCMToken())
-
+    this.messageListener = messaging().onMessage(async remoteMessage => {
+      console.log('testy')
+      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    });
+    console.log(messaging())
   }
 
   componentWillUnmount() {
-    this.messageListener();
+  //  this.messageListener();
   }
   getToken = async () => {
     try {
@@ -154,6 +156,7 @@ export default class App extends React.Component {
         console.warn(err);
       }
     }
+    
   }
 
 

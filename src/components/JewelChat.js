@@ -175,6 +175,11 @@ const AppMainStack = createStackNavigator({
     },
     SuccessFullGiftRedeem: {
         screen: SuccessFullGiftRedeem,
+        navigationOptions: ({ navigation }) => {
+            return {
+                header: null
+            };
+        }
     },
     FriendProfile: {
         screen: FriendProfile,

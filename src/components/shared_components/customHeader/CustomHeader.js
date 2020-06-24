@@ -165,7 +165,7 @@ class CustomHeader extends React.Component {
                 <View style={styles.levelProgressContainer}>
                     <View style={styles.levelCount}>
                         <ImageBackground source={require('../../../assets/ColorGrad.jpg')} style={styles.imageBackground}>
-                            <Text style={styles.count}>{this.props.scores.level<9?'00'+this.props.scores.level:this.props.scores.level}</Text>
+                            <Text style={styles.count}>{this.props.scores.level < 9 ? '00' + this.props.scores.level : this.props.scores.level}</Text>
                         </ImageBackground>
                     </View>
                     <View style={styles.barContainer}>
@@ -174,12 +174,12 @@ class CustomHeader extends React.Component {
                         </View>
                         <View style={styles.progressBarOuterContainer}>
                             <View style={styles.progressBarInnerContainer}>
-                                <View style={{ width: this.props.scores.level / 10 + '%', height: '100%' }}>
+                                <View style={{ width: (this.props.scores.points*100) / this.props.scores.max_level_points + '%', height: '100%' }}>
                                     <ImageBackground source={require('../../../assets/ColorGrad.jpg')} style={styles.progressBackground}></ImageBackground>
                                 </View>
                             </View>
                             <View style={styles.levelData}>
-                                <Text style={styles.levelDataText}>{this.props.scores.level<9?'00'+this.props.scores.level:this.props.scores.level}/1000</Text>
+                                <Text style={styles.levelDataText}>{this.props.scores.points < 9 ? '00' + this.props.scores.points : this.props.scores.points}/{this.props.scores.max_level_points}</Text>
                             </View>
 
                         </View>

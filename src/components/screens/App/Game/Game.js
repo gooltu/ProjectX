@@ -9,6 +9,7 @@ import {
   View,
   Text,
   ScrollView,
+  FlatList,
   TouchableOpacity
 } from 'react-native';
 import styles from './Game.styles'
@@ -17,7 +18,6 @@ import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
 import color from '../../../shared_styles/colors'
 import XP from '../../../svg_components/XP';
-import { FlatList } from 'react-native-gesture-handler';
 import NetworkManager from '../../../../network/NetworkManager';
 import rest from '../../../../network/rest';
 import actions from '../../../../actions';
@@ -39,22 +39,21 @@ class Game extends React.Component {
   }
 
   getTaskDetails() {
-    if (this.props.tasks.length == 0) {
+   // if (this.props.tasks.length == 0) {
       NetworkManager.callAPI(rest.getTasks, 'POST', null).then(result => {
         console.log(result)
         this.props.setTaskData(result.tasks)
       }).catch(error => {
       })
-    }
+   // }
   }
   getGiftTask(page) {
-    console.log('page',page)
+    console.log('page', page)
     NetworkManager.callAPI(rest.getGiftTasks, 'POST', { page: page }).then(result => {
       console.log(result.gifttasks)
       if (result.gifttasks.length > 0) {
         this.setState({
-          reachedEnd: false,
-          page: page + 1
+          reachedEnd: false
         })
         let data = page == 0 ? [] : JSON.parse(JSON.stringify(this.props.gifttasks))
         let dataToInsert = { title: 'section' + page, data: [result.gifttasks] }
@@ -78,6 +77,17 @@ class Game extends React.Component {
       <FlatList numColumns={2}
         style={{ padding: 10 }}
         data={data}
+        onEndReached={() => {
+          console.log('test end reached')
+          if (this.state.reachedEnd == false) {
+            this.getGiftTask(this.state.page + 1)
+          }
+          this.setState({
+            page: this.state.page + 1
+          })
+        }
+        }
+        ListFooterComponent={this._renderSectionFooter}
         renderItem={({ item, index }) =>
           item.cash === 0 ?
             <TouchableOpacity style={{ width: '48%', borderRadius: 10, padding: 5, margin: 5, backgroundColor: color.darkcolor3 }}
@@ -112,7 +122,38 @@ class Game extends React.Component {
       />
     )
   }
-  _renderSectionHeader = ({ section, sectionIndex }) => {
+  _renderSectionHeader = () => {
+    return (
+      //  item.title == 'section0' ? 
+      <View>
+        <View style={{ paddingHorizontal: 15, paddingTop: 10 }}>
+          <Text style={{ color: color.jcgray, fontSize: 11, }}>WIN GAME POINTS AND GAME COINS</Text>
+        </View>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{ paddingHorizontal: 10, paddingBottom: 10 }}>
+          {
+            this.props.tasks.map((task) => (
+              <View style={styles.scrollBar}>
+                <TouchableOpacity style={styles.scrollBarItem} onPress={() => {
+                  this.props.navigation.navigate("TaskDetail", { task: task })
+                }}>
+                  <View style={styles.itemOne}>
+                    <Coin height="30" width="30" />
+                    <Text style={styles.itemText}>{task.coins}</Text>
+                  </View>
+                  <View style={styles.itemOne}>
+                    <XP height="30" width="30" />
+                    <Text style={styles.itemText}>{task.points}</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            ))
+          }
+        </ScrollView>
+      </View>
+      //: null
+    )
+  }
+  _renderSectionFooter = () => {
     return (
       // <BannerAd
       //   unitId={TestIds.BANNER}
@@ -121,7 +162,7 @@ class Game extends React.Component {
       //     requestNonPersonalizedAdsOnly: true,
       //   }} />
       <View>
-        <Text>header replace by ads</Text>
+        <Text>footer replace by ads</Text>
       </View>
     )
   }
@@ -129,47 +170,21 @@ class Game extends React.Component {
   render() {
     return (
       <SafeAreaView style={styles.mainContainer}>
-        <ScrollView>
-        <View style={{ paddingHorizontal: 15, paddingTop: 10 }}>
-          <Text style={{ color: color.jcgray, fontSize: 11, }}>WIN GAME POINTS AND GAME COINS</Text>
-        </View>
-        <View>
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{ paddingHorizontal: 10, paddingBottom: 10 }}>
-            {
-              this.props.tasks.map((task) => (
-                <View style={styles.scrollBar}>
-                  <TouchableOpacity style={styles.scrollBarItem} onPress={() => {
-                    this.props.navigation.navigate("TaskDetail", { task: task })
-                  }}>
-                    <View style={styles.itemOne}>
-                      <Coin height="30" width="30" />
-                      <Text style={styles.itemText}>{task.coins}</Text>
-                    </View>
-                    <View style={styles.itemOne}>
-                      <XP height="30" width="30" />
-                      <Text style={styles.itemText}>{task.points}</Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              ))
-            }
-          </ScrollView>
-        </View>
-        <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
-        {this.props.gifttasks.length > 0 ?
-          <SectionList
-            renderItem={({ item }) => (this._renderList(item))}
-            renderSectionHeader={this._renderSectionHeader}
-            sections={this.props.gifttasks}
-            keyExtractor={(item, index) => item + index}
-            onEndReachedThreshold={0.5}
-            onEndReached={() => {
-              if (this.state.reachedEnd == false)
-                this.getGiftTask(this.state.page)
-            }
-            }
-          /> : null}
-          </ScrollView>
+        
+          <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
+          {this.props.gifttasks.length > 0 ?
+            <FlatList
+              bounces={false}
+              data={this.props.gifttasks}
+              renderItem={({ item, index }) =>
+                this._renderList(item.data[0])
+              }
+              onEndReachedThreshold={0.5}
+              ListHeaderComponent={this._renderSectionHeader}
+              
+              keyExtractor={(item, index) => item + index}
+            />
+            : null}
         <StatusBar barStyle="light-content" hidden={false} translucent={true} />
       </SafeAreaView>
     );

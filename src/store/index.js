@@ -12,7 +12,7 @@ const persistConfig = {
     // Storage Method (React Native)
     storage: AsyncStorage,
     // Whitelist (Save Specific Reducers)
-    whitelist: ['game','tasks','taskdetails','gifttasks','gifttaskdetails','usergifttasks', 'userachievements', 'achievements'],
+    whitelist: ['game','tasks','taskdetails','gifttaskdetails','usergifttasks', 'userachievements', 'achievements'],
     // Blacklist (Don't Save Specific Reducers)
     blacklist: [],
 };

@@ -19,7 +19,14 @@ export default {
     getTasks: '/getTasks',
     getTaskElements: '/getTaskElements',
     getAchievements: '/getAchievements',
-    getUsersAchievement: '/getUsersAchievement'
+    getUsersAchievement: '/getUsersAchievement',
+    redeemTask:'/redeemTask',
+    checkTaskCompletion:'/checkTaskCompletion',
+    getNewTaskOnTaskCompletion:'/getNewTaskOnTaskCompletion',
+    redeemGiftTask:'/redeemGiftTask',
+    checkGiftTaskCompletion: '/checkGiftTaskCompletion',
+    redeemAchievement: '/redeemAchievement'
+
 }
 
 

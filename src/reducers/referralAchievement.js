@@ -9,12 +9,14 @@ let initialState = {
             total_count:0,
         },
         {
+            achievement_id : 2,
+            total_count:0,
+        },
+        {
             achievement_id : 18-32,
             total_count:0,
         }
     ]
-
-
 }   
 
         

@@ -3,7 +3,7 @@ import {
   Image,
   ActivityIndicator,
   AsyncStorage,
-  Button,
+  Platform,
   StatusBar,
   StyleSheet,
   View,
@@ -35,6 +35,9 @@ class TaskDetail extends React.Component {
     this.giftTask = this.props.navigation.state.params.giftTask
     console.log(this.giftTask)
     this.count = 0
+    this.state ={
+      isLaoding: false
+    }
   }
   jewelView(jewel) {
     let jewelView = []
@@ -46,25 +49,53 @@ class TaskDetail extends React.Component {
     return jewelView
   }
 
+  getCurrentCycle(dt) {
+    var tdt = new Date(dt.valueOf());
+    var dayn = (dt.getDay() + 6) % 7;
+    tdt.setDate(tdt.getDate() - dayn + 3);
+    var firstThursday = tdt.valueOf();
+    tdt.setMonth(0, 1);
+    if (tdt.getDay() !== 4) {
+      tdt.setMonth(0, 1 + ((4 - tdt.getDay()) + 7) % 7);
+    }
+    return 1 + Math.ceil((firstThursday - tdt) / 604800000);
+  }
+
   componentDidMount() {
     let data = {
       'gifttask_id': this.giftTask.id
     }
-    NetworkManager.callAPI(rest.getGiftTasksElements, 'POST', data).then(result => {
-      console.log(result)
-      let data = JSON.parse(JSON.stringify(this.props.gifttaskdetails))
-      data[this.giftTask.id] = result.gifttaskdetails
-      this.props.setGiftTaskDetails(data)
-    }).catch(error => {
+    if (!this.props.gifttaskdetails.hasOwnProperty(this.giftTask.id)) {
+      NetworkManager.callAPI(rest.getGiftTasksElements, 'POST', data).then(result => {
+        console.log(result)
+        let data = JSON.parse(JSON.stringify(this.props.gifttaskdetails))
+        data[this.giftTask.id] = result.gifttaskdetails
+        this.props.setGiftTaskDetails(data)
+      }).catch(error => {
 
-    })
-    NetworkManager.callAPI(rest.getGiftTaskLevel, 'POST', data).then(result => {
-      let data = JSON.parse(JSON.stringify(this.props.usergifttasks))
-      data[this.giftTask.id] = result.gifttaskusers[0]
-      this.props.setUserGiftTask(data)
-    }).catch(error => {
+      })
+    }
+    if (!this.props.usergifttasks.hasOwnProperty(this.giftTask.id)) {
+      NetworkManager.callAPI(rest.getGiftTaskLevel, 'POST', data).then(result => {
+        let data = JSON.parse(JSON.stringify(this.props.usergifttasks))
+        data[this.giftTask.id] = result.gifttaskusers[0]
+        this.props.setUserGiftTask(data)
+      }).catch(error => {
 
-    })
+      })
+    }
+    else if (this.props.usergifttasks.hasOwnProperty(this.giftTask.id)) {
+      if (this.props.usergifttasks[this.giftTask.id].cycle < parseInt((new Date()).getFullYear() + '' + this.getCurrentCycle(new Date()))) {
+        console.log((new Date()).getFullYear() + '' + this.getCurrentCycle(new Date()), 'curewent', this.props.usergifttasks[this.giftTask.id].cycle)
+        NetworkManager.callAPI(rest.getGiftTaskLevel, 'POST', data).then(result => {
+          let data = JSON.parse(JSON.stringify(this.props.usergifttasks))
+          data[this.giftTask.id] = result.gifttaskusers[0]
+          this.props.setUserGiftTask(data)
+        }).catch(error => {
+
+        })
+      }
+    }
   }
 
   CheckAvailablity(RequiredJewel) {
@@ -82,10 +113,39 @@ class TaskDetail extends React.Component {
     }
   }
   checkEligibility() {
-    if (this.props.gifttaskdetails[this.giftTask.id].length === this.count)
+    console.log(this.props.gifttaskdetails[this.giftTask.id].length, this.count)
+    if (this.props.gifttaskdetails[this.giftTask.id].length === this.count) {
+      this.count=0
       return true
-    else
+    }
+    else {
+      this.count=0
       return false
+    }
+  }
+  winGift(){
+    let data =  {
+      id: this.props.usergifttasks[this.giftTask.id].id,
+      gifttask_id: this.props.usergifttasks[this.giftTask.id].gifttask_id
+    }
+    this.setState({
+      isLaoding: true
+    })
+    NetworkManager.callAPI(rest.redeemGiftTask, 'POST', data).then(result=>{
+      setTimeout(() => {
+        NetworkManager.callAPI(rest.checkGiftTaskCompletion, 'POST', data).then(completionStatus=>{
+          this.setState({
+            isLaoding: false
+          })
+          this.props.navigation.navigate('SuccessFullGiftRedeem')
+        }).catch(err=>{
+
+        })
+      }, 2000);
+    }).catch(error=>{
+
+    })
+    
   }
   render() {
     return (
@@ -139,7 +199,7 @@ class TaskDetail extends React.Component {
           </View> : null}
         <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
 
-        {this.props.gifttaskdetails.hasOwnProperty(this.giftTask.id) && this.props.usergifttasks.hasOwnProperty(this.giftTask.id)?
+        {this.props.gifttaskdetails.hasOwnProperty(this.giftTask.id) && this.props.usergifttasks.hasOwnProperty(this.giftTask.id) ?
           this.props.game.scores.level < this.props.usergifttasks[this.giftTask.id].level ?
             <View style={{ alignItems: 'center', paddingTop: 10 }}>
               <View style={{ justifyContent: 'center', width: 150, alignItems: 'center', backgroundColor: color.darkcolor2, borderRadius: 5, borderWidth: 1, borderColor: color.jcgray, paddingHorizontal: 25, paddingVertical: 10 }}>
@@ -158,7 +218,7 @@ class TaskDetail extends React.Component {
                   </View>
                 </View>
                 <TouchableOpacity
-                  onPress={() => this.props.navigation.navigate('SuccessFullGiftRedeem')}
+                  onPress={() => this.winGift()}
                   style={{ position: 'absolute', width: '100%', height: '100%', zIndex: 2, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                   <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>WIN GIFT</Text>
                 </TouchableOpacity>
@@ -175,7 +235,18 @@ class TaskDetail extends React.Component {
 
         </View>
 
-
+        {
+                    this.state.isLaoding ?
+                        <View style={styles.activityIndicatorWrapper}>
+                            <ActivityIndicator
+                                color={Platform.OS === 'ios' ? 'white' : '#66cdaa'}
+                                size='large'
+                                style={styles.activityIndicator}
+                            />
+                            <Text style={styles.loadingText}>Processing...</Text>
+                        </View>
+                        : null
+                }
       </SafeAreaView>
     );
   }

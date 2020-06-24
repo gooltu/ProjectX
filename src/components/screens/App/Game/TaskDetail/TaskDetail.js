@@ -8,9 +8,11 @@ import {
     StyleSheet,
     View,
     Text,
+    Platform,
     ScrollView,
     TouchableOpacity,
-    ImageBackground
+    ImageBackground,
+    Alert
 } from 'react-native';
 import styles from './TaskDetail.styles'
 import Coin from '../../../../svg_components/Coin';
@@ -31,6 +33,9 @@ class TaskDetail extends React.Component {
 
     constructor(props) {
         super(props)
+        this.state = {
+            isLaoding: false
+        }
         this.task = this.props.navigation.state.params.task
     }
 
@@ -74,6 +79,15 @@ class TaskDetail extends React.Component {
             return false
 
     }
+    CheckAvailablityForAllJewels() {
+        let success = true
+        this.props.taskdetails[this.task.task_id].map((jewel) => {
+            if (this.CheckAvailablity(jewel)) {
+                success = false
+            }
+        })
+        return success
+    }
     render() {
         return (
             <SafeAreaView style={styles.mainContainer}>
@@ -114,8 +128,53 @@ class TaskDetail extends React.Component {
 
                 <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
 
+                <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }} onPress={() => {
+                    let data = {
+                        task_id: this.task.task_id,
+                        id: this.task.id
+                    }
+                    if (this.CheckAvailablityForAllJewels()) {
+                        this.setState(({
+                            isLaoding: true
+                        }))
+                        NetworkManager.callAPI(rest.redeemTask, 'POST', data).then((result) => {
 
-                <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }}>
+                            setTimeout(() => {
+                                NetworkManager.callAPI(rest.checkTaskCompletion, 'POST', data).then((taskcompResult) => {
+                                    NetworkManager.callAPI(rest.getNewTaskOnTaskCompletion, 'GET', null).then((newTask) => {
+                                        console.log('new Task', newTask)
+                                        this.setState(({
+                                            isLaoding: false
+                                        }))
+                                        let data = JSON.parse(JSON.stringify(this.props.tasks))
+                                        let taskIndex
+                                        data.map((item, index) => {
+                                            if (item.id == this.task.id && item.task_id == this.task.task_id) {
+                                                taskIndex = index
+                                            }
+                                        })
+                                        console.log('new Task1', taskIndex)
+                                        if (newTask.newtask.length > 0)
+                                            data.splice(taskIndex, 1, newTask.newtask[0])
+                                        else
+                                            data.splice(taskIndex, 1)
+                                        this.props.setTaskData(data)
+                                        this.props.loadGameState()
+                                        this.props.navigation.navigate('SuccessFullGiftRedeem')
+                                    }).catch(error => {
+                                        console.log(error)
+                                    })
+                                }).catch(error => {
+
+                                })
+                            }, 2000);
+
+                        }).catch(error => {
+
+                        })
+                    }
+                }}>
+
                     <View style={{ width: 220, height: 45, zIndex: 1, backgroundColor: color.darkcolor3, borderColor: color.darkcolor3, borderRadius: 8, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
                         <View style={{ width: "100%", height: '100%' }}>
                             <ImageBackground source={JCImages.colorGrad} style={{
@@ -128,6 +187,19 @@ class TaskDetail extends React.Component {
                         <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>WIN POINTS & COINS</Text>
                     </View>
                 </TouchableOpacity>
+                {
+                    this.state.isLaoding ?
+                        <View style={styles.activityIndicatorWrapper}>
+                            <ActivityIndicator
+                                color={Platform.OS === 'ios' ? 'white' : '#66cdaa'}
+                                size='large'
+                                style={styles.activityIndicator}
+                            />
+                            <Text style={styles.loadingText}>Processing...</Text>
+                        </View>
+                        : null
+                }
+
             </SafeAreaView>
         );
     }
@@ -148,7 +220,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        setTaskDetails: (payload) => (dispatch(actions.setTaskDetails(payload)))
+        setTaskDetails: (payload) => (dispatch(actions.setTaskDetails(payload))),
+        setTaskData: (payload) => dispatch(actions.setTaskData(payload)),
+        loadGameState: () => dispatch(actions.loadGameState())
     }
 }
 

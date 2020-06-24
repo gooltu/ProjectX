@@ -216,7 +216,7 @@ class Profile extends React.Component {
                         <Diamond height='20' width='20' />
                       </View>
                       {
-                        this.props.game.scores.level == this.props.userachievements[index].level ?
+                        this.props.game.scores.level >= this.props.userachievements[index].level ?
                           <TouchableOpacity style={{ backgroundColor: color.lightcolor2, height: 22, width: 70, alignItems: 'center', justifyContent: 'center', borderRadius: 5 }}>
                             <Text style={{ color: 'white', fontSize: 12 }}>WIN</Text>
                           </TouchableOpacity> :
