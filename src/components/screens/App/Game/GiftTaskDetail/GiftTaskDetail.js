@@ -137,6 +137,10 @@ class TaskDetail extends React.Component {
           this.setState({
             isLaoding: false
           })
+          let data = JSON.parse(JSON.stringify(this.props.usergifttasks))
+          data[this.giftTask.id].done = 1
+          this.props.setUserGiftTask(data)
+          this.props.loadGameState()
           this.props.navigation.navigate('SuccessFullGiftRedeem')
         }).catch(err=>{
 
@@ -208,7 +212,7 @@ class TaskDetail extends React.Component {
             </View>
             :
             this.checkEligibility() ?
-              <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }}>
+              <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }}  disabled={this.props.usergifttasks[this.giftTask.id].done==1?true: false}>
                 <View style={{ width: 220, height: 45, zIndex: 1, backgroundColor: color.darkcolor3, borderColor: color.darkcolor3, borderRadius: 8, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
                   <View style={{ width: "100%", height: '100%' }}>
                     <ImageBackground source={JCImages.colorGrad} style={{
@@ -218,9 +222,10 @@ class TaskDetail extends React.Component {
                   </View>
                 </View>
                 <TouchableOpacity
+                  disabled={this.props.usergifttasks[this.giftTask.id].done==1?true: false}
                   onPress={() => this.winGift()}
                   style={{ position: 'absolute', width: '100%', height: '100%', zIndex: 2, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                  <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>WIN GIFT</Text>
+                  <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>{this.props.usergifttasks[this.giftTask.id].done==1?'ALREADY WON':'WIN GIFT'}</Text>
                 </TouchableOpacity>
               </TouchableOpacity> :
               <View style={{ alignItems: 'center', paddingTop: 10 }}>
@@ -268,7 +273,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     setGiftTaskDetails: (payload) => dispatch(actions.setGiftTaskDetails(payload)),
-    setUserGiftTask: (payload) => dispatch(actions.setUserGiftTask(payload))
+    setUserGiftTask: (payload) => dispatch(actions.setUserGiftTask(payload)),
+    loadGameState: () => dispatch(actions.loadGameState())
 
   }
 }

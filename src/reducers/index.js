@@ -16,5 +16,5 @@ import userachievements from './userachievements'
 import referralAchievement from './referralAchievement'
 
 export default combineReducers({
-    mytoken, appstate ,network, game, chatslist, chatroom, contactlist, achievements,userachievements, tasks,taskdetails, gifttasks, usergifttasks, gifttaskdetails,referralAchievement
+    mytoken, appstate ,network, game, chatslist, chatroom, contactlist, achievements, userachievements, tasks,taskdetails, gifttasks, usergifttasks, gifttaskdetails,referralAchievement
 });

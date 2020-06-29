@@ -3,8 +3,8 @@ import { store } from '../store'
 import actions from '../actions'
 import AsyncStorage from '@react-native-community/async-storage';
 import db from '../db/localdatabase'
-const URL = 'ws://13.127.197.210:5280/ws-xmpp';
-
+// const URL = 'ws://13.127.197.210:5280/ws-xmpp';
+const URL = 'ws://localhost:5280/ws-xmpp';
 let connection = new XMPP.Strophe.Connection(URL);
 connection.registerSASLMechanism = XMPP.Strophe.SASLXOAuth2;
 

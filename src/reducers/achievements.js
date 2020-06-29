@@ -1,4 +1,5 @@
-import { SET_ACHIEVEMENT_DATA } from '../actions/ActionTypes'
+import { SET_ACHIEVEMENT_DATA } from '../actions/ActionTypes';
+
 let initialState = {
     achievements: []
 }

@@ -69,16 +69,21 @@ class Profile extends React.Component {
     })
     this.getAchievements()
   }
-  getAchievements() {
+  getAchievements = () => {
     if (!this.props.userachievements.length > 0)
       NetworkManager.callAPI(rest.getUsersAchievement, 'POST', null).then(result => {
         this.props.setUserAchievement(result.userachievements)
       }).catch(error => {
 
       })
-    if (!this.props.achievements.length > 0)
+    //if (!this.props.achievements.length > 0)
       NetworkManager.callAPI(rest.getAchievements, 'POST', null).then(result => {
         this.props.setAchievements(result.achievements)
+      }).catch(error => {
+
+      })
+      NetworkManager.callAPI(rest.getChildren, 'GET', null).then(result => {
+    //    this.props.setAchievements(result.achievements)
       }).catch(error => {
 
       })
@@ -240,9 +245,8 @@ class Profile extends React.Component {
   }
 }
 
-
 function mapStateToProps(state) {
-  console.log(state.achievements)
+  console.log('state.achievements.achievements',state.userachievements.userachivements)
   return {
     userachievements: state.userachievements.userachivements,
     achievements: state.achievements.achievements,

@@ -25,8 +25,12 @@ export default {
     getNewTaskOnTaskCompletion:'/getNewTaskOnTaskCompletion',
     redeemGiftTask:'/redeemGiftTask',
     checkGiftTaskCompletion: '/checkGiftTaskCompletion',
-    redeemAchievement: '/redeemAchievement'
-
+    redeemAchievement: '/redeemAchievement',
+    getChildren: '/getChildren',
+    getLeaderboard: '/getLeaderboard',
+    getAllGiftsWon: '/getAllGiftsWon',
+    getWallet: '/getWallet',
+    redeemMoney: '/redeemMoney'
 }
 
 

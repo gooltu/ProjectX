@@ -58,7 +58,7 @@ class ImageEdit extends React.Component {
     uploadImagetoAWS = (image, pic, responseJson) => {
         AWS.config.region = 'ap-south-1'
         AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-            IdentityPoolId: 'ap-south-1:c595f34e-88f7-4bc7-9fd5-fe8881952dc1',
+            IdentityPoolId: 'ap-south-1:7dedf548-261e-4e7f-b9e6-83f09b16817b',
             IdentityId: responseJson.IdentityId,
             Logins: {
                 'cognito-identity.amazonaws.com': responseJson.Token
@@ -69,7 +69,7 @@ class ImageEdit extends React.Component {
             var keyName = '918756463536.jpeg';
             let contentType = image.mime;
             const arrayBuffer = decode(image.data);
-            var params = { Bucket: 'parthaprofiles', Key: keyName, Body: arrayBuffer, contentType: contentType };
+            var params = { Bucket: 'nkjc', Key: keyName, Body: arrayBuffer, contentType: contentType };
             var upload = new AWS.S3.ManagedUpload({
                 params: params
             });

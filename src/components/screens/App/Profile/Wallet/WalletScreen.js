@@ -10,7 +10,8 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  CameraRoll
+  CameraRoll,
+  ImageBackground
 } from "react-native";
 
 import CustomHeader from "../../../../shared_components/customHeader/CustomHeader";
@@ -21,6 +22,8 @@ import styles from './Wallet.styles'
 import Logo from '../../../../svg_components/Logo';
 import Diamond from '../../../../svg_components/Diamond';
 import Coin from '../../../../svg_components/Coin';
+import NetworkManager from "../../../../../network/NetworkManager";
+import rest from "../../../../../network/rest";
 
 const scrollBarData = [
   {
@@ -51,17 +54,49 @@ export default class WalletScreen extends React.Component {
     };
 };*/
 
+  constructor(props) {
+    super(props)
+    this.state = {
+      money: 0
+    }
+  }
+
+  componentDidMount() {
+    NetworkManager.callAPI(rest.getWallet, 'GET', null).then(result => {
+      this.setState({
+        money: result.money
+      })
+    }).catch(error => {
+
+    })
+  }
+
 
   render() {
     return (
       <SafeAreaView style={styles.mainContainer}>
         <View style={styles.addMoneyContainer}>
-          <View style={{ paddingLeft: 40 }}>
-            <Text style={styles.MoneyText}>{'\u20B9'} 1000</Text>
+          <View style={{ }}>
+            <Text style={styles.MoneyText}>{'\u20B9'} {this.state.money}</Text>
           </View>
-          <Button style={{ backgroundColor: '#5a98fb' }}>
+          {/* <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }}  >
+                <View style={{ width: 160, height: 45, zIndex: 1, backgroundColor: color.darkcolor3, borderColor: color.darkcolor3, borderRadius: 8, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
+                  <View style={{ width: "100%", height: '100%' }}>
+                    <ImageBackground source={JCImages.colorGrad} style={{
+                      width: '100%', height: '100%', justifyContent: 'center',
+                      alignItems: 'center', overflow: 'hidden'
+                    }}></ImageBackground>
+                  </View>
+                </View>
+                <TouchableOpacity
+                  onPress={() => console.log('add money')}
+                  style={{ position: 'absolute', width: '100%', height: '100%', zIndex: 2, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                  <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>+ Add Money</Text>
+                </TouchableOpacity>
+              </TouchableOpacity> */}
+          {/* <Button style={{ backgroundColor: '#5a98fb' }}>
             <Text style={styles.addMoneyText}>+ Add Money</Text>
-          </Button>
+          </Button> */}
         </View>
 
         <View style={styles.transferMoneyContainer}>
