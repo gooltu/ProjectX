@@ -28,6 +28,7 @@ import rest from "../../../../network/rest";
 import NetworkManager from "../../../../network/NetworkManager";
 import { renderJewel } from "../../../JCUtils/CommonUtils";
 import actions from "../../../../actions";
+import colors from "../../../shared_styles/colors";
 
 const scrollBarData = [
   {
@@ -60,7 +61,8 @@ class Profile extends React.Component {
       imagepath: '',
       userProfile: {
         name: 'test'
-      }
+      },
+      referrals: {}
     }
   }
   componentDidMount() {
@@ -76,17 +78,19 @@ class Profile extends React.Component {
       }).catch(error => {
 
       })
-    //if (!this.props.achievements.length > 0)
+    if (!this.props.achievements.length > 0)
       NetworkManager.callAPI(rest.getAchievements, 'POST', null).then(result => {
         this.props.setAchievements(result.achievements)
       }).catch(error => {
 
       })
-      NetworkManager.callAPI(rest.getChildren, 'GET', null).then(result => {
-    //    this.props.setAchievements(result.achievements)
-      }).catch(error => {
-
+    NetworkManager.callAPI(rest.getChildren, 'GET', null).then(result => {
+      this.setState({
+        referrals: result
       })
+    }).catch(error => {
+
+    })
   }
   loadProfilePicture = () => {
     AsyncStorage.multiGet(["UserProfileImage", "UserProfile"]).then(profileData => {
@@ -115,10 +119,10 @@ class Profile extends React.Component {
       }
     })
   }
-  getPercentage(item) {
+  getPercentage(item,index) {
     if (item.text.includes('img')) {
       let jewel = parseInt(item.text.replace(/\D/g, ''))
-      let percent = (this.props.game.jewels[jewel].total_count) / (this.props.game.scores.level * 5)
+      let percent = (this.props.game.jewels[jewel].total_count) / (this.props.userachievements[index].level * 10)
       if (percent > 1) {
         return 100
       }
@@ -126,8 +130,16 @@ class Profile extends React.Component {
         return percent * 100
       }
     }
-    else
-      return 10
+    else if (item.text.includes('successfully')) {
+      let percent = (this.props.game.jewels[2].total_count) / (this.props.userachievements[index].level * 5)
+      if (percent > 1) {
+        return 100
+      }
+      else {
+        return percent * 100
+      }
+    }
+    return 100
   }
 
   componentWillUnmount() {
@@ -143,6 +155,26 @@ class Profile extends React.Component {
     }
     if (text === 'SETTINGS') {
       this.props.navigation.navigate("UserProfile")
+    }
+  }
+  redeemAchievements = (item, index) => {
+    if (this.getPercentage(item,index) == 100) {
+      let data = {
+        id: this.props.userachievements[index].id
+      }
+      NetworkManager.callAPI(rest.redeemAchievement, 'POST', data).then(result => {
+        console.log(result)
+        // let userAchievementdata = JSON.parse(JSON.stringify(this.props.userachievements))
+        // userAchievementdata[index].level = userAchievementdata[index].level+ 5
+         NetworkManager.callAPI(rest.getUsersAchievement, 'POST', null).then(results => {
+          // this.props.setUserAchievement(userAchievementdata)
+          this.props.setUserAchievement(results.userachievements)
+         }).catch(error => {
+
+         })
+      }).catch(error => {
+
+      })
     }
   }
   render() {
@@ -207,7 +239,7 @@ class Profile extends React.Component {
                           <Text style={{ color: 'white' }}>{item.text.replace('<x>', '5')}</Text>}
                       </View>
                       <View style={{ width: '100%', height: 5, zIndex: 1, backgroundColor: color.darkcolor3, borderColor: color.darkcolor3, borderRadius: 3, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
-                        <View style={{ width: "" + this.getPercentage(item) + "%", height: '100%' }}>
+                        <View style={{ width: "" + this.getPercentage(item,index) + "%", height: '100%' }}>
                           <ImageBackground source={JCImages.colorGrad} style={{
                             width: '100%', height: '100%', justifyContent: 'center',
                             alignItems: 'center', overflow: 'hidden'
@@ -222,7 +254,7 @@ class Profile extends React.Component {
                       </View>
                       {
                         this.props.game.scores.level >= this.props.userachievements[index].level ?
-                          <TouchableOpacity style={{ backgroundColor: color.lightcolor2, height: 22, width: 70, alignItems: 'center', justifyContent: 'center', borderRadius: 5 }}>
+                          <TouchableOpacity onPress={() => this.redeemAchievements(item, index)} disabled={this.getPercentage(item,index) == 100 ? false : true} style={{ backgroundColor: this.getPercentage(item,index) == 100 ? color.lightcolor2 : colors.darkcolor1, borderColor: colors.lightcolor2, borderWidth: 1, height: 22, width: 70, alignItems: 'center', justifyContent: 'center', borderRadius: 5 }}>
                             <Text style={{ color: 'white', fontSize: 12 }}>WIN</Text>
                           </TouchableOpacity> :
                           <TouchableOpacity style={{ backgroundColor: color.darkcolor1, height: 22, width: 65, alignItems: 'center', borderColor: color.lightcolor2, justifyContent: 'center', borderWidth: 1.5, borderRadius: 5 }}>
@@ -246,7 +278,7 @@ class Profile extends React.Component {
 }
 
 function mapStateToProps(state) {
-  console.log('state.achievements.achievements',state.userachievements.userachivements)
+  console.log('state.achievements.achievements', state.userachievements.userachivements)
   return {
     userachievements: state.userachievements.userachivements,
     achievements: state.achievements.achievements,

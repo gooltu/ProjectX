@@ -76,7 +76,7 @@ export default class WalletScreen extends React.Component {
     return (
       <SafeAreaView style={styles.mainContainer}>
         <View style={styles.addMoneyContainer}>
-          <View style={{ }}>
+          <View>
             <Text style={styles.MoneyText}>{'\u20B9'} {this.state.money}</Text>
           </View>
           {/* <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }}  >

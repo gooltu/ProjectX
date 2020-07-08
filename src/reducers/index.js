@@ -14,7 +14,11 @@ import chatroom from './chatroom'
 import contactlist from './contactlist'
 import userachievements from './userachievements'
 import referralAchievement from './referralAchievement'
+import leaderboard from './leaderboard'
 
 export default combineReducers({
-    mytoken, appstate ,network, game, chatslist, chatroom, contactlist, achievements, userachievements, tasks,taskdetails, gifttasks, usergifttasks, gifttaskdetails,referralAchievement
+    mytoken, appstate ,network, game, chatslist, chatroom,
+     contactlist, achievements, userachievements, tasks,taskdetails,
+      gifttasks, usergifttasks, gifttaskdetails,referralAchievement,
+      leaderboard
 });

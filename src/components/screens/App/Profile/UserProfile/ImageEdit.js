@@ -132,7 +132,7 @@ class ImageEdit extends React.Component {
         return (
             <SafeAreaView style={{ flex: 1, backgroundColor: colors.darkcolor1 }}>
                 <ScrollView contentContainerStyle={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                    <Image style={{ width: 400, height: 400, alignItems: 'center', justifyContent: 'center' }} key={this.state.imagepath} source={this.state.imagepath ? { uri: this.state.imagepath } : JCImages.placeholderImage} />
+                    <Image style={{ width: 400, height: 400, alignItems: 'center', justifyContent: 'center' }} key={this.state.imagepath} source={this.state.imagepath!='' ? { uri: this.state.imagepath } : JCImages.placeholderImage} />
                 </ScrollView>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20 }}>
                     <Button style={{ width: '45%', alignItems: 'center', justifyContent: 'center' }} primary><Text style={{ color: 'white' }}>CLEAR</Text></Button>

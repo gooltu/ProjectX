@@ -20,7 +20,7 @@ import J15 from '../svg_components/J15'
 import J16 from '../svg_components/J16'
 import J17 from '../svg_components/J17'
 import Diamond from '../svg_components/Diamond'
-
+import Coin from '../svg_components/Coin'
 
 export const getContacts = (callback) => {
     if (Platform.OS == 'android') {
@@ -97,6 +97,8 @@ export const renderJewel = (id, width, height, style) => {
     let jewelView
     if (id == 0)
         jewelView = <Diamond width={width} height={height} style={style} />
+    if (id == 1)
+        jewelView = <Coin width={width} height={height} style={style} />
     if (id == 3)
         jewelView = <J3 width={width} height={height} style={style} />
     if (id == 4)

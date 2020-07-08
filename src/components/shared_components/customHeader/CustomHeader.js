@@ -101,7 +101,7 @@ class CustomHeader extends React.Component {
             </TouchableOpacity>
             :
             factoryView =
-            <TouchableOpacity onPress={() => console.log('Factory Press')} style={styles.jewelBox}>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('JewelFactory')} style={styles.jewelBox}>
                 <ImageBackground source={require('../../../assets/factory.png')} style={{
                     width: '100%', height: '100%', justifyContent: 'center',
                     alignItems: 'center'

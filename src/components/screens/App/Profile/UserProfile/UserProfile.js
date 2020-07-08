@@ -116,20 +116,42 @@ class UserProfile extends React.Component {
                 <TouchableOpacity style={{ paddingTop: 30, alignItems: 'center', justifyContent: 'center' }} onPress={() => this.props.navigation.navigate('ImageEdit')}>
                     <Image style={{ width: 150, height: 150, borderRadius: 75, alignItems: 'center', justifyContent: 'center' }} key={this.state.imagepath} source={this.state.imagepath ? { uri: this.state.imagepath } : JCImages.placeholderImage} />
                     <TouchableOpacity style={{ marginLeft: 100, top: -30, width: 40, height: 40, backgroundColor: colors.darkcolor1, alignItems: 'center', justifyContent: 'center', borderRadius: 20 }} onPress={() => this.props.navigation.navigate('ImageEdit')}>
-                        <Icon name='edit' size={25} color='white' />
+                        <Icon name='edit' size={22} color='white' />
                     </TouchableOpacity>
-                    <Text style={{ color: 'white', fontSize: 16, top: -30 }} onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'UpdateStatus', value: this.state.userProfile.name, UpdateStatus: this.updateName })}>{this.state.userProfile.name}</Text>
+                    {/* <Text style={{ color: 'white', fontSize: 16, top: -30 }} onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'UpdateStatus', value: this.state.userProfile.name, UpdateStatus: this.updateName })}>{this.state.userProfile.name}</Text> */}
                     <Text style={{ color: 'white', fontSize: 16, top: -30 }}>+{this.state.userProfile.phone}</Text>
                 </TouchableOpacity>
                 <List>
                     <ListItem>
                         <Body>
-                            <Text style={{ color: 'white' }}>STATUS</Text>
-                            <Text style={{ color: 'white' }} note onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'UpdateStatus', value: this.state.userProfile.status, UpdateStatus: this.updateStatus })}>{this.state.userProfile.status}</Text>
+                            <Text style={{ color: colors.lightcolor1,fontWeight:'bold' }}>NAME</Text>
+                            <Text style={{ color: 'white' }} note  onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'UpdateStatus',subType: 'name', value: this.state.userProfile.name, UpdateStatus: this.updateName })}>{this.state.userProfile.name}</Text>
                         </Body>
                         <Right>
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'UpdateStatus', value: this.state.userProfile.status, UpdateStatus: this.updateStatus })}>
-                                <Icon name='edit' size={25} color='white' />
+                            <TouchableOpacity  onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'UpdateStatus',subType: 'name',  value: this.state.userProfile.name, UpdateStatus: this.updateName })}>
+                                <Icon name='edit' size={20} color='white' />
+                            </TouchableOpacity>
+                        </Right>
+                    </ListItem>
+                    <ListItem>
+                        <Body>
+                            <Text style={{ color: colors.lightcolor1,fontWeight:'bold' }}>STATUS</Text>
+                            <Text style={{ color: 'white' }} note onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'UpdateStatus',subType: 'status',  value: this.state.userProfile.status, UpdateStatus: this.updateStatus })}>{this.state.userProfile.status}</Text>
+                        </Body>
+                        <Right>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'UpdateStatus',subType: 'status',  value: this.state.userProfile.status, UpdateStatus: this.updateStatus })}>
+                                <Icon name='edit' size={20} color='white' />
+                            </TouchableOpacity>
+                        </Right>
+                    </ListItem>
+                    <ListItem>
+                        <Body>
+                            <Text style={{ color: colors.lightcolor1,fontWeight:'bold' }}>GIFTS WON</Text>
+                            <Text style={{ color: 'white' }} note >Find list of all gifts won.</Text>
+                        </Body>
+                        <Right>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('GiftsWon')}>
+                                <Icon name='arrow-right' size={20} color='white' />
                             </TouchableOpacity>
                         </Right>
                     </ListItem>

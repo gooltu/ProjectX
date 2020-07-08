@@ -33,11 +33,12 @@ import Wallet from './screens/App/Profile/Wallet/WalletScreen'
 import FriendProfile from './screens/App/FriendProfile/FriendProfile'
 import UserProfile from './screens/App/Profile/UserProfile/UserProfile'
 import ImageEdit from './screens/App/Profile/UserProfile/ImageEdit'
+import GiftsWon from './screens/App/Profile/UserProfile/GiftsWon'
 
 import ChatPage from "./screens/App/Chat/ChatPage/ChatPage";
 import ForwardMessage from './screens/App/Chat/ForwardMessage/ForwardMessage'
 import NewGroup from "./screens/App/NewGroup";
-import JewelFactory from "./screens/App/JewelFactory";
+import JewelFactory from "./screens/App/JewelFactory/jewelFactory";
 
 import CustomHeader from "./shared_components/customHeader/CustomHeader";
 import JCModal from "./shared_components/JCModal";
@@ -215,6 +216,14 @@ const AppMainStack = createStackNavigator({
     },
     ImageEdit:{
         screen: ImageEdit,
+        navigationOptions: ({ navigation }) => {
+            return {
+                header: <CustomHeader navigation={navigation} />
+            };
+        }
+    },
+    GiftsWon:{
+        screen: GiftsWon,
         navigationOptions: ({ navigation }) => {
             return {
                 header: <CustomHeader navigation={navigation} />

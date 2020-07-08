@@ -43,7 +43,7 @@ export default styles = StyleSheet.create({
     },
     addMoneyContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
         padding: PixelRatio.roundToNearestPixel(30*global.moderateScaleFactor)
     },
@@ -54,7 +54,7 @@ export default styles = StyleSheet.create({
     },
     MoneyText: {
         color: 'white',
-        fontSize: PixelRatio.roundToNearestPixel(24*global.scaleFactor),
+        fontSize: PixelRatio.roundToNearestPixel(28*global.scaleFactor),
         fontWeight: 'bold'
     },
     transferMoneyContainer: {
