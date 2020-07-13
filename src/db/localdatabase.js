@@ -119,7 +119,16 @@ function getChatList() {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
-				txn.executeSql('Select * from Contact WHERE LAST_MSG_CREATED_TIME IS NOT NULL ORDER BY LAST_MSG_CREATED_TIME DESC')
+				txn.executeSql('select a._ID, a.MSG_TEXT, a.MSG_TYPE, b.UNREAD_COUNT, b.LAST_MSG_CREATED_TIME, a.CHAT_ROOM_JID, a.IS_GROUP_MSG, c.JID, c.SMALL_IMAGE, c.PHONEBOOK_CONTACT_NAME, c.JEWELCHAT_ID'
+				+ 'from ChatMessage a'
+				+ 'INNER JOIN ( '
+				+ 'select _ID, max(_ID) MAX_ID, count(_ID) UNREAD_COUNT, max(TIME_CREATED) LAST_MSG_CREATED_TIME'
+				+ 'from ChatMessage'
+				+ 'where IS_READ = 0'
+				+ 'group by CHAT_ROOM_JID'
+				+ ') b ON a._ID = b.MAX_ID'
+				+ 'LEFT OUTER JOIN Contact c ON c.JID = a.CHAT_ROOM_JID '
+				+ 'order by b.LAST_MSG_CREATED_TIME DESC')
 					.then((txn, results) => {
 						console.log('Contact query COMPLETED for');
 						console.log(results)
@@ -142,7 +151,7 @@ function getChatList() {
 
 function getContactList(type) {
 	let Query
-	if (type == 'Forward')
+	if (type === 'Forward')
 		Query = 'Select * from Contact where IS_REGIS=1'
 	else
 		Query = 'Select * from Contact where IS_PHONEBOOK_CONTACT=1'
@@ -190,6 +199,24 @@ function checkIfRowExist(JID) {
 	});
 }
 
+// var incomingMessage = {
+// 	CHAT_ROOM_JID: msg.getAttribute('from').split('/')[0],
+// 	IS_GROUP_MSG: IS_GROUP_MSG,
+// 	MSG_TEXT: message,
+// 	CREATOR_JID: msg.getAttribute('from').split('/')[0],
+// 	GROUP_MEMBER_JID: (IS_GROUP_MSG == 1 ? msg.getAttribute('from').split('/')[1] : msg.getAttribute('from').split('/')[0]),
+// 	JEWEL_TYPE: parseInt(jewelType),
+// 	CREATED_DATE: createdDateTime.date,
+// 	CREATED_TIME: createdDateTime.time,
+// 	TIME_CREATED: createdDateTime.fulltime,
+// 	SENDER_MSG_ID: msg.getAttribute('id'),
+// 	MSG_TYPE: ( media ? ( parseInt(media[0].getAttribute('number')) ) : 0 ),
+// 	MEDIA_CLOUD: (media ? (Strophe.getText(media[0])) : null ),
+// 	SEQUENCE: -1,
+// 	IS_REPLY: reply,
+// 	IS_FORWARD: forward,
+// 	REPLY_PARENT: parent
+// }
 
 function insertStropheChatData(data) {
 	//select last_insert_rowid()
@@ -198,14 +225,15 @@ function insertStropheChatData(data) {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 				let sql;
-				sql = "INSERT INTO ChatMessage " +
-					" ( MSG_TYPE, CREATED_DATE, CREATED_TIME, CHAT_ROOM_JID, CREATOR_JID, GROUP_MEMBER_JID, JEWEL_TYPE, MSG_TEXT, SENDER_MSG_ID, IS_REPLY, IS_FORWARD, REPLY_PARENT) " +
-					" VALUES (" + data.MSG_TYPE + ",'" + data.CREATED_DATE + "','" + data.CREATED_TIME + "','" + data.CHAT_ROOM_JID + "','" + data.CREATOR_JID + "'," + data.GROUP_MEMBER_JID + "'," + data.JEWEL_TYPE + ",'" + data.MSG_TEXT + "'," + data.SENDER_MSG_ID + "," + data.IS_REPLY + "," + data.IS_FORWARD + ",'" + data.REPLY_PARENT + "')"
-				console.log(sql)
-				txn.executeSql(sql).then((results) => {
+				sql = "INSERT INTO ChatMessage "
+					+ "( " + Object.keys(data).join(', ') + " ) " 				
+					+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				
+				txn.executeSql(sql, Object.values(data))
+					.then((txn, results) => {
 					console.log('ChatMessage insert Query COMPLETED for');
-					console.log(results[1].insertId)
-					resolve(results[1].insertId)
+					console.log(results.insertId)
+					resolve(results.insertId)
 				}).catch(err => {
 					reject(err)
 				})
@@ -224,14 +252,14 @@ function insertAffiliations(data) {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 				let sql;
-				sql = "INSERT INTO ChatMessage " +
-					" ( MSG_TYPE, CREATED_DATE, CREATED_TIME, CHAT_ROOM_JID, CREATOR_JID, MSG_TEXT) " +
-					" VALUES (" + data.MSG_TYPE + ",'" + data.CREATED_DATE + "','" + data.CREATED_TIME + "','" + data.CHAT_ROOM_JID + "','" + data.CREATOR_JID + "'," + data.MSG_TEXT  + "')"
-				console.log(sql)
-				txn.executeSql(sql).then((results) => {
+				sql = "INSERT INTO ChatMessage "
+					+ "( " + Object.keys(data).join(', ') + " ) " 				
+					+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				console.log(sql);
+				txn.executeSql(sql, Object.values(data) ).then((txn, results) => {
 					console.log('Affiliation insert Query COMPLETED for');
-					console.log(results[1].insertId)
-					resolve(results[1].insertId)
+					console.log(results.insertId)
+					resolve(results.insertId)
 				}).catch(err => {
 					reject(err)
 				})

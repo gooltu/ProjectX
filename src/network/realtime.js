@@ -86,6 +86,9 @@ export const realtimeConnect = () => {
 						}
 						else if (processedMessage.subtype === 'Message' || processedMessage.type === 'GroupMessage')
 							dispatch(insertIncomingMessageViaHistoryDownload(processedMessage.data))
+
+						else if (processedMessage.subtype === 'Affiliations' )
+							dispatch(insertIncomingAffiliationsViaHistoryDownload(processedMessage.data))		
 					}
 					else if (processedMessage.type === 'Read' || processedMessage.type === 'Delivery') {
 						dispatch(handleReadAndDeliveryMessages(processedMessage))

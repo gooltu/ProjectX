@@ -24,6 +24,7 @@ import colors from "../../../../shared_styles/colors";
 import db from '../../../../../db/localdatabase'
 import actions from '../../../../../actions'
 import { setActiveChat } from '../../../../../actions/chatListActions'
+import { updateChatPageRedux, updateChatlistRedux } from './realtime-utils/messages';
 
 function Item({ item, onpressitem, onlongpressitem }) {
 
@@ -85,6 +86,7 @@ class ChatList extends React.Component {
     //console.log(this.props);
     //console.log(this.props.navigation.state.routeName);
     console.log('ChatList Mount');
+    this.props.updateChatlistRedux();
   }
 
   componentWillUnmount() {
@@ -103,23 +105,9 @@ class ChatList extends React.Component {
               renderItem={({ item }) => (
                 <Item item={item}
                   onpressitem={(item) => {
-                    this.props.setActiveChat(item)
-                    db.getChats(item.JID, 0)
-                      .then(results => {
-                        console.log('FROM JEWELCHAT COMPONENT GETCHAT SUCCESS')
-                        console.log(results.rows.length)
-                        let chatroom = []
-                        for (let i = 0; i <results.rows.length; i++) {
-                          chatroom.push(results.rows.item(i))
-                        }
-                        this.props.setChatData(chatroom)
-
-                      })
-                      .catch(err => {
-                        console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
-                        console.log(err)
-                      })
-                    this.props.navigation.navigate('ChatPage', item)
+                    this.props.setActiveChat(item);
+                    this.props.updateChatPageRedux();
+                    this.props.navigation.navigate('ChatPage', item);
                   }}
                   onlongpressitem={(id) => { this.props.navigation.navigate('MyModal', { modal_name: 'chatlist_longpress', item }) }}
                 />
@@ -210,7 +198,9 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     setActiveChat: (activeChat) => dispatch(setActiveChat(activeChat)),
-    setChatData: (chatData) => dispatch(actions.setChatData(chatData))
+    setChatData: (chatData) => dispatch(actions.setChatData(chatData)),
+    updateChatPageRedux: dispatch(updateChatPageRedux),
+    updateChatlistRedux: dispatch(updateChatlistRedux)
   }
 }
 

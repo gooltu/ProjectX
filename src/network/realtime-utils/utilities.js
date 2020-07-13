@@ -1,18 +1,18 @@
 import {getConnectionObj} from '../realtime';
 
 export const getServerTime = () => {
-	var serverTime = $iq({ type: 'get', from: store.getState().mytoken.myphone + '@jewelchat.net', to: 'jewelchat.net', id: 'time_1' })
-		.c('time', { xmlns: 'urn:xmpp:time' });
+		let serverTime = $iq({ type: 'get', from: store.getState().mytoken.myphone + '@jewelchat.net', to: 'jewelchat.net', id: 'time_1' })
+						.c('time', { xmlns: 'urn:xmpp:time' });
+
 		getConnectionObj().sendIQ(serverTime.tree(), (stanza) => {
-		console.log('CALLBACK serverTime SEND IQ')
-		console.log(stanza.toString())
-		var body = stanza.getElementsByTagName('utc')
-		var time = new Date(Strophe.getText(body[0])).getTime()
-		var delta = time - new Date().getTime()
-		global.TimeDelta = delta
-		console.log('Time delta', delta)
-	},
-		(error) => {
+			console.log('CALLBACK serverTime SEND IQ')
+			console.log(stanza.toString())
+			var body = stanza.getElementsByTagName('utc')
+			var time = new Date(Strophe.getText(body[0])).getTime()
+			var delta = time - new Date().getTime()
+			global.TimeDelta = delta
+			console.log('Time delta', delta)
+		},(error) => {
 			console.log('error IQ')
 			console.log(error.toString())
 		});
@@ -20,9 +20,7 @@ export const getServerTime = () => {
 
 
 export const detectMessagetype = (incomingStanza) => {
-	var type
-	var subtype
-	var data
+	var type, subtype, data;	
 	var fwd = incomingStanza.getElementsByTagName('forwarded');
 	var recieved = incomingStanza.getElementsByTagName('received')
 	var read = incomingStanza.getElementsByTagName('read')
@@ -95,34 +93,40 @@ export const detectMessagetype = (incomingStanza) => {
 
 function getFormattedAffiliations(msg, createdDateTime) {
 
-	affiliationText = "Affiliation message";
+	let affiliationText = "Affiliation message";
 
-	var affiliationMessage = {
+	let affiliationMessage = {
 		CHAT_ROOM_JID: msg.getAttribute('from').split('/')[0],
 		IS_GROUP_MSG: 1,
 		MSG_TEXT: affiliationText,
-		CREATOR_JID: msg.getAttribute('from').split('/')[0],		
+		CREATOR_JID: msg.getAttribute('from').split('/')[0],
+		SENDER_MSG_ID: msg.getAttribute('id'),		
 		CREATED_DATE: createdDateTime.date,
-		CREATED_TIME: createdDateTime.time,		
+		CREATED_TIME: createdDateTime.time,
+		TIME_CREATED: createdDateTime.fulltime,		
 		MSG_TYPE: -1		
 	}
 	return affiliationMessage
 }
 
 function getFromattedReceipt(msg, type, time = (new Date()).getTime() + global.TimeDelta) {
+	
+	let message;
+
 	if (type == 'Delivery') {
-		var message = msg.getElementsByTagName('received')
+		message = msg.getElementsByTagName('received')
 	}
 	else {
-		var message = msg.getElementsByTagName('read')
+		message = msg.getElementsByTagName('read')
 	}
-	var receipt = {
+	let receipt = {
 		id: message[0].getAttribute('id'),
 		time: time,
 		to: msg.getAttribute('to'),
 		from: msg.getAttribute('from').split('/')[0]
 	}
-	return receipt
+
+	return receipt;
 }
 
 function getFormattedMessages(msg, createdDateTime, IS_GROUP_MSG ) {
@@ -136,19 +140,17 @@ function getFormattedMessages(msg, createdDateTime, IS_GROUP_MSG ) {
 	var parent = msg.getAttribute('parent')
 	var body = msg.getElementsByTagName('body')
 	var message = Strophe.getText(body[0]);
-	var media = msg.getElementsByTagName('media')
-
-
+	var media = msg.getElementsByTagName('media');
 
 	var incomingMessage = {
 		CHAT_ROOM_JID: msg.getAttribute('from').split('/')[0],
 		IS_GROUP_MSG: IS_GROUP_MSG,
 		MSG_TEXT: message,
-		CREATOR_JID: msg.getAttribute('from').split('/')[0],
-		GROUP_MEMBER_JID: (IS_GROUP_MSG == 1 ? msg.getAttribute('from').split('/')[1] : msg.getAttribute('from').split('/')[0]),
+		CREATOR_JID: (IS_GROUP_MSG == 1 ? msg.getAttribute('from').split('/')[1] : msg.getAttribute('from').split('/')[0]),		
 		JEWEL_TYPE: parseInt(jewelType),
 		CREATED_DATE: createdDateTime.date,
 		CREATED_TIME: createdDateTime.time,
+		TIME_CREATED: createdDateTime.fulltime,
 		SENDER_MSG_ID: msg.getAttribute('id'),
 		MSG_TYPE: ( media ? ( parseInt(media[0].getAttribute('number')) ) : 0 ),
 		MEDIA_CLOUD: (media ? (Strophe.getText(media[0])) : null ),
@@ -157,6 +159,7 @@ function getFormattedMessages(msg, createdDateTime, IS_GROUP_MSG ) {
 		IS_FORWARD: forward,
 		REPLY_PARENT: parent
 	}
+	
 	return incomingMessage
 }
 
@@ -177,6 +180,6 @@ function _dateToYMD(createdDateTime) {
 	var time = (hour < 10 ? '0' + hour : hour) + ':' + (mins < 10 ? '0' + mins : mins) + ':' + (seconds < 10 ? '0' + seconds : seconds)
 	// var date = d.toLocaleString().split(', ')[0].split('/').reverse().join("-")
 	// var time = d.toLocaleString().split(', ')[1]
-	return { date: date, time: time };
+	return { date: date, time: time , fulltime: createdDateTime };
 }
 

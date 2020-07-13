@@ -27,16 +27,16 @@ const Create_ChatMessage = "CREATE TABLE if not exists ChatMessage (" +
     "CREATED_DATE  TEXT ," +
     "CREATED_TIME  INTEGER ," +
     "CHAT_ROOM_JID	  TEXT ," +
-    "CREATOR_JID	  TEXT ," +
-    "GROUP_MEMBER_JID	 TEXT ," +
+    "CREATOR_JID	  TEXT ," +    
     "SENDER_NAME  TEXT ," +
-    "SENDER_MSG_ID   INTEGER ," +
+    "SENDER_MSG_ID   TEXT ," +
     "IS_READ	 INTEGER DEFAULT 0 ," +
     "TIME_READ   INTEGER ," +
     "IS_DELIVERED   INTEGER DEFAULT 0 ," +
     "TIME_DELIVERED  INTEGER ," +
     "IS_SUBMITTED   INTEGER DEFAULT 0 ," +
     "TIME_SUBMITTED  INTEGER ," +
+    "TIME_CREATED INTEGER" +
     "IS_ERROR  INTEGER DEFAULT 0 ," +
     "JEWEL_TYPE   INTEGER ," +
     "IS_JEWEL_PICKED  INTEGER DEFAULT 0 ," +
@@ -47,7 +47,7 @@ const Create_ChatMessage = "CREATE TABLE if not exists ChatMessage (" +
     "IS_REPLY INTEGER DEFAULT 0," +
     "REPLY_PARENT INTEGER DEFAULT NULL," +
     "IS_FORWARD INTEGER DEFAULT 0," +
-    "UNIQUE(" + "SENDER_MSG_ID" + "," + "CHAT_ROOM_JID" + "))"
+    "UNIQUE(" + "SENDER_MSG_ID, " + "CHAT_ROOM_JID, " + "CREATOR_JID "+ "))"
 
 const Create_GroupMembers = "CREATE TABLE if not exists GroupMembers (" +
     "_ID  integer PRIMARY KEY autoincrement ," +
