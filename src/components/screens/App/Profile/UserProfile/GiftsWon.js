@@ -78,7 +78,7 @@ class GiftsWon extends React.Component {
                         <View style={{ flexDirection: 'row', alignItems: 'center', borderColor: 'grey', borderRadius: 10, borderWidth: 1, padding: 5, marginBottom: 10 }}>
                             {item.money > 0 ?
                                 <View style={{borderRadius:5, width: 60, height: 60,justifyContent:'center',alignItems:'center',backgroundColor:colors.lightBlue }}>
-                                    <Text style={{color:'white'}}>{item.money}</Text>
+                                    <Text style={{color:'white'}}>{'\u20B9'} {item.money}</Text>
                                 </View>
                                 :
                                 <Image style={{ width: 60, height: 60,borderRadius:5 }} source={item.product_pic != '' ? { uri: item.product_pic } : JCImages.placeholderImage}></Image>

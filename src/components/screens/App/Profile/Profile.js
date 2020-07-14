@@ -169,6 +169,8 @@ class Profile extends React.Component {
          NetworkManager.callAPI(rest.getUsersAchievement, 'POST', null).then(results => {
           // this.props.setUserAchievement(userAchievementdata)
           this.props.setUserAchievement(results.userachievements)
+          this.props.loadGameState()
+          this.props.navigation.navigate('SuccessFullGiftRedeem')
          }).catch(error => {
 
          })
@@ -231,7 +233,7 @@ class Profile extends React.Component {
                     <View style={{ width: '75%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                       <View style={{ padding: 5 }}>
                         {item.text.includes('img') ?
-                          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                          <View style={{ flexDirection: 'row',justifyContent:'space-between', alignItems: 'center' }}>
                             <Text style={{ color: 'white', paddingRight: 10 }}>{item.text.split('<x>')[0]} 5</Text>
                             {renderJewel(item.text.replace(/\D/g, ''), 30, 35, styles.jewelStyle)}
                           </View>
@@ -290,7 +292,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     setAchievements: (payload) => dispatch(actions.setAchievements(payload)),
-    setUserAchievement: (payload) => dispatch(actions.setUserAchievement(payload))
+    setUserAchievement: (payload) => dispatch(actions.setUserAchievement(payload)),
+    loadGameState: () => dispatch(actions.loadGameState())
   }
 }
 
