@@ -1,27 +1,21 @@
 import React from 'react'
 import {
-  Image,
-  ActivityIndicator,
-  AsyncStorage,
-  Button,
   StatusBar,
-  SectionList,
   View,
   Text,
   ScrollView,
-  FlatList,
-  TouchableOpacity
+  FlatList
 } from 'react-native';
 import styles from './Game.styles'
-import Coin from '../../../svg_components/Coin';
 import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
 import color from '../../../shared_styles/colors'
-import XP from '../../../svg_components/XP';
 import NetworkManager from '../../../../network/NetworkManager';
 import rest from '../../../../network/rest';
 import actions from '../../../../actions';
+import GiftTaskView from './GiftTaskView'
 import { InterstitialAd, RewardedAd, RewardedAdEventType, BannerAdSize, BannerAd, TestIds } from '@react-native-firebase/admob';
+import TaskView from './TaskView';
 
 class Game extends React.Component {
 
@@ -39,13 +33,13 @@ class Game extends React.Component {
   }
 
   getTaskDetails() {
-   // if (this.props.tasks.length == 0) {
-      NetworkManager.callAPI(rest.getTasks, 'POST', null).then(result => {
-        console.log(result)
-        this.props.setTaskData(result.tasks)
-      }).catch(error => {
-      })
-   // }
+    // if (this.props.tasks.length == 0) {
+    NetworkManager.callAPI(rest.getTasks, 'POST', null).then(result => {
+      console.log(result)
+      this.props.setTaskData(result.tasks)
+    }).catch(error => {
+    })
+    // }
   }
   getGiftTask(page) {
     console.log('page', page)
@@ -89,34 +83,7 @@ class Game extends React.Component {
         }
         ListFooterComponent={this._renderSectionFooter}
         renderItem={({ item, index }) =>
-          item.cash === 0 ?
-            <TouchableOpacity style={{ width: '48%', borderRadius: 10, padding: 5, margin: 5, backgroundColor: color.darkcolor3 }}
-              onPress={() => {
-                console.log(item)
-                this.props.navigation.navigate('GiftTaskDetail', { giftTask: item })
-              }}
-            >
-              <Image
-                style={{ width: '100%', height: 180, borderTopRightRadius: 7, borderTopLeftRadius: 7 }}
-                source={{ uri: item.product_pic }}
-              />
-              <View style={{ paddingVertical: 5 }}>
-                <Text numberOfLines={1} style={{ color: 'white', fontWeight: '600', fontSize: 13, paddingBottom: 3 }}>{item.productname}</Text>
-                <Text style={{ color: color.jcgray, fontSize: 11 }}>QTY: {item.current_qty}/{item.total_qty}</Text>
-              </View>
-            </TouchableOpacity>
-            :
-            <TouchableOpacity style={{ width: '48%', borderRadius: 10, padding: 5, margin: 5, backgroundColor: color.darkcolor3 }}
-              onPress={() => this.props.navigation.navigate('GiftTaskDetail', { giftTask: item })}
-            >
-              <View style={{ backgroundColor: color.jcgray, width: '100%', height: 180, borderTopRightRadius: 7, borderTopLeftRadius: 7, alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ color: color.darkcolor1, fontSize: 30, fontWeight: 'bold' }}>{'\u20B9'} {item.money}</Text>
-              </View>
-              <View style={{ paddingVertical: 5 }}>
-                <Text numberOfLines={1} style={{ color: 'white', fontWeight: '600', fontSize: 13, paddingBottom: 3 }}>{item.productname}</Text>
-                <Text style={{ color: color.jcgray, fontSize: 11 }}>QTY: {item.current_qty}/{item.total_qty}</Text>
-              </View>
-            </TouchableOpacity>
+          <GiftTaskView navigation={this.props.navigation} giftTask={item} />
         }
         keyExtractor={item => item.id + ''}
       />
@@ -132,20 +99,7 @@ class Game extends React.Component {
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{ paddingHorizontal: 10, paddingBottom: 10 }}>
           {
             this.props.tasks.map((task) => (
-              <View style={styles.scrollBar}>
-                <TouchableOpacity style={styles.scrollBarItem} onPress={() => {
-                  this.props.navigation.navigate("TaskDetail", { task: task })
-                }}>
-                  <View style={styles.itemOne}>
-                    <Coin height="30" width="30" />
-                    <Text style={styles.itemText}>{task.coins}</Text>
-                  </View>
-                  <View style={styles.itemOne}>
-                    <XP height="30" width="30" />
-                    <Text style={styles.itemText}>{task.points}</Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
+              <TaskView navigation={this.props.navigation} task={item} />
             ))
           }
         </ScrollView>
@@ -170,21 +124,21 @@ class Game extends React.Component {
   render() {
     return (
       <SafeAreaView style={styles.mainContainer}>
-        
-          <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
-          {this.props.gifttasks.length > 0 ?
-            <FlatList
-              bounces={false}
-              data={this.props.gifttasks}
-              renderItem={({ item, index }) =>
-                this._renderList(item.data[0])
-              }
-              onEndReachedThreshold={0.5}
-              ListHeaderComponent={this._renderSectionHeader}
-              
-              keyExtractor={(item, index) => item + index}
-            />
-            : null}
+
+        <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
+        {this.props.gifttasks.length > 0 ?
+          <FlatList
+            bounces={false}
+            data={this.props.gifttasks}
+            renderItem={({ item, index }) =>
+              this._renderList(item.data[0])
+            }
+            onEndReachedThreshold={0.5}
+            ListHeaderComponent={this._renderSectionHeader}
+
+            keyExtractor={(item, index) => item + index}
+          />
+          : null}
         <StatusBar barStyle="light-content" hidden={false} translucent={true} />
       </SafeAreaView>
     );

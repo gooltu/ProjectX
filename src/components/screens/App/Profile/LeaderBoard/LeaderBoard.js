@@ -22,6 +22,7 @@ import actions from "../../../../../actions";
 import { connect } from 'react-redux';
 import colors from "../../../../shared_styles/colors";
 import { renderJewel } from '../../../../JCUtils/CommonUtils'
+import LeaderBoardRow from "./LeaderBoardRow";
 
 class LeaderBoard extends React.Component {
   /*static navigationOptions = ({ navigation }) => {
@@ -37,6 +38,7 @@ class LeaderBoard extends React.Component {
       imagepath: '',
       userProfile: {}
     }
+    this.user
   }
 
   componentDidMount() {
@@ -80,72 +82,23 @@ class LeaderBoard extends React.Component {
   render() {
     return (
       <SafeAreaView style={styles.mainContainer}>
-
         <ScrollView style={{ padding: 10 }}>
           {this.props.leaderboard.top1.map(item =>
-            <View style={{ flexDirection: 'row', alignItems: 'center', borderColor: 'grey', borderRadius: 10, borderWidth: 1, padding: 5, marginBottom: 10 }}>
-              <Image style={{ width: 60, height: 60, borderRadius: 30 }} source={item.pic != '' ? { uri: item.pic } : JCImages.placeholderImage}></Image>
-              <View style={{ flexDirection: 'column', paddingLeft: 10, width: '70%' }}>
-                <Text style={{ color: 'lightgrey', fontSize: 16, paddingBottom: 5 }}>{item.name}</Text>
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={{ color: colors.lightcolor1, fontWeight: 'bold' }}>LEVEL:</Text>
-                    <Text style={{ color: 'white' }}> {item.level}</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    {renderJewel(0, 25, 25, styles.jewelStyle)}
-                    <Text style={{ color: 'white' }}> {item.diamond}</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    {renderJewel(1, 25, 25, styles.jewelStyle)}
-                    <Text style={{ color: 'white' }}> {item.coins}</Text>
-                  </View>
-                </View>
-              </View>
-            </View>
+            <LeaderBoardRow type={'other'} item={item} />
           )}
           {Object.keys(this.props.game).length > 0 ?
-            <View style={{ backgroundColor: colors.lightBlue, flexDirection: 'row', alignItems: 'center', borderColor: colors.lightBlue, borderRadius: 10, borderWidth: 1, padding: 5, marginBottom: 10 }}>
-              <Image style={{ width: 60, height: 60, borderRadius: 30 }} key={this.state.imagepath} source={this.state.imagepath != '' ? { uri: this.state.imagepath } : JCImages.placeholderImage}></Image>
-              <View style={{ flexDirection: 'column', paddingLeft: 10, width: '70%' }}>
-                <Text style={{ color: 'lightgrey', fontSize: 16, paddingBottom: 5 }}>You</Text>
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={{ color: colors.lightcolor1, fontWeight: 'bold' }}>LEVEL:</Text>
-                    <Text style={{ color: 'white' }}> {this.props.game.scores.level}</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    {renderJewel(0, 25, 25, styles.jewelStyle)}
-                    <Text style={{ color: 'white' }}> {this.props.game.jewels[0].total_count}</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    {renderJewel(1, 25, 25, styles.jewelStyle)}
-                    <Text style={{ color: 'white' }}> {this.props.game.jewels[1].total_count}</Text>
-                  </View>
-                </View>
-              </View>
-            </View> : null}
+            <LeaderBoardRow type={'user'}  item={
+              {
+                pic: this.state.imagepath,
+                name: 'You',
+                level: this.props.game.scores.level,
+                diamond: this.props.game.jewels[0].total_count,
+                coins: this.props.game.jewels[1].total_count
+              }
+            } />
+            : null}
           {this.props.leaderboard.top2.map(item =>
-            <View style={{ flexDirection: 'row', alignItems: 'center', borderColor: 'grey', borderRadius: 10, borderWidth: 1, padding: 5, marginBottom: 10 }}>
-              <Image style={{ width: 60, height: 60, borderRadius: 30 }} source={item.pic != '' ? { uri: item.pic } : JCImages.placeholderImage}></Image>
-              <View style={{ flexDirection: 'column', paddingLeft: 10, width: '70%' }}>
-                <Text style={{ color: 'lightgrey', fontSize: 16, paddingBottom: 5 }}>{item.name}</Text>
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={{ color: colors.lightcolor1, fontWeight: 'bold' }}>LEVEL:</Text>
-                    <Text style={{ color: 'white' }}> {item.level}</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    {renderJewel(0, 25, 25, styles.jewelStyle)}
-                    <Text style={{ color: 'white' }}> {item.diamond}</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    {renderJewel(1, 25, 25, styles.jewelStyle)}
-                    <Text style={{ color: 'white' }}> {item.coins}</Text>
-                  </View>
-                </View>
-              </View>
-            </View>
+            <LeaderBoardRow type={'other'} item={item} />
           )}
         </ScrollView>
       </SafeAreaView >
