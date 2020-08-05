@@ -245,6 +245,18 @@ function insertStropheChatData(data) {
 	})
 }
 
+// let affiliationMessage = {
+// 	CHAT_ROOM_JID: msg.getAttribute('from').split('/')[0],
+// 	IS_GROUP_MSG: 1,
+// 	MSG_TEXT: affiliationText,
+// 	CREATOR_JID: msg.getAttribute('from').split('/')[0],
+// 	SENDER_MSG_ID: msg.getAttribute('id'),		
+// 	CREATED_DATE: createdDateTime.date,
+// 	CREATED_TIME: createdDateTime.time,
+// 	TIME_CREATED: createdDateTime.fulltime,		
+// 	MSG_TYPE: -1		
+// }
+
 function insertAffiliations(data) {	
 	
 	return new Promise((resolve, reject) => {

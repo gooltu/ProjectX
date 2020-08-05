@@ -108,8 +108,7 @@ class ChatList extends React.Component {
                     this.props.setActiveChat(item);
                     this.props.updateChatPageRedux();
                     this.props.navigation.navigate('ChatPage', item);
-                  }}
-                  onlongpressitem={(id) => { this.props.navigation.navigate('MyModal', { modal_name: 'chatlist_longpress', item }) }}
+                  }}                  
                 />
               )}
               keyExtractor={item => item._ID + ''}
