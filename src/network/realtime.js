@@ -67,10 +67,9 @@ export const realtimeConnect = () => {
 				//save logout time
 			} else if (status == Strophe.Status.CONNECTED) {
 				dispatch({ type: 'XMPP_CONNECTED' });
-				console.log('Strophe is connected.');
-				console.log(connection)
+				console.log('Strophe is connected.');	
 
-				getServerTime();
+				
 
 				//dispatch(resendMessages(getState().mytoken.myphone + '@jewelchat.net'));
 
@@ -120,12 +119,23 @@ export const realtimeConnect = () => {
 				//send presence 
 				connection.send($pres().tree(), () => {});
 
-				// download history since your last logout	
-				AsyncStorage.getItem('logOutTime')
-        		.then( lastlogouttime => {
-					lastlogouttime = (new Date().getTime() + global.TimeDelta) - parseInt(lastlogouttime) > 604800000 ? (new Date().getTime() + global.TimeDelta - 604800000) : value;
-					dispatch(downloadMessages(connection, lastlogouttime));
-				});
+
+				getServerTime(getState().mytoken.myphone)
+				.then(delta => {
+
+					// download history since your last logout	after getting server time
+					AsyncStorage.getItem('logOutTime')
+					.then( lastlogouttime => {			
+						console.log('LOGOUT TIME', lastlogouttime);		
+						let current_servertime = new Date().getTime() + global.TimeDelta
+						lastlogouttime = current_servertime - parseInt(lastlogouttime) > 604800000 ? (current_servertime - 604800000) : parseInt(lastlogouttime);
+						dispatch(downloadMessages(connection, lastlogouttime));
+					});
+
+				})
+				.catch(err => {
+
+				})
 
 				
 			}

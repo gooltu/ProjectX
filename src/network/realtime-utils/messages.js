@@ -1,5 +1,6 @@
 import db from '../../db/localdatabase';
 import {getConnectionObj} from '../realtime';
+import actions from '../../actions'
 
 // function to handlle incoming messages (insertion to DB , sending delivery and read receipt)
 export const insertIncomingMessageViaHistoryDownload = (incomingMessage) => {
@@ -51,7 +52,7 @@ export const updateChatlistRedux = () => {
 	return (dispatch, getState) => {
 		db.getChatList().then(chatlist => {
             console.log('FROM JEWELCHAT COMPONENT GETCHATLIST SUCCESS')
-            console.log(chatlist.rows.length)                           
+            //console.log(chatlist.rows.length)                           
             dispatch(actions.setChatListData(chatlist))                            
         })
 	}

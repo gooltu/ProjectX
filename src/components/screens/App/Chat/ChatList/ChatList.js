@@ -24,7 +24,7 @@ import colors from "../../../../shared_styles/colors";
 import db from '../../../../../db/localdatabase'
 import actions from '../../../../../actions'
 import { setActiveChat } from '../../../../../actions/chatListActions'
-import { updateChatPageRedux, updateChatlistRedux } from './realtime-utils/messages';
+import { updateChatPageRedux, updateChatlistRedux } from '../../../../../network/realtime-utils/messages';
 
 function Item({ item, onpressitem, onlongpressitem }) {
 
@@ -198,8 +198,8 @@ function mapDispatchToProps(dispatch) {
   return {
     setActiveChat: (activeChat) => dispatch(setActiveChat(activeChat)),
     setChatData: (chatData) => dispatch(actions.setChatData(chatData)),
-    updateChatPageRedux: dispatch(updateChatPageRedux),
-    updateChatlistRedux: dispatch(updateChatlistRedux)
+    updateChatPageRedux: () => dispatch(updateChatPageRedux),
+    updateChatlistRedux: () => dispatch(updateChatlistRedux)
   }
 }
 

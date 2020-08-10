@@ -1,6 +1,8 @@
 import SQLite from 'react-native-sqlite-storage';
 import SQL from './queries';
 import phoneContactModal from './phoneContactModal';
+import {populateTestData} from './TestData';
+
 
 
 SQLite.DEBUG(true);
@@ -40,6 +42,7 @@ SQLite.openDatabase({
 	console.log(val)
 }).then((result) => {
 	console.log('APP START TRANSACTION SUCCESSFUL')
+	populateTestData();
 }).catch(err => {
 	console.log('APP START DATABASE ERROR');
 	console.log(err);
@@ -71,9 +74,9 @@ function getChats(JID, offset) {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 				txn.executeSql('select * FROM ChatMessage JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) where CHAT_ROOM_JID ="' + JID + '" ORDER BY _ID DESC LIMIT 20 OFFSET ' + offset)
-					.then((txn, results) => {
+					.then((results) => {
 						console.log('QUERY COMPLETED for Chat room', JID);
-						console.log(results)
+						console.log(results[1])
 						resolve(results)
 					})
 					.catch(err => {
@@ -94,14 +97,14 @@ function getAllChatsGreaterThanEqual_ID(JID, _id ) {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 				txn.executeSql('select * FROM ChatMessage JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) where CHAT_ROOM_JID = ? AND _ID >= ? ORDER BY _ID DESC', [JID, _id])
-					.then((txn, results) => {
+					.then((results) => {
 						console.log(' f(getAllChatsGreaterThanEqual_ID) QUERY COMPLETED for Chat room', JID);
-						console.log(results)
-						let chats = []
-						for(let i=0;i<results.rows.length;i++){
-							chats.push(results.rows.item(i))
-						}
-						resolve(chats)
+						console.log(results[1])
+						// let chats = []
+						// for(let i=0;i<results.rows.length;i++){
+						// 	chats.push(results.rows.item(i))
+						// }
+						resolve(results[1].rows.raw())
 					})
 					.catch(err => {
 						reject(err)
@@ -120,22 +123,22 @@ function getChatList() {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 				txn.executeSql('select a._ID, a.MSG_TEXT, a.MSG_TYPE, b.UNREAD_COUNT, b.LAST_MSG_CREATED_TIME, a.CHAT_ROOM_JID, a.IS_GROUP_MSG, c.JID, c.SMALL_IMAGE, c.PHONEBOOK_CONTACT_NAME, c.JEWELCHAT_ID'
-				+ 'from ChatMessage a'
+				+ ' from ChatMessage a '
 				+ 'INNER JOIN ( '
-				+ 'select _ID, max(_ID) MAX_ID, count(_ID) UNREAD_COUNT, max(TIME_CREATED) LAST_MSG_CREATED_TIME'
-				+ 'from ChatMessage'
-				+ 'where IS_READ = 0'
-				+ 'group by CHAT_ROOM_JID'
-				+ ') b ON a._ID = b.MAX_ID'
-				+ 'LEFT OUTER JOIN Contact c ON c.JID = a.CHAT_ROOM_JID '
-				+ 'order by b.LAST_MSG_CREATED_TIME DESC')
-					.then((txn, results) => {
-						console.log('Contact query COMPLETED for');
-						console.log(results)
-						let chatlist = []
-						for(let i=0;i<results.rows.length;i++){
-							chatlist.push(results.rows.item(i))
-						}
+				+ 'select _ID, max(_ID) as MAX_ID, count(_ID) as UNREAD_COUNT, max(TIME_CREATED) as LAST_MSG_CREATED_TIME'
+				+ ' from ChatMessage'
+				+ ' where IS_READ = 0'
+				+ ' group by CHAT_ROOM_JID'
+				+ ' ) b ON a._ID = b.MAX_ID'
+				+ ' LEFT OUTER JOIN Contact c ON c.JID = a.CHAT_ROOM_JID '
+				+ ' order by b.LAST_MSG_CREATED_TIME DESC')				
+					.then((results) => {
+						console.log('Contact query COMPLETED for');						
+						console.log(results[1].rows.raw());
+						let chatlist = results[1].rows.raw();
+						// for(let i=0;i<results.rows.length;i++){
+						// 	chatlist.push(results.rows.item(i))
+						// }
 						resolve(chatlist)
 					})
 					.catch(err => {
@@ -230,10 +233,10 @@ function insertStropheChatData(data) {
 					+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				
 				txn.executeSql(sql, Object.values(data))
-					.then((txn, results) => {
+					.then((results) => {
 					console.log('ChatMessage insert Query COMPLETED for');
-					console.log(results.insertId)
-					resolve(results.insertId)
+					console.log(results[1].insertId)
+					resolve(results[1].insertId)
 				}).catch(err => {
 					reject(err)
 				})
@@ -268,10 +271,11 @@ function insertAffiliations(data) {
 					+ "( " + Object.keys(data).join(', ') + " ) " 				
 					+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				console.log(sql);
-				txn.executeSql(sql, Object.values(data) ).then((txn, results) => {
+				txn.executeSql(sql, Object.values(data) )
+				.then((results) => {
 					console.log('Affiliation insert Query COMPLETED for');
-					console.log(results.insertId)
-					resolve(results.insertId)
+					console.log(results[1].insertId)
+					resolve(results[1].insertId)
 				}).catch(err => {
 					reject(err)
 				})

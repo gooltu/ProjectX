@@ -23,30 +23,28 @@ import { realtimeConnect, realtimeDisconnect } from "../../../network/realtime"
 import actions from "../../../actions";
 
 class CustomHeader extends React.Component {
+
     componentDidMount() {
-        console.log('CUSTOM HEADER MOUNT')
-        console.log(this.props.navigation.state.routeName)
-        //console.log(this.props.navigation.state.params)
+        console.log('CUSTOM HEADER MOUNT', this.props.navigation.state.routeName)    
 
         if (this.props.mytoken.token && this.props.appstate.state === 'active' && this.props.network.xmppState === 'XMPP_DISCONNECTED') {
             console.log('CALL Connect strophe xmpp')
             this.props.openRealtimeConnection()
         }
 
-    }
+    }    
 
-    componentWillUnmount() {
-        console.log('CUSTOM HEADER UNMOUNT')
-    }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps, prevState){
         console.log('CUSTOM HEADER STATE UPDATE')
-        console.log(this.props.navigation.state.params);
+        //console.log(this.props.navigation.state.params);
         if (this.props.mytoken.token && this.props.appstate.state === 'active' && this.props.network.xmppState === 'XMPP_DISCONNECTED') {
             console.log('CALL Connect strophe xmpp')
             this.props.openRealtimeConnection()
         }
     }
+
+    
 
     displayLogo() {
         let logoView
@@ -71,6 +69,19 @@ class CustomHeader extends React.Component {
         return logoView
     }
 
+
+    connectingSpinner(){
+
+        if( this.props.network.xmppState !== 'XMPP_CONNECTED'){
+            let connectingspinner = <View style={{height:32, paddingLeft:8, justifyContent:'center'}}>
+                                        <ActivityIndicator size="small" color="white" />
+                                    </View>
+
+            return connectingspinner;  
+        }else
+            return null;           
+
+    }
 
     displayJewelBox() {
         return (
@@ -112,11 +123,10 @@ class CustomHeader extends React.Component {
     }
 
     displayBackButton() {
-        console.log('test')
-        console.log(this.props.navigation.state.routeName)
-        console.log(
-            this.props.navigation.dangerouslyGetParent().state
-        )
+        //console.log('test')
+        //console.log(this.props.navigation.state.routeName)
+        //console.log(this.props.navigation.dangerouslyGetParent().state)
+
         if (this.props.navigation.dangerouslyGetParent().state.index > 0 && this.props.navigation.state.routeName != 'MainTabs')
             return (<TouchableOpacity style={{ height: 32, width: 16, marginLeft: 8 }}
                 onPress={() => { this.props.navigation.goBack() }} >
@@ -153,6 +163,7 @@ class CustomHeader extends React.Component {
                     <View style={styles.headerLeft}>
                         {this.displayBackButton()}
                         {this.displayLogo()}
+                        {this.connectingSpinner()}
                         {this.displayTitle()}
                     </View>
 

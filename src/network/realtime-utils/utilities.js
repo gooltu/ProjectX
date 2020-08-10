@@ -1,21 +1,32 @@
 import {getConnectionObj} from '../realtime';
 
-export const getServerTime = () => {
-		let serverTime = $iq({ type: 'get', from: store.getState().mytoken.myphone + '@jewelchat.net', to: 'jewelchat.net', id: 'time_1' })
+export const getServerTime = (myphone) => {
+
+	return new Promise((resolve, reject) => {
+		let serverTime = $iq({ type: 'get', from: myphone + '@jewelchat.net', to: 'jewelchat.net', id: 'time_1' })
 						.c('time', { xmlns: 'urn:xmpp:time' });
 
+		console.log('GET SERVER TIME');				
 		getConnectionObj().sendIQ(serverTime.tree(), (stanza) => {
 			console.log('CALLBACK serverTime SEND IQ')
 			console.log(stanza.toString())
 			var body = stanza.getElementsByTagName('utc')
-			var time = new Date(Strophe.getText(body[0])).getTime()
-			var delta = time - new Date().getTime()
+			var servertime = new Date(Strophe.getText(body[0])).getTime()
+			let currtime = new Date().getTime();
+			var delta = servertime - currtime;
 			global.TimeDelta = delta
+			console.log('Servertime', servertime)
+			console.log('Time delta', currtime)
 			console.log('Time delta', delta)
+			resolve(delta)
 		},(error) => {
 			console.log('error IQ')
 			console.log(error.toString())
+			reject(error);
 		});
+
+	});
+
 }
 
 
