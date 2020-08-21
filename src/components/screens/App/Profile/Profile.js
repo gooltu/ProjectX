@@ -99,67 +99,73 @@ class Profile extends React.Component {
       })
     }
   }
+  _renderSectionHeader = () => {
+    return (
+      <View>
+        <ProfilePhotoSection navigation={this.props.navigation} />
+        <ProfileOptionsList navigation={this.props.navigation} />
+
+        <View style={styles.diamondContainer} >
+          <Text style={styles.buyText}>WIN GAME DIAMONDS</Text>
+        </View>
+      </View>
+    )
+  }
   render() {
     return (
       <SafeAreaView style={styles.mainContainer}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <ProfilePhotoSection navigation={this.props.navigation} />
-          <ProfileOptionsList navigation={this.props.navigation} />
 
-          <View style={styles.diamondContainer} >
-            <Text style={styles.buyText}>WIN GAME DIAMONDS</Text>
-          </View>
-          {this.props.achievements.length > 0 && this.props.userachievements.length > 0 ?
-            <FlatList
-              scrollEnabled={false}
-              data={this.props.achievements}
-              renderItem={({ item, index }) =>
-                <View>
-                  <View style={{ padding: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <View style={{ width: '75%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                      <View style={{ padding: 5 }}>
-                        {item.text.includes('img') ?
-                          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Text style={{ color: 'white', paddingRight: 10 }}>{item.text.split('<x>')[0]} 5</Text>
-                            {renderJewel(item.text.replace(/\D/g, ''), 30, 35, styles.jewelStyle)}
-                          </View>
-                          :
-                          <Text style={{ color: 'white' }}>{item.text.replace('<x>', '5')}</Text>}
-                      </View>
-                      <View style={{ width: '100%', height: 5, zIndex: 1, backgroundColor: color.darkcolor3, borderColor: color.darkcolor3, borderRadius: 3, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
-                        <View style={{ width: "" + this.getPercentage(item, index) + "%", height: '100%' }}>
-                          <ImageBackground source={JCImages.colorGrad} style={{
-                            width: '100%', height: '100%', justifyContent: 'center',
-                            alignItems: 'center', overflow: 'hidden'
-                          }}></ImageBackground>
+        {this.props.achievements.length > 0 && this.props.userachievements.length > 0 ?
+          <FlatList
+            ListHeaderComponent={this._renderSectionHeader}
+            data={this.props.achievements}
+            renderItem={({ item, index }) =>
+              <View>
+                <View style={{ padding: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <View style={{ width: '75%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <View style={{ padding: 5, width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Text style={{ color: colors.lightBlue }}>0</Text>
+                      {item.text.includes('img') ?
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <Text style={{ color: 'white', paddingRight: 10 }}>{item.text.split('<x>')[0]} 5</Text>
+                          {renderJewel(item.text.replace(/\D/g, ''), 30, 35, styles.jewelStyle)}
                         </View>
-                      </View>
+                        :
+                        <Text style={{ color: 'white' }}>{item.text.replace('<x>', '5')}</Text>}
+                      <Text style={{ color: colors.lightBlue }}>{item.text.includes('img') ? this.props.userachievements[index].level * 10 : this.props.userachievements[index].level * 5}</Text>
                     </View>
-                    <View>
-                      <View style={{ flexDirection: 'row', justifyContent: 'center', paddingBottom: 5 }}>
-                        <Text style={{ color: 'white', paddingRight: 5, fontSize: 16 }}>{item.diamond}</Text>
-                        <Diamond height='20' width='20' />
+                    <View style={{ width: '100%', height: 5, zIndex: 1, backgroundColor: color.darkcolor3, borderColor: color.darkcolor3, borderRadius: 3, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
+                      <View style={{ width: "" + this.getPercentage(item, index) + "%", height: '100%' }}>
+                        <ImageBackground source={JCImages.colorGrad} style={{
+                          width: '100%', height: '100%', justifyContent: 'center',
+                          alignItems: 'center', overflow: 'hidden'
+                        }}></ImageBackground>
                       </View>
-                      {
-                        this.props.game.scores.level >= this.props.userachievements[index].level ?
-                          <TouchableOpacity onPress={() => this.redeemAchievements(item, index)} disabled={this.getPercentage(item, index) == 100 ? false : true} style={{ backgroundColor: this.getPercentage(item, index) == 100 ? color.lightcolor2 : colors.darkcolor1, borderColor: colors.lightcolor2, borderWidth: 1, height: 22, width: 70, alignItems: 'center', justifyContent: 'center', borderRadius: 5 }}>
-                            <Text style={{ color: 'white', fontSize: 12 }}>WIN</Text>
-                          </TouchableOpacity> :
-                          <TouchableOpacity style={{ backgroundColor: color.darkcolor1, height: 22, width: 65, alignItems: 'center', borderColor: color.lightcolor2, justifyContent: 'center', borderWidth: 1.5, borderRadius: 5 }}>
-                            <Text style={{ color: color.jcgray, fontSize: 12 }}>LEVEL {this.props.userachievements[index].level}</Text>
-                          </TouchableOpacity>
-                        // console.log(this.props.userachievements, index)
-                      }
                     </View>
                   </View>
-                  <View style={{ backgroundColor: color.darkcolor3, height: 0.4, width: '100%' }}></View>
+                  <View>
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', paddingBottom: 5 }}>
+                      <Text style={{ color: 'white', paddingRight: 5, fontSize: 16 }}>{item.diamond}</Text>
+                      <Diamond height='20' width='20' />
+                    </View>
+                    {
+                      this.props.game.scores.level >= this.props.userachievements[index].level ?
+                        <TouchableOpacity onPress={() => this.redeemAchievements(item, index)} disabled={this.getPercentage(item, index) == 100 ? false : true} style={{ backgroundColor: this.getPercentage(item, index) == 100 ? color.lightcolor2 : colors.darkcolor1, borderColor: colors.lightcolor2, borderWidth: 1, height: 22, width: 70, alignItems: 'center', justifyContent: 'center', borderRadius: 5 }}>
+                          <Text style={{ color: 'white', fontSize: 12 }}>WIN</Text>
+                        </TouchableOpacity> :
+                        <TouchableOpacity style={{ backgroundColor: color.darkcolor1, height: 22, width: 65, alignItems: 'center', borderColor: color.lightcolor2, justifyContent: 'center', borderWidth: 1.5, borderRadius: 5 }}>
+                          <Text style={{ color: color.jcgray, fontSize: 12 }}>LEVEL {this.props.userachievements[index].level}</Text>
+                        </TouchableOpacity>
+                      // console.log(this.props.userachievements, index)
+                    }
+                  </View>
                 </View>
-              }
-              keyExtractor={item => item.id}
-            /> : null}
-
-          <StatusBar barStyle="light-content" hidden={false} translucent={true} />
-        </ScrollView>
+                <View style={{ backgroundColor: color.darkcolor3, height: 0.4, width: '100%' }}></View>
+              </View>
+            }
+            keyExtractor={item => item.id}
+          /> : null}
+        <StatusBar barStyle="light-content" hidden={false} translucent={true} />
       </SafeAreaView >
     );
   }

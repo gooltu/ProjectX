@@ -96,10 +96,10 @@ class Game extends React.Component {
         <View style={{ paddingHorizontal: 15, paddingTop: 10 }}>
           <Text style={{ color: color.jcgray, fontSize: 11, }}>WIN GAME POINTS AND GAME COINS</Text>
         </View>
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{ paddingHorizontal: 10, paddingBottom: 10 }}>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{ paddingHorizontal: 10 }}>
           {
             this.props.tasks.map((task) => (
-              <TaskView navigation={this.props.navigation} task={item} />
+              <TaskView navigation={this.props.navigation} task={task} />
             ))
           }
         </ScrollView>

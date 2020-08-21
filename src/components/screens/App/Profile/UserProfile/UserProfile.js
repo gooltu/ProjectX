@@ -54,7 +54,7 @@ class UserProfile extends React.Component {
     }
     getProfileData() {
         var data = {
-            'phone': '918756463536'
+            'phone': this.props.mytoken.myphone
         }
         AsyncStorage.multiGet(["UserProfileImage", "UserProfile"]).then(profileData => {
             console.log(profileData)
@@ -165,7 +165,7 @@ class UserProfile extends React.Component {
 
 function mapStateToProps(state) {
     return {
-
+        mytoken: state.mytoken
     };
 }
 

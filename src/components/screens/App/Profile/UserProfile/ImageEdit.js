@@ -66,7 +66,7 @@ class ImageEdit extends React.Component {
         });
         // Refresh and Upload
         AWS.config.credentials.refresh(() => {
-            var keyName = '918756463536.jpeg';
+            var keyName = this.props.mytoken.myphone + '.jpeg';
             let contentType = image.mime;
             const arrayBuffer = decode(image.data);
             var params = { Bucket: 'nkjc', Key: keyName, Body: arrayBuffer, contentType: contentType };
@@ -145,7 +145,7 @@ class ImageEdit extends React.Component {
 
 function mapStateToProps(state) {
     return {
-
+        mytoken: state.mytoken
     };
 }
 

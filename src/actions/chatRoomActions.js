@@ -1,4 +1,4 @@
-import { SET_CHAT_DATA,ADD_CHAT_MESSAGE } from './ActionTypes'
+import { SET_CHAT_DATA, ADD_CHAT_MESSAGE } from './ActionTypes'
 import db from '../db/localdatabase'
 export const setChatData = (chatData) => {
     return {
@@ -7,11 +7,11 @@ export const setChatData = (chatData) => {
     }
 }
 
-export const updateChatRoom = (id) =>{
-    return(dispatch, setState) =>{
+export const updateChatRoom = (id) => {
+    return (dispatch, setState) => {
         let chatList = JSON.parse(JSON.stringify(getState().chatroom.chatroom))
-        for(let i=0;i<chatList.length;i++){
-            if(chatList[i]._ID==id){
+        for (let i = 0; i < chatList.length; i++) {
+            if (chatList[i]._ID == id) {
                 chatList[i].IS_JEWEL_PICKED = 1
             }
         }
@@ -21,7 +21,7 @@ export const updateChatRoom = (id) =>{
 }
 
 export const addChatMessage = (message) => {
-    return{
+    return {
         type: ADD_CHAT_MESSAGE,
         message: message
     }

@@ -62,7 +62,7 @@ class LeaderBoard extends React.Component {
       }
       else {
         var data = {
-          'phone': '918756463536'
+          'phone': this.props.mytoken.myphone
         }
         NetworkManager.callAPI(rest.downloadContact_Phone, 'post', data).then((responseJson) => {
           console.log(responseJson)
@@ -109,7 +109,8 @@ class LeaderBoard extends React.Component {
 function mapStateToProps(state) {
   return {
     leaderboard: state.leaderboard.leaderboard,
-    game: state.game
+    game: state.game,
+    mytoken: state.mytoken
   };
 }
 

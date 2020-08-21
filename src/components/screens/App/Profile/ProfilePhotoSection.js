@@ -42,7 +42,7 @@ class ProfilePhotoSection extends React.Component {
             }
             else {
                 var data = {
-                    'phone': '918756463536'
+                    'phone': this.props.mytoken.myphone
                 }
                 NetworkManager.callAPI(rest.downloadContact_Phone, 'post', data).then((responseJson) => {
                     console.log(responseJson)
@@ -102,7 +102,8 @@ function mapStateToProps(state) {
     return {
         userachievements: state.userachievements.userachivements,
         achievements: state.achievements.achievements,
-        game: state.game
+        game: state.game,
+        mytoken: state.mytoken
     };
 }
 

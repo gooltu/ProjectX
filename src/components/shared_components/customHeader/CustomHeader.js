@@ -90,33 +90,29 @@ class CustomHeader extends React.Component {
 
     displayFactory() {
         let factoryView
-        this.props.navigation.state.routeName == 'ChatPage' ?
-            factoryView =
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'ChatPageOptions' })} style={styles.jewelBox}>
-                <ImageBackground source={require('../../../assets/dots.png')} style={{
-                    width: '100%', height: '100%', justifyContent: 'center',
-                    alignItems: 'center'
-                }}>
-                </ImageBackground>
-            </TouchableOpacity>
-            :
-            factoryView =
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('JewelFactory')} style={styles.jewelBox}>
-                <ImageBackground source={require('../../../assets/factory.png')} style={{
-                    width: '100%', height: '100%', justifyContent: 'center',
-                    alignItems: 'center'
-                }}>
-                </ImageBackground>
-            </TouchableOpacity>
+        this.props.navigation.state.routeName == 'JewelFactory' ? factoryView = null :
+            this.props.navigation.state.routeName == 'ChatPage' ?
+                factoryView =
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'ChatPageOptions' })} style={styles.jewelBox}>
+                    <ImageBackground source={require('../../../assets/dots.png')} style={{
+                        width: '100%', height: '100%', justifyContent: 'center',
+                        alignItems: 'center'
+                    }}>
+                    </ImageBackground>
+                </TouchableOpacity>
+                :
+                factoryView =
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('JewelFactory')} style={styles.jewelBox}>
+                    <ImageBackground source={require('../../../assets/factory.png')} style={{
+                        width: '100%', height: '100%', justifyContent: 'center',
+                        alignItems: 'center'
+                    }}>
+                    </ImageBackground>
+                </TouchableOpacity>
         return factoryView
     }
 
     displayBackButton() {
-        console.log('test')
-        console.log(this.props.navigation.state.routeName)
-        console.log(
-            this.props.navigation.dangerouslyGetParent().state
-        )
         if (this.props.navigation.dangerouslyGetParent().state.index > 0 && this.props.navigation.state.routeName != 'MainTabs')
             return (<TouchableOpacity style={{ height: 32, width: 16, marginLeft: 8 }}
                 onPress={() => { this.props.navigation.goBack() }} >
@@ -124,7 +120,6 @@ class CustomHeader extends React.Component {
             </TouchableOpacity>)
         else
             return <View style={{ height: 32, width: 8, marginLeft: 4 }} />
-
     }
 
     displayTitle() {
@@ -174,7 +169,7 @@ class CustomHeader extends React.Component {
                         </View>
                         <View style={styles.progressBarOuterContainer}>
                             <View style={styles.progressBarInnerContainer}>
-                                <View style={{ width: (this.props.scores.points*100) / this.props.scores.max_level_points + '%', height: '100%' }}>
+                                <View style={{ width: (this.props.scores.points * 100) / this.props.scores.max_level_points + '%', height: '100%' }}>
                                     <ImageBackground source={require('../../../assets/ColorGrad.jpg')} style={styles.progressBackground}></ImageBackground>
                                 </View>
                             </View>

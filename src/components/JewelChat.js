@@ -298,7 +298,7 @@ class JewelChat extends React.Component {
         AppState.addEventListener('change', this._handleAppStateChange);
         this.unsubscribe = NetInfo.addEventListener(this._handleNetworkChange);
         db.getChatList().then(results => {
-            console.log('FROM JEWELCHAT COMPONENT GETCHAT SUCCESS')
+            console.log('FROM JEWELCHAT COMPONENT GETCHAT LIST SUCCESS')
             console.log(results.rows.length)
           
             let chatList = []

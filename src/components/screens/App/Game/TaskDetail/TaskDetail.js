@@ -128,7 +128,7 @@ class TaskDetail extends React.Component {
 
                 <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
 
-                <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }} onPress={() => {
+                <TouchableOpacity disabled={!this.CheckAvailablityForAllJewels()} style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }} onPress={() => {
                     let data = {
                         task_id: this.task.task_id,
                         id: this.task.id
