@@ -23,11 +23,14 @@ import actions from "../../../../actions";
 import colors from "../../../shared_styles/colors";
 import ProfileOptionsList from './ProfileOptionsList'
 import ProfilePhotoSection from './ProfilePhotoSection'
+const levelArray = [5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120]
 class Profile extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      referrals: {}
+      referrals: [],
+      invitees: 0,
+      levelJson: {}
     }
   }
   componentDidMount() {
@@ -47,40 +50,54 @@ class Profile extends React.Component {
 
       })
     NetworkManager.callAPI(rest.getChildren, 'GET', null).then(result => {
-      this.setState({
-        referrals: result
-      })
+      this.processReferrals(result)
     }).catch(error => {
 
     })
   }
+  processReferrals(result) {
+    let levelJson = {}
+    if (result.children.length > 0) {
+      levelArray.map(item => {
+        levelJson[item] = result.children.filter((user) => {
+          return user.level >= item
+        })
+      })
+    }
+    this.setState({
+      referrals: result.children,
+      invitees: result.invitees,
+      levelJson: levelJson
+    })
+  }
   getPercentage(item, index) {
+    let percent = null
     if (item.text.includes('img')) {
       let jewel = parseInt(item.text.replace(/\D/g, ''))
-      let percent = (this.props.game.jewels[jewel].total_count) / (this.props.userachievements[index].level * 10)
-      if (percent > 1) {
-        return 100
-      }
-      else {
-        return percent * 100
-      }
+      percent = (this.props.game.jewels[jewel].total_count) / (this.props.userachievements[index].level * 10)
     }
     else if (item.text.includes('successfully')) {
-      let percent = (this.props.game.jewels[2].total_count) / (this.props.userachievements[index].level * 5)
-      if (percent > 1) {
-        return 100
-      }
-      else {
-        return percent * 100
+      percent = (this.props.game.jewels[2].total_count) / (this.props.userachievements[index].level * 5)
+    }
+    else if (item.text.includes('reached level')) {
+      if (this.state.referrals.length > 0 && Object.keys(this.state.levelJson).length > 0) {
+        percent = (this.state.levelJson[levelArray[index - 17]].length) / (this.props.userachievements[index].level * 5)
       }
     }
-    return 100
-  }
+    else if (item.text.includes('Invite')) {
+      if (this.state.referrals.length > 0) {
+        percent = this.state.invitees / (this.props.userachievements[index].level * 5)
+      }
+    }
 
-  componentWillUnmount() {
-    this.focusListener.remove()
-  }
+    if (percent > 1) {
+      return 100
+    }
+    else {
+      return percent * 100
+    }
 
+  }
   redeemAchievements = (item, index) => {
     if (this.getPercentage(item, index) == 100) {
       let data = {
@@ -172,7 +189,6 @@ class Profile extends React.Component {
 }
 
 function mapStateToProps(state) {
-  console.log('state.achievements.achievements', state.userachievements.userachivements)
   return {
     userachievements: state.userachievements.userachivements,
     achievements: state.achievements.achievements,
