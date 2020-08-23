@@ -114,7 +114,7 @@ const AppMainStack = createStackNavigator({
         screen: MainTabs,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} />
+                header: <CustomHeader navigation={navigation} title='JewelChat'/>
             };
         }
     },
@@ -122,7 +122,7 @@ const AppMainStack = createStackNavigator({
         screen: ChatPage,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} />
+                header: <CustomHeader navigation={navigation} title='Chat Page' />
             };
         }
     },
@@ -130,7 +130,7 @@ const AppMainStack = createStackNavigator({
         screen: NewGroup,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} />
+                header: <CustomHeader navigation={navigation} title='Create New Group' />
             };
         }
     },
@@ -138,7 +138,7 @@ const AppMainStack = createStackNavigator({
         screen: JewelFactory,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} />
+                header: <CustomHeader navigation={navigation} title='Jewel Factory' />
             };
         }
     },
@@ -146,7 +146,7 @@ const AppMainStack = createStackNavigator({
         screen: LeaderBoard,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} />
+                header: <CustomHeader navigation={navigation} title='Leaderboard'/>
             };
         }
     },
@@ -154,7 +154,7 @@ const AppMainStack = createStackNavigator({
         screen: Wallet,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} />
+                header: <CustomHeader navigation={navigation} title='Wallet'/>
             };
         }
     },
@@ -162,7 +162,7 @@ const AppMainStack = createStackNavigator({
         screen: TaskDetail,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} />
+                header: <CustomHeader navigation={navigation} title='Task Detail'/>
             };
         }
     },
@@ -170,7 +170,7 @@ const AppMainStack = createStackNavigator({
         screen: GiftTaskDetail,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} />
+                header: <CustomHeader navigation={navigation} title='Gift Task Detail'/>
             };
         }
     },
@@ -186,47 +186,47 @@ const AppMainStack = createStackNavigator({
         screen: FriendProfile,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} />
+                header: <CustomHeader navigation={navigation} title=''/>
             };
         }
     },
-    Contacts:{
+    Contacts: {
         screen: ContactsScreen,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} />
+                header: <CustomHeader navigation={navigation} title='Contacts'/>
             };
         }
     },
-    UserProfile:{
+    UserProfile: {
         screen: UserProfile,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} />
+                header: <CustomHeader navigation={navigation} title='Profile'/>
             };
         }
     },
-    ForwardMessage:{
+    ForwardMessage: {
         screen: ForwardMessage,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} />
+                header: <CustomHeader navigation={navigation} title='Forward..'/>
             };
         }
     },
-    ImageEdit:{
+    ImageEdit: {
         screen: ImageEdit,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} />
+                header: <CustomHeader navigation={navigation} title='Change Picture'/>
             };
         }
     },
-    GiftsWon:{
+    GiftsWon: {
         screen: GiftsWon,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} />
+                header: <CustomHeader navigation={navigation} title='Gifts Won'/>
             };
         }
     }
@@ -291,7 +291,7 @@ class JewelChat extends React.Component {
         console.log(this.props)
     }
 
-   
+
 
     componentDidMount() {
         console.log('MOUNT APP');
@@ -300,21 +300,21 @@ class JewelChat extends React.Component {
         db.getChatList().then(results => {
             console.log('FROM JEWELCHAT COMPONENT GETCHAT LIST SUCCESS')
             console.log(results.rows.length)
-          
+
             let chatList = []
-            for(let i=0;i<results.rows.length;i++){
+            for (let i = 0; i < results.rows.length; i++) {
                 chatList.push(results.rows.item(i))
             }
             this.props.setChatListData(chatList)
         })
-        .catch(err => {
-            console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
-            console.log(err)
-        })
-        
-     if (!this.props.mytoken.isLoading && this.props.mytoken.token !== null && this.props.network.networkIsConnected){
-        console.log('Came to real time connect')
-        this.props.realtimeConnect();
+            .catch(err => {
+                console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
+                console.log(err)
+            })
+
+        if (!this.props.mytoken.isLoading && this.props.mytoken.token !== null && this.props.network.networkIsConnected) {
+            console.log('Came to real time connect')
+            this.props.realtimeConnect();
         }
     }
     componentWillUnmount() {
@@ -323,18 +323,18 @@ class JewelChat extends React.Component {
         this.unsubscribe();
     }
 
-     _handleAppStateChange = (nextAppState) => {
+    _handleAppStateChange = (nextAppState) => {
 
         console.log(nextAppState);
-        if(nextAppState == 'inactive' || nextAppState == 'background'){
+        if (nextAppState == 'inactive' || nextAppState == 'background') {
             try {
-                 AsyncStorage.setItem(
-                  'logOutTime',
-                  (new Date().getTime() + global.TimeDelta).toString()
+                AsyncStorage.setItem(
+                    'logOutTime',
+                    (new Date().getTime() + global.TimeDelta).toString()
                 );
-              } catch (error) {
+            } catch (error) {
                 // Error saving data
-              }
+            }
         }
         this.props.appstateChange(nextAppState);
 

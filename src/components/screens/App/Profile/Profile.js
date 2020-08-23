@@ -24,6 +24,7 @@ import colors from "../../../shared_styles/colors";
 import ProfileOptionsList from './ProfileOptionsList'
 import ProfilePhotoSection from './ProfilePhotoSection'
 const levelArray = [5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120]
+
 class Profile extends React.Component {
   constructor(props) {
     super(props)
@@ -173,7 +174,6 @@ class Profile extends React.Component {
                         <TouchableOpacity style={{ backgroundColor: color.darkcolor1, height: 22, width: 65, alignItems: 'center', borderColor: color.lightcolor2, justifyContent: 'center', borderWidth: 1.5, borderRadius: 5 }}>
                           <Text style={{ color: color.jcgray, fontSize: 12 }}>LEVEL {this.props.userachievements[index].level}</Text>
                         </TouchableOpacity>
-                      // console.log(this.props.userachievements, index)
                     }
                   </View>
                 </View>

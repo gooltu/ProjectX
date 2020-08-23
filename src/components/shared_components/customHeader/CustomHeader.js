@@ -133,7 +133,7 @@ class CustomHeader extends React.Component {
             titleView = <Text style={{ fontSize: 16, color: 'white', paddingLeft: 10, fontWeight: 'bold' }}>{this.props.activeChat.PHONEBOOK_CONTACT_NAME}</Text>
         }
         else
-            titleView = <Text style={{ fontSize: 20, fontWeight: '500', color: 'white', textAlignVertical: 'center', paddingLeft: 16 }}>JewelChat</Text>
+    titleView = <Text style={{ fontSize: 20, fontWeight: '500', color: 'white', textAlignVertical: 'center', paddingLeft: 16 }}>{this.props.title}</Text>
         return titleView
     }
 
