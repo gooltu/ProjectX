@@ -127,7 +127,7 @@ class TaskDetail extends React.Component {
                     </View> : null}
 
                 <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
-
+                {this.props.taskdetails.hasOwnProperty(this.task.task_id) ?
                 <TouchableOpacity disabled={!this.CheckAvailablityForAllJewels()} style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }} onPress={() => {
                     let data = {
                         task_id: this.task.task_id,
@@ -186,7 +186,7 @@ class TaskDetail extends React.Component {
                     <View style={{ position: 'absolute', width: '100%', height: '100%', zIndex: 2, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>WIN POINTS & COINS</Text>
                     </View>
-                </TouchableOpacity>
+                </TouchableOpacity>:null}
                 {
                     this.state.isLaoding ?
                         <View style={styles.activityIndicatorWrapper}>

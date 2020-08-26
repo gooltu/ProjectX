@@ -9,8 +9,8 @@ SQLite.enablePromise(true);
 let _jcdb
 
 export default {
-	getChats, getChatList, updatePhoneContact, insertStropheChatData, updateDeliveryAndReadRecipt, getContactList,updatePickedJewel,
-	updateLastMessageAndText, selectUnreadMessages, selectUnsendMessages, updateContact, insertContactData, checkIfRowExist
+	getChats, getChatList, updatePhoneContact, insertStropheChatData, updateDeliveryAndReadRecipt, getContactList, updatePickedJewel,
+	updateLastMessageAndText, selectUnreadMessages, selectUnsendMessages, updateContact, insertContactData, checkIfRowExist, insertTeamJC
 };
 
 SQLite.openDatabase({
@@ -360,7 +360,7 @@ function updatePhoneContact(contactData) {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
-				let sql = "UPDATE Contact SET PHONEBOOK_CONTACT_NAME=" + _handleString(contactData.PHONEBOOK_CONTACT_NAME) + ", IS_PHONEBOOK_CONTACT = 1  WHERE CONTACT_NUMBER=" + contactData.phone;
+				let sql = "UPDATE Contact SET PHONEBOOK_CONTACT_NAME=" + _handleString(contactData.PHONEBOOK_CONTACT_NAME) + ", IS_PHONEBOOK_CONTACT = 1  WHERE CONTACT_NUMBER=" + contactData.CONTACT_NUMBER;
 				txn.executeSql(sql).then(result => {
 					resolve('success')
 					console.log('success Contact update')
@@ -406,6 +406,27 @@ function _handleString(value) {
 		return "'" + value + "'"
 }
 
+function insertTeamJC(data) {
+	return new Promise((resolve, reject) => {
+		_initDb().then(instance => {
+			jcdb = instance;
+			jcdb.transaction((txn) => {
+				let sql = "INSERT INTO Contact " +
+					" (JID, CONTACT_NUMBER, IS_PHONEBOOK_CONTACT , PHONEBOOK_CONTACT_NAME, IS_REGIS, LAST_MSG_CREATED_TIME, SMALL_IMAGE, IMAGE_PATH, CHAT_ROOM_JID) " +
+					" VALUES (" + _handleString(data.JID) + "," + _handleString(data.CONTACT_NUMBER) + ", " + data.IS_PHONEBOOK_CONTACT + "," + _handleString(data.PHONEBOOK_CONTACT_NAME) + "," + data.IS_REGIS + "," + data.LAST_MSG_CREATED_TIME + "," + data.SMALL_IMAGE + ",'" + _handleString(data.IMAGE_PATH) + "," + _handleString(data.JID) + " ) "
+				txn.executeSql(sql).then(val => {
+					resolve('Success')
+				}).catch(err => {
+					console.log('reject')
+					reject(err)
+				})
+			}).catch(err => {
+				console.log('reject1')
+				reject(err)
+			})
+		})
+	})
+}
 
 const contactData = [
 	{

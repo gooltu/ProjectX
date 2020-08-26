@@ -20,22 +20,23 @@ export default class SuccessFullGiftRedeem extends React.Component {
 
   render() {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor:colors.darkcolor3 }}>
-        <TouchableOpacity style={{ margin: 20, alignItems:'flex-end' }} onPress={() => this.props.navigation.navigate('MainTabs')}>
-        <Icon name='close' color={colors.lightcolor1} size={30} />
+      <SafeAreaView style={{ flex: 1, backgroundColor: colors.darkcolor3 }}>
+        <TouchableOpacity style={{ margin: 20, alignItems: 'flex-end' }} onPress={() => this.props.navigation.navigate('MainTabs')}>
+          <Icon name='close' color={colors.lightcolor1} size={30} />
         </TouchableOpacity>
-        <View style={{ width: '100%', height: '70%', alignItems: 'center'}}>
+        <View style={{ width: '100%', height: '70%', alignItems: 'center' }}>
           <LottieView
             ref={animation => {
               this.animation = animation;
             }}
-            source={require('../../../../LottieSamples/trophy.json')}
+             source={require('../../../../LottieSamples/trophy.json')}
+           // source={{ uri: 'https://testjatinbucket.s3.ap-south-1.amazonaws.com/trophy.json' }}
           />
         </View>
-        <View style={{alignItems:'center'}}>
-        <Text style={{fontSize:30, color:colors.lightcolor1, textAlign:'center', fontWeight:'500'}}>Congratulations... {'\n'} You have won</Text>
+        <View style={{ alignItems: 'center' }}>
+          <Text style={{ fontSize: 30, color: colors.lightcolor1, textAlign: 'center', fontWeight: '500' }}>Congratulations... {'\n'} You have won</Text>
         </View>
-           
+
       </SafeAreaView>
     );
   }

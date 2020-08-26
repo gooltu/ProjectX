@@ -57,7 +57,7 @@ function insertContacts(Contacts, callback) {
     console.log(callback)
     for (let i = 0; i < Contacts.length; i++) {
         console.log(Contacts[i])
-        // console.log(new phoneContactModal(Contacts[i]))
+        console.log(new phoneContactModal(Contacts[i]))
         if (Contacts[i].phoneNumbers.length > 0) {
             let data = new phoneContactModal(Contacts[i])
             if (data.CONTACT_NUMBER.length == 12) {

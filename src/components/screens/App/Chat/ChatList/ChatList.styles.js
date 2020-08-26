@@ -37,11 +37,11 @@ export default styles = StyleSheet.create({
         fontWeight: "600"
     },
     jewelStyle: {
-        margin: 10,
-        width: '100%',
-        height: '100%',
-        alignItems: 'center',
-        overflow: 'hidden'
+       // margin: 10,
+        // width: '100%',
+        // height: '100%',
+        // alignItems: 'center',
+       // overflow: 'hidden'
     },
     imgBackground: {
         width: '100%',
