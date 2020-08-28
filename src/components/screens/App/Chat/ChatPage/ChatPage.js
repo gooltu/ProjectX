@@ -35,6 +35,7 @@ import actions from '../../../../../actions'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import Icon2 from 'react-native-vector-icons/FontAwesome'
 import Icon1 from 'react-native-vector-icons/MaterialIcons'
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import db from '../../../../../db/localdatabase'
 import rest from '../../../../../network/rest';
 import axios from 'axios'
@@ -237,7 +238,7 @@ class ChatPage extends React.Component {
   mainBar() {
     return (
       <View style={styles.mainBarConatiner}>
-        <TouchableOpacity style={styles.firstItemMainBar}></TouchableOpacity>
+        <Icon2 name={'plus'} color={'white'} size={24} style={{ marginLeft: 8, marginRight: 4 }} />
         {Platform.OS === 'ios' && <TextInput
           placeholder="Type here"
           placeholderTextColor="white"
@@ -272,8 +273,8 @@ class ChatPage extends React.Component {
           //value={value}                    
           onContentSizeChange={(e) => this.updateChatTextboxHeight(e.nativeEvent.contentSize.height)}
         />}
-        {this.state.chatboxempty && <TouchableOpacity style={styles.secondItem}></TouchableOpacity>}
-        {this.state.chatboxempty && <TouchableOpacity style={styles.thirdItem}></TouchableOpacity>}
+        {this.state.chatboxempty && <Icon2 name={'camera'} color={'white'} size={24} style={{ marginLeft: 8, marginRight: 4 }} />}
+        {this.state.chatboxempty && <MaterialIcon name={'sticker-emoji'} color={'white'} size={26} style={{ marginLeft: 4, marginRight: 4 }} />}
         {!this.state.chatboxempty && <TouchableOpacity onPress={() => {
           this.textInput.clear();
           if (this.props.activeChat.IS_PHONEBOOK_CONTACT == 1 && this.props.chatroom.length == 0) {
@@ -444,7 +445,7 @@ class ChatPage extends React.Component {
             />
             <Snackbar
               duration={1000}
-              style={{ backgroundColor: colors.lightcolor1, alignItems: 'center'}}
+              style={{ backgroundColor: colors.lightcolor1, alignItems: 'center' }}
               visible={this.state.visible}
               onDismiss={this._onDismissSnackBar}>
               Jewel Store is FULL.

@@ -20,6 +20,8 @@ import CustomLoader from '../../shared_components/CustomLoader';
 import TabIcon from "../../svg_components/TabIcons";
 import actions from '../../../actions';
 import db from '../../../db/localdatabase'
+import NetworkManager from '../../../network/NetworkManager';
+import rest from '../../../network/rest';
 
 const teamJC = {
   _ID: 1,
@@ -35,16 +37,15 @@ const teamJC = {
   IS_INVITED: null,
   IS_BLOCKED: 0,
   IS_PHONEBOOK_CONTACT: 0,
-  UNREAD_COUNT: 0,
+  UNREAD_COUNT: 1,
   SMALL_IMAGE: null,
   IMAGE_PATH: 'https://parthaprofiles.s3.ap-south-1.amazonaws.com/9005835708_pic.png',
-  LAST_MSG_CREATED_TIME: '1569819266669',
+  LAST_MSG_CREATED_TIME: new Date().getTime(),
   MSG_TYPE: 1,
   MSG_TEXT: 'Welcome to JewelChat.'
 }
 
 class EnterDetails extends React.Component {
-
 
   state = {
     networkloading: false,
@@ -59,7 +60,25 @@ class EnterDetails extends React.Component {
 
   componentDidMount() {
     this.props.loadGameData()
-    db.insertTeamJC(teamJC)
+    db.insertTeamJC(teamJC).then(result => {
+      db.getChatList().then(results => {
+        console.log('FROM JEWELCHAT COMPONENT GETCHAT LIST SUCCESS')
+        console.log(results.rows.length)
+
+        let chatList = []
+        for (let i = 0; i < results.rows.length; i++) {
+          chatList.push(results.rows.item(i))
+        }
+        this.props.setChatListData(chatList)
+      })
+        .catch(err => {
+          console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
+          console.log(err)
+        })
+    }).catch(err => {
+      console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
+      console.log(err)
+    })
     this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
     console.log('Token', this.props.mytoken)
   }
@@ -102,41 +121,26 @@ class EnterDetails extends React.Component {
       console.log(this.props.mytoken.cookie);
       console.log('Name:' + this.state.name);
       console.log('RefPhone:' + this.state.refphone);
-
-
-
       this.setState({ networkloading: true });
-
-
-      axios({
-        method: 'post',
-        url: 'https://testjc1984.herokuapp.com/initialDetails',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Cookie: this.props.mytoken.cookie,
-        },
-        data: {
-          name: this.state.name,
-          reference: this.state.refphone
-        },
+      let data =  {
+        name: this.state.name,
+        reference: this.state.refphone
+      }
+      NetworkManager.callAPI(rest.initialDetails, 'POST', data).then((responseJson) => {
+        this.setState({ networkloading: false })
+        console.log(responseJson);
+        if (!responseJson.error) {
+          this.props.navigation.navigate('App')
+        } else
+          throw (new Error(responseJson.message))
       })
-        .then((responseJson) => {
-          this.setState({ networkloading: false })
-          console.log(responseJson);
-          if (!responseJson.data.error) {
-            this.props.navigation.navigate('App')
-          } else
-            throw (new Error(responseJson.message))
-        })
-        .catch((error) => {
-          console.log(error)
-          this.setState({ networkloading: false })
-          let s = { visible: true, text: error.message }
-          this.setState({ snackbar: s });
-          this.setState({ buttonDisabled: false });
-        });
-
+      .catch((error) => {
+        console.log(error)
+        this.setState({ networkloading: false })
+        let s = { visible: true, text: error.message }
+        this.setState({ snackbar: s });
+        this.setState({ buttonDisabled: false });
+      });
     }
 
 
@@ -217,8 +221,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     tokenLoad: (myTokens) => dispatch({ type: 'USER_TOKEN_LOADED', myTokens }),
-    loadGameData: () => dispatch(actions.loadGameState())
-
+    loadGameData: () => dispatch(actions.loadGameState()),
+    setChatListData: (chatList) => dispatch(actions.setChatListData(chatList)),
   }
 }
 

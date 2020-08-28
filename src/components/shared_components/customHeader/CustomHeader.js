@@ -201,7 +201,8 @@ function mapStateToProps(state) {
         presence: state.chatslist.presence,
         activeChat: state.chatslist.activeChat,
         scores: state.game.scores,
-        jewels: state.game.jewels
+        jewels: state.game.jewels,
+        chatslist: state.chatslist.chatList
     }
 }
 

@@ -412,8 +412,8 @@ function insertTeamJC(data) {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 				let sql = "INSERT INTO Contact " +
-					" (JID, CONTACT_NUMBER, IS_PHONEBOOK_CONTACT , PHONEBOOK_CONTACT_NAME, IS_REGIS, LAST_MSG_CREATED_TIME, SMALL_IMAGE, IMAGE_PATH, CHAT_ROOM_JID) " +
-					" VALUES (" + _handleString(data.JID) + "," + _handleString(data.CONTACT_NUMBER) + ", " + data.IS_PHONEBOOK_CONTACT + "," + _handleString(data.PHONEBOOK_CONTACT_NAME) + "," + data.IS_REGIS + "," + data.LAST_MSG_CREATED_TIME + "," + data.SMALL_IMAGE + ",'" + _handleString(data.IMAGE_PATH) + "," + _handleString(data.JID) + " ) "
+					" (JID, CONTACT_NUMBER, IS_PHONEBOOK_CONTACT , PHONEBOOK_CONTACT_NAME, IS_REGIS, LAST_MSG_CREATED_TIME,MSG_TEXT,UNREAD_COUNT) " +
+					" VALUES (" + _handleString(data.JID) + "," + _handleString(data.CONTACT_NUMBER) + ", " + data.IS_PHONEBOOK_CONTACT + "," + _handleString(data.PHONEBOOK_CONTACT_NAME) + "," + data.IS_REGIS + "," + data.LAST_MSG_CREATED_TIME + "," + _handleString(data.MSG_TEXT) + ","+ data.UNREAD_COUNT +") "
 				txn.executeSql(sql).then(val => {
 					resolve('Success')
 				}).catch(err => {

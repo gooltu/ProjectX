@@ -43,9 +43,9 @@ function Item({ item, onpressitem, onlongpressitem }) {
             item.JEWELCHAT_ID == 1 && <Logo height="75%" width="75%" style={styles.jewelStyle} />
           }
           {
-            !item.SMALL_IMAGE && item.JEWELCHAT_ID != 1 && 
-            <View style={{justifyContent:'center', alignItems:'center'}}>
-            <Icon name={'user'} color={colors.jcgray} size={35} style={styles.jewelStyle} />
+            !item.SMALL_IMAGE && item.JEWELCHAT_ID != 1 &&
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <Icon name={'user'} color={colors.jcgray} size={35} style={styles.jewelStyle} />
             </View>
           }
         </View>
@@ -82,6 +82,9 @@ class ChatList extends React.Component {
 
 
   componentDidMount() {
+    this.focusListener = this.props.navigation.addListener("didFocus", () => {
+      this.props.setActiveChat({})
+  });
     //console.log(this.props.navigation.state.routes[this.props.navigation.state.index]);
     //console.log(this.props);
     //console.log(this.props.navigation.state.routeName);
@@ -90,6 +93,7 @@ class ChatList extends React.Component {
 
   componentWillUnmount() {
     console.log('ChatList UnMount');
+    this.focusListener.remove()
   }
 
   render() {
@@ -114,7 +118,6 @@ class ChatList extends React.Component {
                           chatroom.push(results.rows.item(i))
                         }
                         this.props.setChatData(chatroom)
-
                       })
                       .catch(err => {
                         console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')

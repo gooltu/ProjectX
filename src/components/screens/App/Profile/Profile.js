@@ -180,7 +180,7 @@ class Profile extends React.Component {
                 <View style={{ backgroundColor: color.darkcolor3, height: 0.4, width: '100%' }}></View>
               </View>
             }
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.text}
           /> : null}
         <StatusBar barStyle="light-content" hidden={false} translucent={true} />
       </SafeAreaView >

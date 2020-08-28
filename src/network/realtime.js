@@ -12,48 +12,48 @@ connection.registerSASLMechanism = XMPP.Strophe.SASLXOAuth2;
 export const realtimeConnect = () => {
 
 	return (dispatch, getState) => {
-		// console.log('REALTIME CONNECT1');
-		// console.log(getState())
-		// // console.log(getState().mytoken.myphone + '@jewelchat')
-		// // console.log(getState().mytoken.token)
-		// //		connection.connect(getState().mytoken.myphone + '@jewelchat.net', getState().mytoken.token, (status, err) => {
-		// connection.connect(getState().mytoken.myphone + '@jewelchat.net', 'pass', (status, err) => {
-		// 	if (err) {
-		// 		console.log(' XMPP Error:' + err);
-		// 		//dispatch({ type: 'XMPP_ERROR' });
-		// 	}
-		// 	if (status == Strophe.Status.CONNECTING) {
-		// 		console.log('Strophe is connecting.');
-		// 		dispatch({ type: 'XMPP_CONNECTING' });
-		// 	} else if (status == Strophe.Status.CONNFAIL) {
-		// 		console.log('Strophe failed to connect.');
-		// 		dispatch({ type: 'XMPP_CONNECTION_FAIL' });
-		// 	} else if (status == Strophe.Status.AUTHENTICATING) {
-		// 		console.log('Strophe is authenticating.');
-		// 		dispatch({ type: 'XMPP_AUTHENTICATING' });
-		// 	} else if (status == Strophe.Status.AUTHFAIL) {
-		// 		dispatch({ type: 'XMPP_AUTH_FAILURE' });
-		// 		console.log('Strophe is auth failure.');
-		// 	} else if (status == Strophe.Status.DISCONNECTING) {
-		// 		dispatch({ type: 'XMPP_DISCONNECTING' });
-		// 		console.log('Strophe is disconnecting.');
-		// 	} else if (status == Strophe.Status.DISCONNECTED) {
-		// 		dispatch({ type: 'XMPP_DISCONNECTED' });
-		// 		console.log('Strophe is disconnected.');
-		// 		//save logout time
-		// 	} else if (status == Strophe.Status.CONNECTED) {
-		// 		dispatch({ type: 'XMPP_CONNECTED' });
-		// 		console.log('Strophe is connected.');
-		// 		console.log(connection)
-		// 		getServerTime()
-		// 		dispatch(resendMessages(getState().mytoken.myphone + '@jewelchat.net'))
-		// 		connection.addHandler(onMessage, null, 'message', null, null, null);
-		// 		connection.addHandler(onPresence, null, 'presence', null, null, null);
-		// 		connection.send($pres().tree(), () => {
-		// 		});
-		// 		downloadMessages()
-		// 	}
-		// });
+		console.log('REALTIME CONNECT1');
+		console.log(getState())
+		// console.log(getState().mytoken.myphone + '@jewelchat')
+		// console.log(getState().mytoken.token)
+		//		connection.connect(getState().mytoken.myphone + '@jewelchat.net', getState().mytoken.token, (status, err) => {
+		connection.connect(getState().mytoken.myphone + '@jewelchat.net', 'pass', (status, err) => {
+			if (err) {
+				console.log(' XMPP Error:' + err);
+				//dispatch({ type: 'XMPP_ERROR' });
+			}
+			if (status == Strophe.Status.CONNECTING) {
+				console.log('Strophe is connecting.');
+				dispatch({ type: 'XMPP_CONNECTING' });
+			} else if (status == Strophe.Status.CONNFAIL) {
+				console.log('Strophe failed to connect.');
+				dispatch({ type: 'XMPP_CONNECTION_FAIL' });
+			} else if (status == Strophe.Status.AUTHENTICATING) {
+				console.log('Strophe is authenticating.');
+				dispatch({ type: 'XMPP_AUTHENTICATING' });
+			} else if (status == Strophe.Status.AUTHFAIL) {
+				dispatch({ type: 'XMPP_AUTH_FAILURE' });
+				console.log('Strophe is auth failure.');
+			} else if (status == Strophe.Status.DISCONNECTING) {
+				dispatch({ type: 'XMPP_DISCONNECTING' });
+				console.log('Strophe is disconnecting.');
+			} else if (status == Strophe.Status.DISCONNECTED) {
+				dispatch({ type: 'XMPP_DISCONNECTED' });
+				console.log('Strophe is disconnected.');
+				//save logout time
+			} else if (status == Strophe.Status.CONNECTED) {
+				dispatch({ type: 'XMPP_CONNECTED' });
+				console.log('Strophe is connected.');
+				console.log(connection)
+				getServerTime()
+				dispatch(resendMessages(getState().mytoken.myphone + '@jewelchat.net'))
+				connection.addHandler(onMessage, null, 'message', null, null, null);
+				connection.addHandler(onPresence, null, 'presence', null, null, null);
+				connection.send($pres().tree(), () => {
+				});
+				downloadMessages()
+			}
+		});
 	}
 }
 
@@ -77,7 +77,7 @@ function _handlePresence(msg) {
 	console.log(type)
 	console.log(from)
 	console.log(to)
-	connection.roster.add('7@jewelchat.net', 'nickname', [], function () { })
+	connection.roster.add(from, 'nickname', [], function () { })
 	if ((type == '' || type == 'unavailable') && from != to) {
 		let presenceData = JSON.parse(JSON.stringify(store.getState().chatslist.presence))
 		if (type == 'unavailable')
@@ -105,6 +105,7 @@ function _handlePresence(msg) {
 }
 
 export const sendSubscriptionRequest = (JID) => {
+	console.log('sent subscription request', JID)
 	return (dispatch, getState) => {
 		connection.roster.subscribe(JID);
 	}
@@ -377,7 +378,6 @@ export const sendReply = (messageText, chatroom, type, parent) => {
 			IS_FORWARD: forward,
 			REPLY_PARENT: parent
 		}
-		console.log(message)
 		db.insertStropheChatData(message).then((result) => {
 			message['_ID'] = result
 			message['SENDER_MSG_ID'] = result
