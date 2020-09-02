@@ -79,7 +79,7 @@ class ChatPage extends React.Component {
   //to update the contact data (Image, JEWELCHAT_ID etc)
   UpdateContact() {
     var data = {
-      'phone': '918756463536',
+      'phone': this.props.activeChat.CONTACT_NUMBER,
     }
     NetworkManager.callAPI(rest.downloadContact_Phone, 'post', data).then((responseJson) => {
       console.log('responseJson')
