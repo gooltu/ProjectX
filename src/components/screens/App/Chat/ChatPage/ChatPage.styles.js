@@ -20,12 +20,7 @@ export default styles = StyleSheet.create({
         paddingLeft: 8,
         paddingRight: 8
     },
-    createdDateStyle: {
-        marginTop: 5,
-        marginBottom: 5,
-        color: 'white',
-        alignSelf: 'center'
-    },
+    
     chatItemContainer: {
         flex: 1,
         flexDirection: 'column',
@@ -65,14 +60,61 @@ export default styles = StyleSheet.create({
         marginLeft: 4,
         marginRight: 8
     },
-    friendMsgContainer: {
+    MsgRow: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
         marginBottom: 10
+    },    
+    MsgContainer: {
+        flex: 1,
+        flexDirection: 'column'        
+    },
+    sectionheaderdate: {
+        marginTop: 10,
+        marginBottom: 10,
+        paddingVertical:3,
+        paddingHorizontal:7,
+        borderRadius:4,        
+        color: 'white',
+        backgroundColor: colors.darkcolor3,
+        alignSelf: 'center'
+    },
+    mychatbox: {
+        flex:1,
+        flexDirection: 'column', 
+        alignSelf: 'flex-end',
+        backgroundColor: colors.lightcolor2,
+        color: 'black',
+        maxWidth: 250,
+        minWidth: 100,
+        paddingHorizontal: 3,
+        paddingVertical:2,
+        borderRadius: 5
+    },
+
+    friendschatbox: {
+        flex:1,
+        flexDirection: 'column', 
+        alignSelf: 'flex-start',
+        backgroundColor: 'white',
+        color: 'black',
+        maxWidth: 250,
+        minWidth: 100,
+        paddingHorizontal: 3,
+        paddingVertical:2,
+        borderRadius: 5
+    },
+
+    myMsgContainer: {
+        flex: 1,
+        alignSelf: 'flex-end',
+        flexDirection: 'column',
+        maxWidth: 250
     },
     jewelContainer: {
+        justifyContent: 'center',        
         width: 40,
         height: 40
     },
@@ -86,19 +128,10 @@ export default styles = StyleSheet.create({
         alignSelf: 'center',
         overflow: 'hidden'
     },
-    msgContainer: {
-        flex: 1,
-        flexDirection: 'column',
-        maxWidth: 250
-    },
-    myMsgContainer: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
-    },
+    
     friendMsgText: {
         padding: 5,
-        color: 'white'
+        color: 'black'
     },
     friendMsgTextContainer:{
         borderWidth: StyleSheet.hairlineWidth,
@@ -118,7 +151,7 @@ export default styles = StyleSheet.create({
     },
     msgTime: {
         alignSelf: 'flex-end',
-        color: 'white',
+        color: colors.jcgray,
         fontSize: 10,
         paddingRight: 5
     }

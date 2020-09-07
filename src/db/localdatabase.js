@@ -1,6 +1,8 @@
 import SQLite from 'react-native-sqlite-storage';
 import SQL from './queries';
 import phoneContactModal from './phoneContactModal';
+//import {populateTestData} from './TestData';
+
 
 
 SQLite.DEBUG(true);
@@ -9,7 +11,7 @@ SQLite.enablePromise(true);
 let _jcdb
 
 export default {
-	getChats, getChatList, updatePhoneContact, insertStropheChatData, updateDeliveryAndReadRecipt, getContactList,updatePickedJewel,
+	getChats,getAllChatsGreaterThanEqual_ID, getChatList, updatePhoneContact, insertStropheChatData, insertAffiliations, updateDeliveryAndReadReceipt, getContactList,updatePickedJewel,
 	updateLastMessageAndText, selectUnreadMessages, selectUnsendMessages, updateContact, insertContactData, checkIfRowExist
 };
 
@@ -40,6 +42,7 @@ SQLite.openDatabase({
 	console.log(val)
 }).then((result) => {
 	console.log('APP START TRANSACTION SUCCESSFUL')
+	populateTestData();
 }).catch(err => {
 	console.log('APP START DATABASE ERROR');
 	console.log(err);
@@ -65,20 +68,87 @@ function _initDb() {
 	})
 }
 
-function getChats(JID, offset) {
+function getChats(JID, offset, isgroupmsg) {
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
-				txn.executeSql('select * FROM ChatMessage JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) where CHAT_ROOM_JID ="' + JID + '" ORDER BY _ID DESC LIMIT 20 OFFSET ' + offset)
+
+				if( isgroupmsg == 0 ){
+					txn.executeSql('select * FROM ChatMessage JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) where CHAT_ROOM_JID ="' + JID + '" ORDER BY _ID DESC LIMIT 20 OFFSET ' + offset)
 					.then((results) => {
 						console.log('QUERY COMPLETED for Chat room', JID);
 						console.log(results[1])
-						resolve(results[1])
+						resolve(results[1].rows.raw())
 					})
 					.catch(err => {
 						reject(err)
 					})
+				}else{
+					txn.executeSql('select a.*, b.MAX_SEQUENCE, c.CONTACT_NAME as GROUP_NAME '+
+									'FROM ChatMessage a '+
+									'JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) b '+ 
+									'LEFT OUTER JOIN Contact c ON c.JID = a.CREATOR_JID '+
+									'where CHAT_ROOM_JID ="' + JID + '" ORDER BY _ID DESC LIMIT 20 OFFSET ' + offset)
+					.then((results) => {
+						console.log('QUERY COMPLETED for Chat room', JID);
+						console.log(results[1])
+						resolve(results[1].rows.raw())
+					})
+					.catch(err => {
+						reject(err)
+					})
+				}	
+			})
+		}).then(result => {
+		}).catch(err => {
+			reject(err)
+		})
+	});
+}
+
+
+function getAllChatsGreaterThanEqual_ID(JID, _id, isgroupmsg ) {
+	return new Promise((resolve, reject) => {
+		_initDb().then(instance => {
+			jcdb = instance;
+			jcdb.transaction((txn) => {
+
+				if( isgroupmsg == 0 ){
+					txn.executeSql('select * FROM ChatMessage JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) where CHAT_ROOM_JID = ? AND _ID >= ? ORDER BY _ID DESC', [JID, _id])
+					.then((results) => {
+						console.log(' f(getAllChatsGreaterThanEqual_ID) QUERY COMPLETED for Chat room', JID);
+						console.log(results[1])
+						// let chats = []
+						// for(let i=0;i<results.rows.length;i++){
+						// 	chats.push(results.rows.item(i))
+						// }
+						resolve(results[1].rows.raw())
+					})
+					.catch(err => {
+						reject(err)
+					})
+				}else{
+
+					txn.executeSql('select a.*, b.MAX_SEQUENCE, c.CONTACT_NAME as GROUP_NAME FROM ChatMessage a '+
+									'JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) b '+
+									'LEFT OUTER JOIN Contact c ON c.JID = a.CREATOR_JID '+
+									'where a.CHAT_ROOM_JID = ? AND a._ID >= ? ORDER BY a._ID DESC', [JID, _id])
+					.then((results) => {
+						console.log(' f(getAllChatsGreaterThanEqual_ID) QUERY COMPLETED for Chat room', JID);
+						console.log(results[1])
+						// let chats = []
+						// for(let i=0;i<results.rows.length;i++){
+						// 	chats.push(results.rows.item(i))
+						// }
+						resolve(results[1].rows.raw())
+					})
+					.catch(err => {
+						reject(err)
+					})
+
+				}	
+
 			})
 		}).then(result => {
 		}).catch(err => {
@@ -92,11 +162,24 @@ function getChatList() {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
-				txn.executeSql('Select * from Contact WHERE LAST_MSG_CREATED_TIME IS NOT NULL ORDER BY LAST_MSG_CREATED_TIME DESC')
+				txn.executeSql('select a._ID, a.MSG_TEXT, a.MSG_TYPE, b.UNREAD_COUNT, b.LAST_MSG_CREATED_TIME, a.CHAT_ROOM_JID, a.IS_GROUP_MSG, c.JID, c.SMALL_IMAGE, c.PHONEBOOK_CONTACT_NAME, c.CONTACT_NAME, c.JEWELCHAT_ID'
+				+ ' from ChatMessage a '
+				+ 'INNER JOIN ( '
+				+ 'select _ID, max(_ID) as MAX_ID, count(_ID) as UNREAD_COUNT, max(TIME_CREATED) as LAST_MSG_CREATED_TIME'
+				+ ' from ChatMessage'
+				+ ' where IS_READ = 0'
+				+ ' group by CHAT_ROOM_JID'
+				+ ' ) b ON a._ID = b.MAX_ID'
+				+ ' LEFT OUTER JOIN Contact c ON c.JID = a.CHAT_ROOM_JID '
+				+ ' order by b.LAST_MSG_CREATED_TIME DESC')				
 					.then((results) => {
-						console.log('Contact query COMPLETED for');
-						console.log(results[1])
-						resolve(results[1])
+						console.log('Contact query COMPLETED for');						
+						console.log(results[1].rows.raw());
+						let chatlist = results[1].rows.raw();
+						// for(let i=0;i<results.rows.length;i++){
+						// 	chatlist.push(results.rows.item(i))
+						// }
+						resolve(chatlist)
 					})
 					.catch(err => {
 						reject(err)
@@ -111,7 +194,7 @@ function getChatList() {
 
 function getContactList(type) {
 	let Query
-	if (type == 'Forward')
+	if (type === 'Forward')
 		Query = 'Select * from Contact where IS_REGIS=1'
 	else
 		Query = 'Select * from Contact where IS_PHONEBOOK_CONTACT=1'
@@ -159,6 +242,24 @@ function checkIfRowExist(JID) {
 	});
 }
 
+// var incomingMessage = {
+// 	CHAT_ROOM_JID: msg.getAttribute('from').split('/')[0],
+// 	IS_GROUP_MSG: IS_GROUP_MSG,
+// 	MSG_TEXT: message,
+// 	CREATOR_JID: msg.getAttribute('from').split('/')[0],
+// 	GROUP_MEMBER_JID: (IS_GROUP_MSG == 1 ? msg.getAttribute('from').split('/')[1] : msg.getAttribute('from').split('/')[0]),
+// 	JEWEL_TYPE: parseInt(jewelType),
+// 	CREATED_DATE: createdDateTime.date,
+// 	CREATED_TIME: createdDateTime.time,
+// 	TIME_CREATED: createdDateTime.fulltime,
+// 	SENDER_MSG_ID: msg.getAttribute('id'),
+// 	MSG_TYPE: ( media ? ( parseInt(media[0].getAttribute('number')) ) : 0 ),
+// 	MEDIA_CLOUD: (media ? (Strophe.getText(media[0])) : null ),
+// 	SEQUENCE: -1,
+// 	IS_REPLY: reply,
+// 	IS_FORWARD: forward,
+// 	REPLY_PARENT: parent
+// }
 
 function insertStropheChatData(data) {
 	//select last_insert_rowid()
@@ -166,13 +267,53 @@ function insertStropheChatData(data) {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
-				let sql;
-				sql = "INSERT INTO ChatMessage " +
-					" ( MSG_TYPE, CREATED_DATE, CREATED_TIME, CHAT_ROOM_JID, CREATOR_JID, JEWEL_TYPE, MSG_TEXT, SENDER_MSG_ID, IS_REPLY, IS_FORWARD, REPLY_PARENT) " +
-					" VALUES (" + data.MSG_TYPE + ",'" + data.CREATED_DATE + "','" + data.CREATED_TIME + "','" + data.CHAT_ROOM_JID + "','" + data.CREATOR_JID + "'," + data.JEWEL_TYPE + ",'" + data.MSG_TEXT + "'," + data.SENDER_MSG_ID + "," + data.IS_REPLY + "," + data.IS_FORWARD + ",'" + data.REPLY_PARENT + "')"
-				console.log(sql)
-				txn.executeSql(sql).then((results) => {
+				let sql; let q = ',?'
+				sql = "INSERT INTO ChatMessage "
+					+ "( " + Object.keys(data).join(', ') + " ) " 				
+					+ " VALUES (?"+ q.repeat( Object.keys(data).length - 1 ) + ")";
+				
+				txn.executeSql(sql, Object.values(data))
+					.then((results) => {
 					console.log('ChatMessage insert Query COMPLETED for');
+					console.log(results[1].insertId)
+					resolve(results[1].insertId)
+				}).catch(err => {
+					reject(err)
+				})
+			})
+		}).then(result => {
+		}).catch(error => {
+			reject(error)
+		})
+	})
+}
+
+// let affiliationMessage = {
+// 	CHAT_ROOM_JID: msg.getAttribute('from').split('/')[0],
+// 	IS_GROUP_MSG: 1,
+// 	MSG_TEXT: affiliationText,
+// 	CREATOR_JID: msg.getAttribute('from').split('/')[0],
+// 	SENDER_MSG_ID: msg.getAttribute('id'),		
+// 	CREATED_DATE: createdDateTime.date,
+// 	CREATED_TIME: createdDateTime.time,
+// 	TIME_CREATED: createdDateTime.fulltime,		
+// 	MSG_TYPE: -1		
+// }
+
+function insertAffiliations(data) {	
+	
+	return new Promise((resolve, reject) => {
+		_initDb().then(instance => {
+			jcdb = instance;
+			jcdb.transaction((txn) => {
+				let sql;
+				sql = "INSERT INTO ChatMessage "
+					+ "( " + Object.keys(data).join(', ') + " ) " 				
+					+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				console.log(sql);
+				txn.executeSql(sql, Object.values(data) )
+				.then((results) => {
+					console.log('Affiliation insert Query COMPLETED for');
 					console.log(results[1].insertId)
 					resolve(results[1].insertId)
 				}).catch(err => {
@@ -208,7 +349,7 @@ function updatePickedJewel(id) {
 	})
 }
 
-function updateDeliveryAndReadRecipt(type, id, time) {
+function updateDeliveryAndReadReceipt(type, id, time) {
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
 			jcdb = instance;
@@ -311,7 +452,7 @@ function updateLastMessageAndText(message, createdDateTime, messageType) {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 				let sql;
-				if (messageType == 'Active') {
+				if (messageType === 'Active') {
 					sql = "UPDATE Contact SET LAST_MSG_CREATED_TIME =" + createdDateTime + ", MSG_TEXT = '" + message.MSG_TEXT + "', MSG_TYPE= " + message.MSG_TYPE + ", UNREAD_COUNT = " + 0 + " WHERE JID = '" + message.CHAT_ROOM_JID + "'"
 				}
 				else {
@@ -333,14 +474,24 @@ function updateLastMessageAndText(message, createdDateTime, messageType) {
 }
 
 
+// data = {
+// 	JID: message.CHAT_ROOM_JID,
+// 	CONTACT_NUMBER: message.CHAT_ROOM_JID.split('@')[0],
+// 	CONTACT_NAME: message.IS_GROUP === 1 ? 'New Group' : null,
+// 	IS_PHONEBOOK_CONTACT: 0,
+// 	PHONEBOOK_CONTACT_NAME: null,
+// 	IS_REGIS: 1,
+// 	IS_GROUP: message.IS_GROUP_MSG
+// }
+
 function insertContactData(data) {
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 				let sql = "INSERT INTO Contact " +
-					" (JID, CONTACT_NUMBER, IS_PHONEBOOK_CONTACT , PHONEBOOK_CONTACT_NAME, IS_REGIS) " +
-					" VALUES (" + _handleString(data.JID) + "," + _handleString(data.CONTACT_NUMBER) + ", " + data.IS_PHONEBOOK_CONTACT + "," + _handleString(data.PHONEBOOK_CONTACT_NAME) + "," + data.IS_REGIS + ") "
+					" (JID, CONTACT_NUMBER, CONTACT_NAME, IS_PHONEBOOK_CONTACT, PHONEBOOK_CONTACT_NAME, IS_REGIS) " +
+					" VALUES (" + _handleString(data.JID) + "," + _handleString(data.CONTACT_NUMBER) + ", " + _handleString(data.CONTACT_NAME) + ", " + data.IS_PHONEBOOK_CONTACT + "," + _handleString(data.PHONEBOOK_CONTACT_NAME) + "," + data.IS_REGIS + ") "
 				txn.executeSql(sql).then(val => {
 					resolve('Success')
 				}).catch(err => {

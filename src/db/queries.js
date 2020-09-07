@@ -27,37 +27,38 @@ const Create_ChatMessage = "CREATE TABLE if not exists ChatMessage (" +
     "CREATED_DATE  TEXT ," +
     "CREATED_TIME  INTEGER ," +
     "CHAT_ROOM_JID	  TEXT ," +
-    "CREATOR_JID	  TEXT ," +
+    "CREATOR_JID	  TEXT ," +    
     "SENDER_NAME  TEXT ," +
-    "SENDER_MSG_ID   INTEGER ," +
+    "SENDER_MSG_ID   TEXT DEFAULT NULL," +
     "IS_READ	 INTEGER DEFAULT 0 ," +
     "TIME_READ   INTEGER ," +
     "IS_DELIVERED   INTEGER DEFAULT 0 ," +
     "TIME_DELIVERED  INTEGER ," +
     "IS_SUBMITTED   INTEGER DEFAULT 0 ," +
     "TIME_SUBMITTED  INTEGER ," +
+    "TIME_CREATED INTEGER" +
     "IS_ERROR  INTEGER DEFAULT 0 ," +
     "JEWEL_TYPE   INTEGER ," +
     "IS_JEWEL_PICKED  INTEGER DEFAULT 0 ," +
-    "MSG_TEXT   TEXT ," +
-    "IMAGE_BLOB   TEXT," +
-    "IS_IMAGE_DOWNLOADED   INTEGER DEFAULT 0 ," +
-    "IS_IMAGE_UPLOADED  INTEGER DEFAULT 0 ," +
-    "IMAGE_PATH_LOCAL   TEXT ," +
-    "IMAGE_PATH_CLOUD  TEXT ," +
-    "VIDEO_BLOB   TEXT ," +
-    "IS_VIDEO_DOWNLOADED  INTEGER DEFAULT 0 ," +
-    "IS_VIDEO_UPLOADED  INTEGER DEFAULT 0 ," +
-    "VIDEO_PATH_LOCAL  TEXT ," +
-    "VIDEO_PATH_CLOUD   TEXT ," +
+    "MSG_TEXT   TEXT ," +    
+    "MEDIA_UPLOADED  INTEGER DEFAULT 0 ," +    
+    "MEDIA_CLOUD  TEXT DEFAULT NULL," +
+    "MEDIA_CLOUD_THUMBNAIL  TEXT DEFAULT NULL," +
     "SEQUENCE  INTEGER DEFAULT 0," +
     "IS_REPLY INTEGER DEFAULT 0," +
     "REPLY_PARENT INTEGER DEFAULT NULL," +
     "IS_FORWARD INTEGER DEFAULT 0," +
-    "UNIQUE(" + "SENDER_MSG_ID" + "," + "CHAT_ROOM_JID" + "))"
+    "UNIQUE(" + "SENDER_MSG_ID, " + "CHAT_ROOM_JID, " + "CREATOR_JID "+ "))"
+
+const Create_GroupMembers = "CREATE TABLE if not exists GroupMembers (" +
+    "_ID  integer PRIMARY KEY autoincrement ," +
+    "GROUP_JID   TEXT ," +    
+    "MEMBER_JID	  TEXT ," +
+    "AFFILIATION  TEXT ," +    
+    "UNIQUE(" + "GROUP_JID" + "," + "MEMBER_JID" + "))"    
 
 const Sequence_Trigger = "CREATE TRIGGER IF NOT EXISTS Update_Sequence " +
-    " AFTER INSERT ON ChatMessage WHEN NEW.CHAT_ROOM_JID = NEW.CREATOR_JID " +
+    " AFTER INSERT ON ChatMessage WHEN NEW.SENDER_MSG_ID IS NOT NULL" +
     " BEGIN" +
     " UPDATE ChatMessage " +
     " SET SEQUENCE = (SELECT MAX(SEQUENCE) FROM ChatMessage) + 1 " +
@@ -66,6 +67,7 @@ const Sequence_Trigger = "CREATE TRIGGER IF NOT EXISTS Update_Sequence " +
 export default {
     Create_Contact,
     Create_ChatMessage,
+    Create_GroupMembers,
     Sequence_Trigger
 };
 
