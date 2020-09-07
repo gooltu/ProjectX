@@ -34,8 +34,8 @@ import { updateChatPageRedux, updateChatlistRedux } from '../../../../../network
 // PHONEBOOK_CONTACT_NAME, 
 // CONTACT_NAME,
 // JEWELCHAT_ID' }
-import JCImages from "../../../../../assets/JCImages";
-import Icon from 'react-native-vector-icons/FontAwesome'
+//import JCImages from "../../../../../assets/JCImages";
+//import Icon from 'react-native-vector-icons/FontAwesome'
 
 
 function Item({ item, onpressitem, onlongpressitem }) {
