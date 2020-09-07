@@ -9,54 +9,59 @@ PODS:
     - React-Core (= 0.61.5)
     - React-jsi (= 0.61.5)
     - ReactCommon/turbomodule/core (= 0.61.5)
-  - Firebase/AdMob (6.28.1):
+  - Firebase/AdMob (6.25.0):
     - Firebase/CoreOnly
     - Google-Mobile-Ads-SDK (~> 7.50)
-  - Firebase/Analytics (6.28.1):
+  - Firebase/Analytics (6.25.0):
     - Firebase/Core
-  - Firebase/Core (6.28.1):
+  - Firebase/Core (6.25.0):
     - Firebase/CoreOnly
-    - FirebaseAnalytics (= 6.6.2)
-  - Firebase/CoreOnly (6.28.1):
-    - FirebaseCore (= 6.9.1)
-  - Firebase/Messaging (6.28.1):
+    - FirebaseAnalytics (= 6.5.1)
+  - Firebase/CoreOnly (6.25.0):
+    - FirebaseCore (= 6.7.1)
+  - Firebase/Messaging (6.25.0):
     - Firebase/CoreOnly
-    - FirebaseMessaging (~> 4.6.0)
-  - FirebaseAnalytics (6.6.2):
-    - FirebaseCore (~> 6.8)
-    - FirebaseInstallations (~> 1.4)
-    - GoogleAppMeasurement (= 6.6.2)
+    - FirebaseMessaging (~> 4.4.1)
+  - FirebaseAnalytics (6.5.1):
+    - FirebaseCore (~> 6.7)
+    - FirebaseInstallations (~> 1.2)
+    - GoogleAppMeasurement (= 6.5.1)
     - GoogleUtilities/AppDelegateSwizzler (~> 6.0)
     - GoogleUtilities/MethodSwizzler (~> 6.0)
     - GoogleUtilities/Network (~> 6.0)
     - "GoogleUtilities/NSData+zlib (~> 6.0)"
     - nanopb (~> 1.30905.0)
-  - FirebaseCore (6.9.1):
+  - FirebaseAnalyticsInterop (1.5.0)
+  - FirebaseCore (6.7.1):
     - FirebaseCoreDiagnostics (~> 1.3)
-    - GoogleUtilities/Environment (~> 6.7)
-    - GoogleUtilities/Logger (~> 6.7)
-  - FirebaseCoreDiagnostics (1.5.0):
-    - GoogleDataTransport (~> 7.0)
-    - GoogleUtilities/Environment (~> 6.7)
-    - GoogleUtilities/Logger (~> 6.7)
+    - FirebaseCoreDiagnosticsInterop (~> 1.2)
+    - GoogleUtilities/Environment (~> 6.5)
+    - GoogleUtilities/Logger (~> 6.5)
+  - FirebaseCoreDiagnostics (1.3.0):
+    - FirebaseCoreDiagnosticsInterop (~> 1.2)
+    - GoogleDataTransportCCTSupport (~> 3.1)
+    - GoogleUtilities/Environment (~> 6.5)
+    - GoogleUtilities/Logger (~> 6.5)
     - nanopb (~> 1.30905.0)
-  - FirebaseInstallations (1.5.0):
-    - FirebaseCore (~> 6.8)
-    - GoogleUtilities/Environment (~> 6.7)
-    - GoogleUtilities/UserDefaults (~> 6.7)
+  - FirebaseCoreDiagnosticsInterop (1.2.0)
+  - FirebaseInstallations (1.3.0):
+    - FirebaseCore (~> 6.6)
+    - GoogleUtilities/Environment (~> 6.6)
+    - GoogleUtilities/UserDefaults (~> 6.6)
     - PromisesObjC (~> 1.2)
-  - FirebaseInstanceID (4.5.1):
-    - FirebaseCore (~> 6.8)
+  - FirebaseInstanceID (4.3.4):
+    - FirebaseCore (~> 6.6)
     - FirebaseInstallations (~> 1.0)
-    - GoogleUtilities/Environment (~> 6.7)
-    - GoogleUtilities/UserDefaults (~> 6.7)
-  - FirebaseMessaging (4.6.1):
-    - FirebaseCore (~> 6.8)
+    - GoogleUtilities/Environment (~> 6.5)
+    - GoogleUtilities/UserDefaults (~> 6.5)
+  - FirebaseMessaging (4.4.1):
+    - FirebaseAnalyticsInterop (~> 1.5)
+    - FirebaseCore (~> 6.6)
     - FirebaseInstanceID (~> 4.3)
-    - GoogleUtilities/AppDelegateSwizzler (~> 6.7)
-    - GoogleUtilities/Environment (~> 6.7)
-    - GoogleUtilities/Reachability (~> 6.7)
-    - GoogleUtilities/UserDefaults (~> 6.7)
+    - GoogleUtilities/AppDelegateSwizzler (~> 6.5)
+    - GoogleUtilities/Environment (~> 6.5)
+    - GoogleUtilities/Reachability (~> 6.5)
+    - GoogleUtilities/UserDefaults (~> 6.5)
     - Protobuf (>= 3.9.2, ~> 3.9)
   - Folly (2018.10.22.00):
     - boost-for-react-native
@@ -278,6 +283,8 @@ PODS:
     - React
   - react-native-image-editor (2.3.0):
     - React
+  - react-native-image-editor (2.3.0):
+    - React
     - React-RCTImage
   - react-native-netinfo (3.2.1):
     - React
@@ -409,6 +416,7 @@ SPEC REPOS:
     - FirebaseAnalytics
     - FirebaseCore
     - FirebaseCoreDiagnostics
+    - FirebaseCoreDiagnosticsInterop
     - FirebaseInstallations
     - FirebaseInstanceID
     - FirebaseMessaging
@@ -513,24 +521,27 @@ SPEC CHECKSUMS:
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
   FBLazyVector: aaeaf388755e4f29cd74acbc9e3b8da6d807c37f
   FBReactNativeSpec: 118d0d177724c2d67f08a59136eb29ef5943ec75
-  Firebase: ed042590caa0029392257529a8003c25ee82bc18
-  FirebaseAnalytics: 5fa308e1b13f838d0f6dc74719ac2a72e8c5afc4
-  FirebaseCore: 687b8e6a0a4337b898a6326d68254c2f80c143af
-  FirebaseCoreDiagnostics: 7535fe695737f8c5b350584292a70b7f8ff0357b
-  FirebaseInstallations: 3c520c951305cbf9ca54eb891ff9e6d1fd384881
-  FirebaseInstanceID: c4ad474b87787afd27d09541800620993b457d6f
-  FirebaseMessaging: 942cfe05b4f53c95ab8959395ca35c200398b2f0
+  Firebase: 5719b4f965f76643241a1bb8244483ff6117db39
+  FirebaseAnalytics: 93565f3f0f0f50a5d8770850bfe6a82eaba5db27
+  FirebaseAnalyticsInterop: 3f86269c38ae41f47afeb43ebf32a001f58fcdae
+  FirebaseCore: 6023faeada5afa95a349fccafb40900e32e9ac42
+  FirebaseCoreDiagnostics: 4a773a47bd83bbd5a9b1ccf1ce7caa8b2d535e67
+  FirebaseCoreDiagnosticsInterop: 296e2c5f5314500a850ad0b83e9e7c10b011a850
+  FirebaseInstallations: 6f5f680e65dc374397a483c32d1799ba822a395b
+  FirebaseInstanceID: cef67c4967c7cecb56ea65d8acbb4834825c587b
+  FirebaseMessaging: 29543feb343b09546ab3aa04d008ee8595b43c44
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
-  Google-Mobile-Ads-SDK: a71d6bc14f9cf1f66d686dbdf9ad2091de04059c
-  GoogleAppMeasurement: 8cd1f289d60e629cf16ab03363b9e89c776b9651
-  GoogleDataTransport: af0c79193dc59acd37630b4833d0dc6912ae6bd5
-  GoogleUtilities: e121a3867449ce16b0e35ddf1797ea7a389ffdf2
-  lottie-ios: 48fac6be217c76937e36e340e2d09cf7b10b7f5f
-  lottie-react-native: 1fb4ce21d6ad37dab8343eaff8719df76035bd93
+  Google-Mobile-Ads-SDK: d70efb31e7ea19fe99d466dc5d4788966b6914f8
+  GoogleAppMeasurement: 137afe68bfa406c3f4221b9395253d9e5d4654cf
+  GoogleDataTransport: 9a8a16f79feffc7f42096743de2a7c4815e84020
+  GoogleDataTransportCCTSupport: d70a561f7d236af529fee598835caad5e25f6d3d
+  GoogleUtilities: 39530bc0ad980530298e9c4af8549e991fd033b1
+  lottie-ios: 85ce835dd8c53e02509f20729fc7d6a4e6645a0a
+  lottie-react-native: 2a1a82bb326ae51331a5520de0cf706733c6db69
   nanopb: c43f40fadfe79e8b8db116583945847910cbabc9
   PersonalizedAdConsent: dbecabb3467df967c16d9cebc2ef4a8890e4bbd8
-  PromisesObjC: b48e0338dbbac2207e611750777895f7a5811b75
+  PromisesObjC: c119f3cd559f50b7ae681fa59dc1acd19173b7e6
   Protobuf: 2793fcd0622a00b546c60e7cbbcc493e043e9bb9
   RCTRequired: b153add4da6e7dbc44aebf93f3cf4fcae392ddf1
   RCTRestart: dd19aab87fc1118e05b6b5b91b959105647f56b4
@@ -542,7 +553,7 @@ SPEC CHECKSUMS:
   React-jsi: cb2cd74d7ccf4cffb071a46833613edc79cdf8f7
   React-jsiexecutor: d5525f9ed5f782fdbacb64b9b01a43a9323d2386
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
-  react-native-contacts: 0ed0dc4d5154c9181657837913bdfac6bba3469b
+  react-native-contacts: 439dd9c7ea7e0d86190f8370898b82cfb7cf4ef4
   react-native-image-editor: 9361a215c3991cafbe5e7f28cbbad6e72c9c2705
   react-native-netinfo: 0da34082d2cec3100c9b5073bb217e35f1142bdd
   react-native-sqlite-storage: a339b4163d54955b57a02a974d3f70a4efa40b1a

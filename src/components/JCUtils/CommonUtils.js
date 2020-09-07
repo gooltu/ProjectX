@@ -1,5 +1,5 @@
 import React from 'react'
-import store from '../../store'
+import { store } from '../../store'
 import Contacts from 'react-native-contacts'
 import db from '../../db/localdatabase'
 import { Platform, PermissionsAndroid } from "react-native";
@@ -21,6 +21,7 @@ import J16 from '../svg_components/J16'
 import J17 from '../svg_components/J17'
 import Diamond from '../svg_components/Diamond'
 import Coin from '../svg_components/Coin'
+import { sendSubscriptionRequest } from '../../network/realtime'
 
 export const getContacts = (callback) => {
     if (Platform.OS == 'android') {
@@ -53,25 +54,19 @@ function getAllContacts(callback) {
 }
 
 function insertContacts(Contacts, callback) {
-    console.log('callback')
-    console.log(callback)
     for (let i = 0; i < Contacts.length; i++) {
-        console.log(Contacts[i])
-        // console.log(new phoneContactModal(Contacts[i]))
         if (Contacts[i].phoneNumbers.length > 0) {
             let data = new phoneContactModal(Contacts[i])
             if (data.CONTACT_NUMBER.length == 12) {
                 var from = data.CONTACT_NUMBER + '@jewelchat.net'
                 db.checkIfRowExist(from).then(result => {
-                    if (i == Contacts.length - 1) {
-                        callback()
-                    }
                     if (result.rows.length > 0) {
                         var contact = result.rows.item(0)
+                        console.log(contact)
                         if (contact.IS_PHONEBOOK_CONTACT != 1) {
                             db.updatePhoneContact(data).then(res => {
-                                store.dispatch(sendSubscriptionRequest(result.JID))
-
+                                console.log(from, contact.JID)
+                                store.dispatch(sendSubscriptionRequest(from))
                             }).catch(err => {
 
                             })
@@ -85,6 +80,9 @@ function insertContacts(Contacts, callback) {
                         }).catch(err => {
 
                         })
+                    }
+                    if (i == Contacts.length - 1) {
+                        callback()
                     }
                 })
             }

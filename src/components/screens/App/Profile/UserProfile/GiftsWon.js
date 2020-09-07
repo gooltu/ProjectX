@@ -32,40 +32,13 @@ class GiftsWon extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            giftsWon: [
-                {
-                    "id": 3,
-                    "user_id": 2,
-                    "productname": "Shirt",
-                    "product_pic": "",
-                    "gifttaskuser_id": 14,
-                    "money": 0,
-                    "money_channel": null,
-                    "status": "Will be ordered in 12hrs",
-                    "notes": null,
-                    "updated_at": "0000-00-00 00:00:00",
-                    "field1": ""
-                },
-                {
-                    "id": 3,
-                    "user_id": 2,
-                    "productname": "Shirt",
-                    "product_pic": "",
-                    "gifttaskuser_id": 14,
-                    "money": 100,
-                    "money_channel": 'PhonePe',
-                    "status": "Successfully Transferred",
-                    "notes": null,
-                    "updated_at": "0000-00-00 00:00:00",
-                    "field1": ""
-                }
-            ]
+            giftsWon: []
         }
     }
     componentDidMount() {
         NetworkManager.callAPI(rest.getAllGiftsWon, 'GET', null).then(result => {
             this.setState({
-                //   giftsWon: result.gifts
+                giftsWon: result.gifts
             })
         })
     }
@@ -77,11 +50,11 @@ class GiftsWon extends React.Component {
                     {this.state.giftsWon.map(item =>
                         <View style={{ flexDirection: 'row', alignItems: 'center', borderColor: 'grey', borderRadius: 10, borderWidth: 1, padding: 5, marginBottom: 10 }}>
                             {item.money > 0 ?
-                                <View style={{borderRadius:5, width: 60, height: 60,justifyContent:'center',alignItems:'center',backgroundColor:colors.lightBlue }}>
-                                    <Text style={{color:'white'}}>{'\u20B9'} {item.money}</Text>
+                                <View style={{ borderRadius: 5, width: 60, height: 60, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.lightBlue }}>
+                                    <Text style={{ color: 'white' }}>{'\u20B9'} {item.money}</Text>
                                 </View>
                                 :
-                                <Image style={{ width: 60, height: 60,borderRadius:5 }} source={item.product_pic != '' ? { uri: item.product_pic } : JCImages.placeholderImage}></Image>
+                                <Image style={{ width: 60, height: 60, borderRadius: 5 }} source={item.product_pic != '' ? { uri: item.product_pic } : JCImages.placeholderImage}></Image>
                             }
                             <View style={{ flexDirection: 'column', paddingLeft: 10 }}>
                                 <Text style={{ color: 'lightgrey', fontSize: 16, paddingBottom: 5 }}>{item.money > 0 ? item.money_channel : item.productname}</Text>

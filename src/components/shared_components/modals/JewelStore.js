@@ -129,7 +129,7 @@ class JewelStore extends React.Component {
                                     <View>
                                         {renderJewel(item.jeweltype_id, 35, 35, styles.jewelStyle)}
                                     </View>
-                                    <Text style={{ fontSize: 16, fontWeight: '400', color: 'white' }}>{item.count < 9 ? '0' + item.count : item.count}</Text>
+                                    <Text style={{ fontSize: 16, fontWeight: '400', color: 'white' }}>{item.count < 10 ? '0' + item.count : item.count}</Text>
                                 </View>
                             }
                         />

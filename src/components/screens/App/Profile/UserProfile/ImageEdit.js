@@ -36,7 +36,6 @@ class ImageEdit extends React.Component {
         }
     }
     componentDidMount() {
-        console.log('AWS', AWS)
         AsyncStorage.multiGet(["UserProfileImage", "UserProfile"]).then(profileData => {
             console.log(profileData)
             if (profileData) {
@@ -66,7 +65,7 @@ class ImageEdit extends React.Component {
         });
         // Refresh and Upload
         AWS.config.credentials.refresh(() => {
-            var keyName = '918756463536.jpeg';
+            var keyName = this.props.mytoken.myphone + '.jpeg';
             let contentType = image.mime;
             const arrayBuffer = decode(image.data);
             var params = { Bucket: 'nkjc', Key: keyName, Body: arrayBuffer, contentType: contentType };
@@ -132,7 +131,7 @@ class ImageEdit extends React.Component {
         return (
             <SafeAreaView style={{ flex: 1, backgroundColor: colors.darkcolor1 }}>
                 <ScrollView contentContainerStyle={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                    <Image style={{ width: 400, height: 400, alignItems: 'center', justifyContent: 'center' }} key={this.state.imagepath} source={this.state.imagepath!='' ? { uri: this.state.imagepath } : JCImages.placeholderImage} />
+                    <Image style={{ width: 400, height: 400, alignItems: 'center', justifyContent: 'center' }} key={this.state.imagepath} source={this.state.imagepath!=null && this.state.imagepath!='' ? { uri: this.state.imagepath } : JCImages.placeholderImage} />
                 </ScrollView>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20 }}>
                     <Button style={{ width: '45%', alignItems: 'center', justifyContent: 'center' }} primary><Text style={{ color: 'white' }}>CLEAR</Text></Button>
@@ -145,7 +144,7 @@ class ImageEdit extends React.Component {
 
 function mapStateToProps(state) {
     return {
-
+        mytoken: state.mytoken
     };
 }
 

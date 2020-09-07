@@ -7,7 +7,8 @@ import {
   StyleSheet,
   FlatList,
   View,
-  Text
+  Text,
+  ImageBackground
 } from "react-native";
 import J6 from '../../../svg_components/J6';
 import styles from './Contacts.styles'

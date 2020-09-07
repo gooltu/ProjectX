@@ -17,13 +17,18 @@ const scrollBarData = [
         'text': 'LEADERBOARD'
     },
     {
-        'image': <Icon1 name='md-settings' size={35} color='white' />,
-        'text': 'SETTINGS'
+        'image': <Icon name='gift' size={35} color='white' />,
+        'text': 'GIFTS WON'
     },
     {
         'image': <Icon name='share-alt' size={35} color='white' />,
         'text': 'SHARE'
+    },
+    {
+        'image': <Icon1 name='md-settings' size={35} color='white' />,
+        'text': 'SETTINGS'
     }
+   
 ]
 
 scrollBarNaviagtion = (text, navigation) => {
@@ -35,6 +40,9 @@ scrollBarNaviagtion = (text, navigation) => {
     }
     if (text === 'SETTINGS') {
         navigation.navigate("UserProfile")
+    }
+    if (text === 'GIFTS WON') {
+        navigation.navigate("GiftsWon")
     }
 }
 const ProfileOptionsList = (props) => {

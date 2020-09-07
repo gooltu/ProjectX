@@ -16,11 +16,6 @@ import { FAB, Portal, Provider } from 'react-native-paper';
 import styles from './ChatList.styles'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import Logo from '../../../../svg_components/Logo';
-import Coin from '../../../../svg_components/Coin';
-import Diamond from '../../../../svg_components/Diamond';
-import J3 from '../../../../svg_components/J3';
-import J6 from '../../../../svg_components/J12';
-import TabIcon from "../../../../svg_components/TabIcons";
 import colors from "../../../../shared_styles/colors";
 import db from '../../../../../db/localdatabase'
 import actions from '../../../../../actions'
@@ -39,6 +34,9 @@ import { updateChatPageRedux, updateChatlistRedux } from '../../../../../network
 // PHONEBOOK_CONTACT_NAME, 
 // CONTACT_NAME,
 // JEWELCHAT_ID' }
+import JCImages from "../../../../../assets/JCImages";
+import Icon from 'react-native-vector-icons/FontAwesome'
+
 
 function Item({ item, onpressitem, onlongpressitem }) {
 
@@ -102,6 +100,9 @@ class ChatList extends React.Component {
 
 
   componentDidMount() {
+    this.focusListener = this.props.navigation.addListener("didFocus", () => {
+      this.props.setActiveChat({})
+  });
     //console.log(this.props.navigation.state.routes[this.props.navigation.state.index]);
     //console.log(this.props);
     //console.log(this.props.navigation.state.routeName);
@@ -111,6 +112,7 @@ class ChatList extends React.Component {
 
   componentWillUnmount() {
     console.log('ChatList UnMount');
+    this.focusListener.remove()
   }
 
   render() {

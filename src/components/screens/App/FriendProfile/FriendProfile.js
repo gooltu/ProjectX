@@ -322,7 +322,6 @@ function mapDispatchToProps(dispatch) {
         openRealtimeConnection: () => dispatch(realtimeConnect()),
         closeRealtimeConnection: () => dispatch(realtimeDisconnect())
     }
-
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(FriendProfile)

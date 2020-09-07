@@ -45,6 +45,7 @@ class LeaderBoard extends React.Component {
     console.log(this.props.leaderboard)
     this.loadProfilePicture()
     NetworkManager.callAPI(rest.getLeaderBoard, 'GET', null).then(result => {
+      console.log(result)
       let top1 = result.top1.concat(result.top2)
       let top2 = result.top3.concat(result.top4)
       //this.props.setLeaderBoard({ top1: top1, top2: top2 })
@@ -62,7 +63,7 @@ class LeaderBoard extends React.Component {
       }
       else {
         var data = {
-          'phone': '918756463536'
+          'phone': this.props.mytoken.myphone
         }
         NetworkManager.callAPI(rest.downloadContact_Phone, 'post', data).then((responseJson) => {
           console.log(responseJson)
@@ -109,7 +110,8 @@ class LeaderBoard extends React.Component {
 function mapStateToProps(state) {
   return {
     leaderboard: state.leaderboard.leaderboard,
-    game: state.game
+    game: state.game,
+    mytoken: state.mytoken
   };
 }
 

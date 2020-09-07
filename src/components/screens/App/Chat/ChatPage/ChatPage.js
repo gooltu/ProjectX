@@ -35,6 +35,7 @@ import actions from '../../../../../actions'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import Icon2 from 'react-native-vector-icons/FontAwesome'
 import Icon1 from 'react-native-vector-icons/MaterialIcons'
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import db from '../../../../../db/localdatabase'
 import rest from '../../../../../network/rest';
 import axios from 'axios'
@@ -168,7 +169,7 @@ class ChatPage extends React.Component {
             />
             <Snackbar
               duration={1000}
-              style={{ backgroundColor: colors.lightcolor1, alignItems: 'center'}}
+              style={{ backgroundColor: colors.lightcolor1, alignItems: 'center' }}
               visible={this.state.visible}
               onDismiss={this._onDismissSnackBar}>
               Jewel Store is FULL.

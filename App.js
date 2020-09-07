@@ -156,10 +156,7 @@ export default class App extends React.Component {
         console.warn(err);
       }
     }
-    
   }
-
-
 
   render() {
     return (

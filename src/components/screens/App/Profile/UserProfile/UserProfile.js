@@ -54,7 +54,7 @@ class UserProfile extends React.Component {
     }
     getProfileData() {
         var data = {
-            'phone': '918756463536'
+            'phone': this.props.mytoken.myphone
         }
         AsyncStorage.multiGet(["UserProfileImage", "UserProfile"]).then(profileData => {
             console.log(profileData)
@@ -144,7 +144,7 @@ class UserProfile extends React.Component {
                             </TouchableOpacity>
                         </Right>
                     </ListItem>
-                    <ListItem>
+                    {/* <ListItem>
                         <Body>
                             <Text style={{ color: colors.lightcolor1,fontWeight:'bold' }}>GIFTS WON</Text>
                             <Text style={{ color: 'white' }} note >Find list of all gifts won.</Text>
@@ -154,10 +154,10 @@ class UserProfile extends React.Component {
                                 <Icon name='arrow-right' size={20} color='white' />
                             </TouchableOpacity>
                         </Right>
-                    </ListItem>
+                    </ListItem> */}
                 </List>
 
-                <Button onPress={() => this.openImagePicker()} title='Select Image' />
+                {/* <Button onPress={() => this.openImagePicker()} title='Select Image' /> */}
             </SafeAreaView >
         );
     }
@@ -165,7 +165,7 @@ class UserProfile extends React.Component {
 
 function mapStateToProps(state) {
     return {
-
+        mytoken: state.mytoken
     };
 }
 

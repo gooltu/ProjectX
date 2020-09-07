@@ -108,24 +108,25 @@ class CustomHeader extends React.Component {
 
     displayFactory() {
         let factoryView
-        this.props.navigation.state.routeName == 'ChatPage' ?
-            factoryView =
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'ChatPageOptions' })} style={styles.jewelBox}>
-                <ImageBackground source={require('../../../assets/dots.png')} style={{
-                    width: '100%', height: '100%', justifyContent: 'center',
-                    alignItems: 'center'
-                }}>
-                </ImageBackground>
-            </TouchableOpacity>
-            :
-            factoryView =
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('JewelFactory')} style={styles.jewelBox}>
-                <ImageBackground source={require('../../../assets/factory.png')} style={{
-                    width: '100%', height: '100%', justifyContent: 'center',
-                    alignItems: 'center'
-                }}>
-                </ImageBackground>
-            </TouchableOpacity>
+        this.props.navigation.state.routeName == 'JewelFactory' ? factoryView = null :
+            this.props.navigation.state.routeName == 'ChatPage' ?
+                factoryView =
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'ChatPageOptions' })} style={styles.jewelBox}>
+                    <ImageBackground source={require('../../../assets/dots.png')} style={{
+                        width: '100%', height: '100%', justifyContent: 'center',
+                        alignItems: 'center'
+                    }}>
+                    </ImageBackground>
+                </TouchableOpacity>
+                :
+                factoryView =
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('JewelFactory')} style={styles.jewelBox}>
+                    <ImageBackground source={require('../../../assets/factory.png')} style={{
+                        width: '100%', height: '100%', justifyContent: 'center',
+                        alignItems: 'center'
+                    }}>
+                    </ImageBackground>
+                </TouchableOpacity>
         return factoryView
     }
 
@@ -141,7 +142,6 @@ class CustomHeader extends React.Component {
             </TouchableOpacity>)
         else
             return <View style={{ height: 32, width: 8, marginLeft: 4 }} />
-
     }
 
     displayTitle() {
@@ -162,7 +162,7 @@ class CustomHeader extends React.Component {
             titleView = <Text style={{ fontSize: 16, color: 'white', paddingLeft: 10, fontWeight: 'bold' }}>{this.props.activeChat.PHONEBOOK_CONTACT_NAME}</Text>
         }
         else
-            titleView = <Text style={{ fontSize: 20, fontWeight: '500', color: 'white', textAlignVertical: 'center', paddingLeft: 16 }}>JewelChat</Text>
+    titleView = <Text style={{ fontSize: 20, fontWeight: '500', color: 'white', textAlignVertical: 'center', paddingLeft: 16 }}>{this.props.title}</Text>
         return titleView
     }
 
@@ -199,7 +199,7 @@ class CustomHeader extends React.Component {
                         </View>
                         <View style={styles.progressBarOuterContainer}>
                             <View style={styles.progressBarInnerContainer}>
-                                <View style={{ width: (this.props.scores.points*100) / this.props.scores.max_level_points + '%', height: '100%' }}>
+                                <View style={{ width: (this.props.scores.points * 100) / this.props.scores.max_level_points + '%', height: '100%' }}>
                                     <ImageBackground source={require('../../../assets/ColorGrad.jpg')} style={styles.progressBackground}></ImageBackground>
                                 </View>
                             </View>
@@ -231,7 +231,8 @@ function mapStateToProps(state) {
         presence: state.chatslist.presence,
         activeChat: state.chatslist.activeChat,
         scores: state.game.scores,
-        jewels: state.game.jewels
+        jewels: state.game.jewels,
+        chatslist: state.chatslist.chatList
     }
 }
 

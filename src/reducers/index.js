@@ -15,10 +15,12 @@ import contactlist from './contactlist'
 import userachievements from './userachievements'
 import referralAchievement from './referralAchievement'
 import leaderboard from './leaderboard'
+import factory from './factory'
+import userfactory from './userfactory'
 
 export default combineReducers({
-    mytoken, appstate ,network, game, chatslist, chatroom,
-     contactlist, achievements, userachievements, tasks,taskdetails,
-      gifttasks, usergifttasks, gifttaskdetails,referralAchievement,
-      leaderboard
+    mytoken, appstate, network, game, chatslist, chatroom,
+    contactlist, achievements, userachievements, tasks, taskdetails,
+    gifttasks, usergifttasks, gifttaskdetails, referralAchievement,
+    leaderboard, factory, userfactory
 });

@@ -211,7 +211,7 @@ class TaskDetail extends React.Component {
               </View>
             </View>
             :
-            this.checkEligibility() ?
+            this.checkEligibility() || this.props.usergifttasks[this.giftTask.id].done==1 ?
               <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }}  disabled={this.props.usergifttasks[this.giftTask.id].done==1?true: false}>
                 <View style={{ width: 220, height: 45, zIndex: 1, backgroundColor: color.darkcolor3, borderColor: color.darkcolor3, borderRadius: 8, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
                   <View style={{ width: "100%", height: '100%' }}>
@@ -229,7 +229,7 @@ class TaskDetail extends React.Component {
                 </TouchableOpacity>
               </TouchableOpacity> :
               <View style={{ alignItems: 'center', paddingTop: 10 }}>
-                <View style={{ justifyContent: 'center', width: 150, alignItems: 'center', backgroundColor: color.darkcolor2, borderRadius: 5, borderWidth: 1, borderColor: color.jcgray, paddingHorizontal: 25, paddingVertical: 10 }}>
+                <View style={{ justifyContent: 'center', width: 220, alignItems: 'center', backgroundColor: color.darkcolor2, borderRadius: 5, borderWidth: 1, borderColor: color.jcgray, paddingHorizontal: 25, paddingVertical: 10 }}>
                   <Text style={{ color: color.jcgray }}>WIN GIFT</Text>
                 </View>
               </View> : null

@@ -511,7 +511,7 @@ function updatePhoneContact(contactData) {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
-				let sql = "UPDATE Contact SET PHONEBOOK_CONTACT_NAME=" + _handleString(contactData.PHONEBOOK_CONTACT_NAME) + ", IS_PHONEBOOK_CONTACT = 1  WHERE CONTACT_NUMBER=" + contactData.phone;
+				let sql = "UPDATE Contact SET PHONEBOOK_CONTACT_NAME=" + _handleString(contactData.PHONEBOOK_CONTACT_NAME) + ", IS_PHONEBOOK_CONTACT = 1  WHERE CONTACT_NUMBER=" + contactData.CONTACT_NUMBER;
 				txn.executeSql(sql).then(result => {
 					resolve('success')
 					console.log('success Contact update')
@@ -557,6 +557,27 @@ function _handleString(value) {
 		return "'" + value + "'"
 }
 
+function insertTeamJC(data) {
+	return new Promise((resolve, reject) => {
+		_initDb().then(instance => {
+			jcdb = instance;
+			jcdb.transaction((txn) => {
+				let sql = "INSERT INTO Contact " +
+					" (JID, CONTACT_NUMBER, IS_PHONEBOOK_CONTACT , PHONEBOOK_CONTACT_NAME, IS_REGIS, LAST_MSG_CREATED_TIME,MSG_TEXT,UNREAD_COUNT) " +
+					" VALUES (" + _handleString(data.JID) + "," + _handleString(data.CONTACT_NUMBER) + ", " + data.IS_PHONEBOOK_CONTACT + "," + _handleString(data.PHONEBOOK_CONTACT_NAME) + "," + data.IS_REGIS + "," + data.LAST_MSG_CREATED_TIME + "," + _handleString(data.MSG_TEXT) + ","+ data.UNREAD_COUNT +") "
+				txn.executeSql(sql).then(val => {
+					resolve('Success')
+				}).catch(err => {
+					console.log('reject')
+					reject(err)
+				})
+			}).catch(err => {
+				console.log('reject1')
+				reject(err)
+			})
+		})
+	})
+}
 
 const contactData = [
 	{
