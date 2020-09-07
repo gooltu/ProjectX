@@ -14,6 +14,7 @@ import {
 import { connect } from 'react-redux';
 import { FAB, Portal, Provider } from 'react-native-paper';
 import styles from './ChatList.styles'
+import Icon from 'react-native-vector-icons/FontAwesome5'
 import Logo from '../../../../svg_components/Logo';
 import Coin from '../../../../svg_components/Coin';
 import Diamond from '../../../../svg_components/Diamond';
@@ -25,6 +26,19 @@ import db from '../../../../../db/localdatabase'
 import actions from '../../../../../actions'
 import { setActiveChat } from '../../../../../actions/chatListActions'
 import { updateChatPageRedux, updateChatlistRedux } from '../../../../../network/realtime-utils/messages';
+
+// { _ID, 
+// MSG_TEXT, 
+// MSG_TYPE, 
+// UNREAD_COUNT, 
+// LAST_MSG_CREATED_TIME, 
+// CHAT_ROOM_JID,
+// IS_GROUP_MSG, 
+// JID, 
+// SMALL_IMAGE, 
+// PHONEBOOK_CONTACT_NAME, 
+// CONTACT_NAME,
+// JEWELCHAT_ID' }
 
 function Item({ item, onpressitem, onlongpressitem }) {
 
@@ -46,11 +60,17 @@ function Item({ item, onpressitem, onlongpressitem }) {
             item.JEWELCHAT_ID == 1 && <Logo height="75%" width="75%" style={styles.jewelStyle} />
           }
           {
-            !item.SMALL_IMAGE && item.JEWELCHAT_ID != 1 && <J6 height="75%" width="75%" style={styles.jewelStyle} />
+            !item.SMALL_IMAGE && item.JEWELCHAT_ID != 1 && item.IS_GROUP_MSG == 0 && <Icon name='user' color={colors.jcgray} size={24} solid />
+          }
+          {
+            !item.SMALL_IMAGE && item.JEWELCHAT_ID != 1 && item.IS_GROUP_MSG == 1 && <Icon  name='users' color={colors.jcgray} size={24} solid />
           }
         </View>
         <View style={styles.chatboxLeftContainer} >
-          <Text style={styles.name}>{item.PHONEBOOK_CONTACT_NAME ? item.PHONEBOOK_CONTACT_NAME : (item.JEWELCHAT_ID == 1 ? 'Team JewelChat' : '+' + item.CONTACT_NUMBER)}</Text>
+          <Text style={styles.name}>{item.PHONEBOOK_CONTACT_NAME ? item.PHONEBOOK_CONTACT_NAME 
+          : (item.JEWELCHAT_ID == 1 ? 'Team JewelChat' 
+          : (item.IS_GROUP_MSG == 0 ? '+' + item.CHAT_ROOM_JID.split('@')[0]
+          : (item.CONTACT_NAME ? item.CONTACT_NAME : 'Group Chat') ) )}</Text>
           <Text style={styles.msgText}>{item.MSG_TEXT != null ? item.MSG_TEXT.substring(0, 25) + (item.MSG_TEXT.length > 25 ? '...' : '') : ''}</Text>
         </View>
       </View>
@@ -198,8 +218,8 @@ function mapDispatchToProps(dispatch) {
   return {
     setActiveChat: (activeChat) => dispatch(setActiveChat(activeChat)),
     setChatData: (chatData) => dispatch(actions.setChatData(chatData)),
-    updateChatPageRedux: () => dispatch(updateChatPageRedux),
-    updateChatlistRedux: () => dispatch(updateChatlistRedux)
+    updateChatPageRedux: () => dispatch(updateChatPageRedux()),
+    updateChatlistRedux: () => dispatch(updateChatlistRedux())
   }
 }
 

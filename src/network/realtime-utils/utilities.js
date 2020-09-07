@@ -37,6 +37,8 @@ export const detectMessagetype = (incomingStanza) => {
 	var read = incomingStanza.getElementsByTagName('read')
 	var date = _dateToYMD((new Date()).getTime() + global.TimeDelta)
 
+	console.log('>>>>>>>>>'+incomingStanza.getAttribute('type').toString());
+
 	if (fwd.toString()) {
 		type = 'DownLoad'
 		var delay = incomingStanza.getElementsByTagName('delay')
@@ -83,18 +85,18 @@ export const detectMessagetype = (incomingStanza) => {
 		data = getFromattedReceipt(incomingStanza, type)
 	}
 	// incoming messages
-	else if(msg.getAttribute('chat').toString()) {
+	else if(incomingStanza.getAttribute('type').toString() === 'chat') {
 		type = 'Message'
 		data = getFormattedMessages(incomingStanza, date, IS_GROUP_MSG=0)
 	}
-	else if(msg.getAttribute('groupchat').toString()){
-		if(msg.getElementsByTagName('x').toString()){
+	else if(incomingStanza.getAttribute('type').toString() === 'groupchat'){
+		if(incomingStanza.getElementsByTagName('x').toString()){
 			type = 'Affiliations'
-			data = getFormattedAffiliations(msg, date)
+			data = getFormattedAffiliations(incomingStanza, date)
 		}
-		else if(msg.getElementsByTagName('body').toString()){
+		else if(incomingStanza.getElementsByTagName('body').toString()){
 			type = 'GroupMessage'
-			data = getFormattedMessages(msg, date, IS_GROUP_MSG=1 )
+			data = getFormattedMessages(incomingStanza, date, IS_GROUP_MSG=1 )
 		}
 	}
 	return ({ type: type, data: data, subtype: subtype })
@@ -106,17 +108,38 @@ function getFormattedAffiliations(msg, createdDateTime) {
 
 	let affiliationText = "Affiliation message";
 
+	let to = msg.getAttribute('to').split('@')[0];
+	let xelem = msg.getElementsByTagName('x');
+	let user = xelem[0].getElementsByTagName('user');
+	let subject = xelem[0].getElementsByTagName('subject');
+	let roomname = xelem[0].getElementsByTagName('roomname');
+	// if(user.toString()){
+
+
+	// }else if(subject.toString()){
+	// 	affiliationText = 'Group status changed'
+	// }else if(roomname.toString()){
+	// 	affiliationText = 'Group name changed'
+	// }
+
+
+	
+
+
 	let affiliationMessage = {
-		CHAT_ROOM_JID: msg.getAttribute('from').split('/')[0],
+		CHAT_ROOM_JID: msg.getAttribute('from').split('@')[0],
 		IS_GROUP_MSG: 1,
 		MSG_TEXT: affiliationText,
-		CREATOR_JID: msg.getAttribute('from').split('/')[0],
+		CREATOR_JID: msg.getAttribute('from').split('@')[0],
 		SENDER_MSG_ID: msg.getAttribute('id'),		
 		CREATED_DATE: createdDateTime.date,
 		CREATED_TIME: createdDateTime.time,
 		TIME_CREATED: createdDateTime.fulltime,		
 		MSG_TYPE: -1		
 	}
+
+	console.log(affiliationMessage);
+
 	return affiliationMessage
 }
 
@@ -152,6 +175,18 @@ function getFormattedMessages(msg, createdDateTime, IS_GROUP_MSG ) {
 	var body = msg.getElementsByTagName('body')
 	var message = Strophe.getText(body[0]);
 	var media = msg.getElementsByTagName('media');
+	var msgtype = ( media[0] ? ( parseInt(media[0].getAttribute('number')) ) : 0 );
+	var media_cloud = ( media[0] ? ( media[0].getAttribute('link') ) : null );
+	var media_thumbnail = (msgtype == 2 ? ( media[0].getAttribute('thumbnail')) : null );
+
+
+	// In the case of group chat sender message id is kept deliberately null when groupchat received from self
+	var fromjid 
+	if(IS_GROUP_MSG ==1)
+		fromjid = msg.getAttribute('from').split('/')[1];
+	var tojid = msg.getAttribute('to');
+
+	var msgid = msg.getAttribute('id')
 
 	var incomingMessage = {
 		CHAT_ROOM_JID: msg.getAttribute('from').split('/')[0],
@@ -162,14 +197,17 @@ function getFormattedMessages(msg, createdDateTime, IS_GROUP_MSG ) {
 		CREATED_DATE: createdDateTime.date,
 		CREATED_TIME: createdDateTime.time,
 		TIME_CREATED: createdDateTime.fulltime,
-		SENDER_MSG_ID: msg.getAttribute('id'),
-		MSG_TYPE: ( media ? ( parseInt(media[0].getAttribute('number')) ) : 0 ),
-		MEDIA_CLOUD: (media ? (Strophe.getText(media[0])) : null ),
+		SENDER_MSG_ID: IS_GROUP_MSG == 0 ? msgid : ( fromjid === tojid ? null : msgid ),
+		MSG_TYPE: msgtype,
+		MEDIA_CLOUD: media_cloud,
+		MEDIA_CLOUD_THUMBNAIL: media_thumbnail,
 		SEQUENCE: -1,
 		IS_REPLY: reply,
 		IS_FORWARD: forward,
 		REPLY_PARENT: parent
 	}
+
+	console.log(incomingMessage);
 	
 	return incomingMessage
 }

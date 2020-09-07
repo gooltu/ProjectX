@@ -29,7 +29,7 @@ const Create_ChatMessage = "CREATE TABLE if not exists ChatMessage (" +
     "CHAT_ROOM_JID	  TEXT ," +
     "CREATOR_JID	  TEXT ," +    
     "SENDER_NAME  TEXT ," +
-    "SENDER_MSG_ID   TEXT ," +
+    "SENDER_MSG_ID   TEXT DEFAULT NULL," +
     "IS_READ	 INTEGER DEFAULT 0 ," +
     "TIME_READ   INTEGER ," +
     "IS_DELIVERED   INTEGER DEFAULT 0 ," +
@@ -42,7 +42,8 @@ const Create_ChatMessage = "CREATE TABLE if not exists ChatMessage (" +
     "IS_JEWEL_PICKED  INTEGER DEFAULT 0 ," +
     "MSG_TEXT   TEXT ," +    
     "MEDIA_UPLOADED  INTEGER DEFAULT 0 ," +    
-    "MEDIA_CLOUD  TEXT ," +
+    "MEDIA_CLOUD  TEXT DEFAULT NULL," +
+    "MEDIA_CLOUD_THUMBNAIL  TEXT DEFAULT NULL," +
     "SEQUENCE  INTEGER DEFAULT 0," +
     "IS_REPLY INTEGER DEFAULT 0," +
     "REPLY_PARENT INTEGER DEFAULT NULL," +
@@ -57,7 +58,7 @@ const Create_GroupMembers = "CREATE TABLE if not exists GroupMembers (" +
     "UNIQUE(" + "GROUP_JID" + "," + "MEMBER_JID" + "))"    
 
 const Sequence_Trigger = "CREATE TRIGGER IF NOT EXISTS Update_Sequence " +
-    " AFTER INSERT ON ChatMessage WHEN NEW.CHAT_ROOM_JID = NEW.CREATOR_JID AND NEW.MSG_TYPE1 != -1" +
+    " AFTER INSERT ON ChatMessage WHEN NEW.SENDER_MSG_ID IS NOT NULL" +
     " BEGIN" +
     " UPDATE ChatMessage " +
     " SET SEQUENCE = (SELECT MAX(SEQUENCE) FROM ChatMessage) + 1 " +

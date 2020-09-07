@@ -117,14 +117,14 @@ const AppMainStack = createStackNavigator({
             };
         }
     },
-    // ChatPage: {
-    //     screen: ChatPage,
-    //     navigationOptions: ({ navigation }) => {
-    //         return {
-    //             header: <CustomHeader navigation={navigation} />
-    //         };
-    //     }
-    // },
+    ChatPage: {
+        screen: ChatPage,
+        navigationOptions: ({ navigation }) => {
+            return {
+                header: <CustomHeader navigation={navigation} />
+            };
+        }
+    },
     NewGroup: {
         screen: NewGroup,
         navigationOptions: ({ navigation }) => {

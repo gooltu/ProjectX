@@ -17,12 +17,15 @@ export const insertIncomingMessageViaHistoryDownload = (incomingMessage) => {
 
 // function to handlle incoming messages (insertion to DB , sending delivery and read receipt)
 export const insertIncomingMessage = (incomingMessage) => {
+
 	return (dispatch, getState) => {
 		db.insertStropheChatData(incomingMessage).then((_id) => {
+            console.log('Helllllooooo');      
+            dispatch(updateChatPageRedux());
+            dispatch(updateChatlistRedux()); 
 			incomingMessage['_ID'] = _id            
-            _sendReceiptsOnReceivingMessages(incomingMessage, getState);          
-            dispatch(updateChatPageRedux);
-            dispatch(updateChatlistRedux);           
+            _sendReceiptsOnReceivingMessages(incomingMessage, getState);    
+                      
 
 		}).catch(err => {})
 	}
@@ -32,16 +35,29 @@ export const insertIncomingMessage = (incomingMessage) => {
 
 export const updateChatPageRedux = () => {
 	return (dispatch, getState) => {
-		if (getState().chatslist.activeChat.JID && getState().chatroom.chatroom.length>0){
+        
+		if(getState().chatslist.activeChat.CHAT_ROOM_JID){
+            console.log('Here1');
+            let chatroom_JID = getState().chatslist.activeChat.CHAT_ROOM_JID;
+            let isgroupmsg = getState().chatslist.activeChat.IS_GROUP_MSG;
+            if(getState().chatroom.chatroom.length>0){
+                
+                let chatroom_length = getState().chatroom.chatroom.length;                            
+                let lowest_ID = getState().chatroom.chatroom[chatroom_length - 1]._ID;
 
-            let chatroom_JID = chatslist.activeChat.JID;
-            let chatroom_length = getState().chatroom.chatroom.length;                            
-            let lowest_ID = getState().chatroom.chatroom[chatroom_length - 1]._ID;
+                db.getAllChatsGreaterThanEqual_ID(chatroom_JID, lowest_ID, isgroupmsg)
+                .then(chatdata => {
+                    dispatch(actions.setChatData(chatdata))
+                })
 
-            db.getAllChatsGreaterThanEqual_ID(chatroom_JID, lowest_ID)
-            .then(chatdata => {
-                dispatch(actions.setChatData(chatdata))
-            })
+            }else if(getState().chatroom.chatroom.length == 0){
+                db.getChats(chatroom_JID, 0, isgroupmsg)
+                .then(chatdata => {       
+                    console.log('Update Chat Page Redux Initial load') 
+                    console.log(chatdata);            
+                    dispatch(actions.setChatData(chatdata))
+                })
+            }     
 
         }
 	}
@@ -49,10 +65,11 @@ export const updateChatPageRedux = () => {
 
 
 export const updateChatlistRedux = () => {
+    console.log('Getting chat list')
 	return (dispatch, getState) => {
 		db.getChatList().then(chatlist => {
             console.log('FROM JEWELCHAT COMPONENT GETCHATLIST SUCCESS')
-            //console.log(chatlist.rows.length)                           
+            console.log(chatlist)                           
             dispatch(actions.setChatListData(chatlist))                            
         })
 	}

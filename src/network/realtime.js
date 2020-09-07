@@ -86,8 +86,8 @@ export const realtimeConnect = () => {
 						else if (processedMessage.subtype === 'Message' || processedMessage.type === 'GroupMessage')
 							dispatch(insertIncomingMessageViaHistoryDownload(processedMessage.data))
 
-						else if (processedMessage.subtype === 'Affiliations' )
-							dispatch(insertIncomingAffiliationsViaHistoryDownload(processedMessage.data))		
+						// else if (processedMessage.subtype === 'Affiliations' )
+						// 	dispatch(insertIncomingAffiliationsViaHistoryDownload(processedMessage.data))		
 					}
 					else if (processedMessage.type === 'Read' || processedMessage.type === 'Delivery') {
 						dispatch(handleReadAndDeliveryMessages(processedMessage))
@@ -95,8 +95,8 @@ export const realtimeConnect = () => {
 					else if (processedMessage.type === 'Message' || processedMessage.type === 'GroupMessage' )
 						dispatch(insertIncomingMessage(processedMessage.data))
 
-					else if (processedMessage.type === 'Affiliations' )
-						dispatch(insertIncomingAffiliations(processedMessage.data))	
+					// else if (processedMessage.type === 'Affiliations' )
+					// 	dispatch(insertIncomingAffiliations(processedMessage.data))	
 
 					return true
 
@@ -124,13 +124,13 @@ export const realtimeConnect = () => {
 				.then(delta => {
 
 					// download history since your last logout	after getting server time
-					AsyncStorage.getItem('logOutTime')
-					.then( lastlogouttime => {			
-						console.log('LOGOUT TIME', lastlogouttime);		
-						let current_servertime = new Date().getTime() + global.TimeDelta
-						lastlogouttime = current_servertime - parseInt(lastlogouttime) > 604800000 ? (current_servertime - 604800000) : parseInt(lastlogouttime);
-						dispatch(downloadMessages(connection, lastlogouttime));
-					});
+					// AsyncStorage.getItem('logOutTime')
+					// .then( lastlogouttime => {			
+					// 	console.log('LOGOUT TIME', lastlogouttime);		
+					// 	let current_servertime = new Date().getTime() + global.TimeDelta
+					// 	lastlogouttime = current_servertime - parseInt(lastlogouttime) > 604800000 ? (current_servertime - 604800000) : parseInt(lastlogouttime);
+					// 	dispatch(downloadMessages(connection, lastlogouttime));
+					// });
 
 				})
 				.catch(err => {

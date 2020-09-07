@@ -1,7 +1,7 @@
 import SQLite from 'react-native-sqlite-storage';
 import SQL from './queries';
 import phoneContactModal from './phoneContactModal';
-import {populateTestData} from './TestData';
+//import {populateTestData} from './TestData';
 
 
 
@@ -68,20 +68,37 @@ function _initDb() {
 	})
 }
 
-function getChats(JID, offset) {
+function getChats(JID, offset, isgroupmsg) {
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
-				txn.executeSql('select * FROM ChatMessage JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) where CHAT_ROOM_JID ="' + JID + '" ORDER BY _ID DESC LIMIT 20 OFFSET ' + offset)
+
+				if( isgroupmsg == 0 ){
+					txn.executeSql('select * FROM ChatMessage JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) where CHAT_ROOM_JID ="' + JID + '" ORDER BY _ID DESC LIMIT 20 OFFSET ' + offset)
 					.then((results) => {
 						console.log('QUERY COMPLETED for Chat room', JID);
 						console.log(results[1])
-						resolve(results)
+						resolve(results[1].rows.raw())
 					})
 					.catch(err => {
 						reject(err)
 					})
+				}else{
+					txn.executeSql('select a.*, b.MAX_SEQUENCE, c.CONTACT_NAME as GROUP_NAME '+
+									'FROM ChatMessage a '+
+									'JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) b '+ 
+									'LEFT OUTER JOIN Contact c ON c.JID = a.CREATOR_JID '+
+									'where CHAT_ROOM_JID ="' + JID + '" ORDER BY _ID DESC LIMIT 20 OFFSET ' + offset)
+					.then((results) => {
+						console.log('QUERY COMPLETED for Chat room', JID);
+						console.log(results[1])
+						resolve(results[1].rows.raw())
+					})
+					.catch(err => {
+						reject(err)
+					})
+				}	
 			})
 		}).then(result => {
 		}).catch(err => {
@@ -91,12 +108,14 @@ function getChats(JID, offset) {
 }
 
 
-function getAllChatsGreaterThanEqual_ID(JID, _id ) {
+function getAllChatsGreaterThanEqual_ID(JID, _id, isgroupmsg ) {
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
-				txn.executeSql('select * FROM ChatMessage JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) where CHAT_ROOM_JID = ? AND _ID >= ? ORDER BY _ID DESC', [JID, _id])
+
+				if( isgroupmsg == 0 ){
+					txn.executeSql('select * FROM ChatMessage JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) where CHAT_ROOM_JID = ? AND _ID >= ? ORDER BY _ID DESC', [JID, _id])
 					.then((results) => {
 						console.log(' f(getAllChatsGreaterThanEqual_ID) QUERY COMPLETED for Chat room', JID);
 						console.log(results[1])
@@ -109,6 +128,27 @@ function getAllChatsGreaterThanEqual_ID(JID, _id ) {
 					.catch(err => {
 						reject(err)
 					})
+				}else{
+
+					txn.executeSql('select a.*, b.MAX_SEQUENCE, c.CONTACT_NAME as GROUP_NAME FROM ChatMessage a '+
+									'JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) b '+
+									'LEFT OUTER JOIN Contact c ON c.JID = a.CREATOR_JID '+
+									'where a.CHAT_ROOM_JID = ? AND a._ID >= ? ORDER BY a._ID DESC', [JID, _id])
+					.then((results) => {
+						console.log(' f(getAllChatsGreaterThanEqual_ID) QUERY COMPLETED for Chat room', JID);
+						console.log(results[1])
+						// let chats = []
+						// for(let i=0;i<results.rows.length;i++){
+						// 	chats.push(results.rows.item(i))
+						// }
+						resolve(results[1].rows.raw())
+					})
+					.catch(err => {
+						reject(err)
+					})
+
+				}	
+
 			})
 		}).then(result => {
 		}).catch(err => {
@@ -122,7 +162,7 @@ function getChatList() {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
-				txn.executeSql('select a._ID, a.MSG_TEXT, a.MSG_TYPE, b.UNREAD_COUNT, b.LAST_MSG_CREATED_TIME, a.CHAT_ROOM_JID, a.IS_GROUP_MSG, c.JID, c.SMALL_IMAGE, c.PHONEBOOK_CONTACT_NAME, c.JEWELCHAT_ID'
+				txn.executeSql('select a._ID, a.MSG_TEXT, a.MSG_TYPE, b.UNREAD_COUNT, b.LAST_MSG_CREATED_TIME, a.CHAT_ROOM_JID, a.IS_GROUP_MSG, c.JID, c.SMALL_IMAGE, c.PHONEBOOK_CONTACT_NAME, c.CONTACT_NAME, c.JEWELCHAT_ID'
 				+ ' from ChatMessage a '
 				+ 'INNER JOIN ( '
 				+ 'select _ID, max(_ID) as MAX_ID, count(_ID) as UNREAD_COUNT, max(TIME_CREATED) as LAST_MSG_CREATED_TIME'
@@ -227,10 +267,10 @@ function insertStropheChatData(data) {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
-				let sql;
+				let sql; let q = ',?'
 				sql = "INSERT INTO ChatMessage "
 					+ "( " + Object.keys(data).join(', ') + " ) " 				
-					+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " VALUES (?"+ q.repeat( Object.keys(data).length - 1 ) + ")";
 				
 				txn.executeSql(sql, Object.values(data))
 					.then((results) => {

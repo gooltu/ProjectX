@@ -18,7 +18,7 @@ import styles from './CustomHeader.styles'
 import Logo from '../../svg_components/Logo';
 import XP from '../../svg_components/XP';
 import BackButton from "../../svg_components/BackButton";
-
+import Icon from 'react-native-vector-icons/FontAwesome5'
 import { realtimeConnect, realtimeDisconnect } from "../../../network/realtime"
 import actions from "../../../actions";
 
@@ -51,13 +51,20 @@ class CustomHeader extends React.Component {
         if (this.props.navigation.state.routeName == 'ChatPage')
             logoView =
                 <TouchableOpacity style={styles.profilepic} onPress={() => this.props.navigation.navigate('FriendProfile')}>
-                    {this.props.activeChat.SMALL_IMAGE == null ?
-                        <ImageBackground
-                            source={require('../../../assets/placeholder_img.png')}
-                            style={styles.imgBackground}></ImageBackground> :
+                    {this.props.activeChat.SMALL_IMAGE && this.props.activeChat.JEWELCHAT_ID != 1 &&
                         <ImageBackground
                             source={{ uri: this.props.activeChat.SMALL_IMAGE }}
-                            style={styles.imgBackground}></ImageBackground>}
+                            style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', overflow: 'hidden'}}></ImageBackground>
+                    }
+                    {
+                        this.props.activeChat.JEWELCHAT_ID == 1 && <Logo height="75%" width="75%" style={{margin: 10, width: '100%', height: '100%', alignItems: 'center', overflow: 'hidden'}} />
+                    }
+                    {
+                        !this.props.activeChat.SMALL_IMAGE && this.props.activeChat.JEWELCHAT_ID != 1 && this.props.activeChat.IS_GROUP_MSG == 0 && <Icon name='user' color={colors.jcgray} size={18} solid />
+                    }
+                    {
+                        !this.props.activeChat.SMALL_IMAGE && this.props.activeChat.JEWELCHAT_ID != 1 && this.props.activeChat.IS_GROUP_MSG == 1 && <Icon  name='users' color={colors.jcgray} size={18} solid />
+                    }   
                 </TouchableOpacity>
         else if (this.props.navigation.state.routeName == 'FriendProfile') {
             logoView = null
@@ -141,8 +148,15 @@ class CustomHeader extends React.Component {
         let titleView
         if (this.props.navigation.state.routeName == 'ChatPage')
             titleView = <TouchableOpacity onPress={() => this.props.navigation.navigate('FriendProfile')} style={{ flexDirection: 'column', paddingLeft: 5, height: 32, justifyContent: 'center' }}>
-                <Text style={{ fontSize: 14, color: 'white', fontWeight: 'bold' }}>{this.props.activeChat.PHONEBOOK_CONTACT_NAME ? this.props.activeChat.PHONEBOOK_CONTACT_NAME : '+' + this.props.activeChat.CONTACT_NUMBER}</Text>
-                <Text style={{ fontSize: 11, color: 'white' }}>{this.props.presence.hasOwnProperty(this.props.activeChat.JID) ? this.props.presence[this.props.activeChat.JID] : this.props.activeChat.IS_PHONEBOOK_CONTACT == 1 ? 'offine' : null}</Text>
+                <Text style={{ fontSize: 14, color: 'white', fontWeight: 'bold' }}>{this.props.activeChat.PHONEBOOK_CONTACT_NAME ? this.props.activeChat.PHONEBOOK_CONTACT_NAME.substring(0, 35)+'...'
+                    : (this.props.activeChat.JEWELCHAT_ID == 1 ? 'Team JewelChat' 
+                    : (this.props.activeChat.IS_GROUP_MSG == 0 ? '+' + this.props.activeChat.CHAT_ROOM_JID.split('@')[0]
+                    : (this.props.activeChat.CONTACT_NAME ? this.props.activeChat.CONTACT_NAME.substring(0, 35)+'...' : 'Group Chat') ) )}</Text>
+                { 
+                    this.props.activeChat.IS_GROUP_MSG == 0 && this.props.presence.hasOwnProperty(this.props.activeChat.JID) 
+                    && <Text style={{ fontSize: 11, color: 'white' }}>{ this.props.presence[this.props.activeChat.JID] ? this.props.presence[this.props.activeChat.JID] : 'offline' }</Text>
+                } 
+                
             </TouchableOpacity>
         else if (this.props.navigation.state.routeName == 'FriendProfile') {
             titleView = <Text style={{ fontSize: 16, color: 'white', paddingLeft: 10, fontWeight: 'bold' }}>{this.props.activeChat.PHONEBOOK_CONTACT_NAME}</Text>
