@@ -229,7 +229,7 @@ class TaskDetail extends React.Component {
                 </TouchableOpacity>
               </TouchableOpacity> :
               <View style={{ alignItems: 'center', paddingTop: 10 }}>
-                <View style={{ justifyContent: 'center', width: 220, alignItems: 'center', backgroundColor: color.darkcolor2, borderRadius: 5, borderWidth: 1, borderColor: color.jcgray, paddingHorizontal: 25, paddingVertical: 10 }}>
+                <View style={{ justifyContent: 'center', width: 220, alignItems: 'center', backgroundColor: color.darkcolor2, borderRadius: 5, borderWidth: 1, borderColor: color.lightcolor1, paddingHorizontal: 25, paddingVertical: 10 }}>
                   <Text style={{ color: color.jcgray }}>WIN GIFT</Text>
                 </View>
               </View> : null

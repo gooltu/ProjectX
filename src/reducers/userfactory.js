@@ -1,7 +1,8 @@
-import { SET_USER_FACTORY } from '../actions/ActionTypes'
+import { SET_USER_FACTORY, IS_LOADING } from '../actions/ActionTypes'
 
 let initialState = {
-    factoryuser: []
+    factoryuser: [],
+    isLoading: false
 }
 
 
@@ -12,6 +13,11 @@ const userfactory = (state = initialState, action) => {
             return {
                 ...state,
                 factoryuser: action.payload.factoryuser
+            }
+        case IS_LOADING:
+            return {
+                ...state,
+                isLoading: action.payload
             }
         default:
             return state

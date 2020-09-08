@@ -126,6 +126,7 @@ class TaskDetail extends React.Component {
 
                     </View> : null}
 
+            
                 <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
                 {this.props.taskdetails.hasOwnProperty(this.task.task_id) ?
                 <TouchableOpacity disabled={!this.CheckAvailablityForAllJewels()} style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }} onPress={() => {

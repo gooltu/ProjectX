@@ -1,4 +1,4 @@
-import { SET_FACTORY, SET_USER_FACTORY } from './ActionTypes'
+import { SET_FACTORY, SET_USER_FACTORY, IS_LOADING } from './ActionTypes'
 import NetworkManager from '../network/NetworkManager'
 import rest from '../network/rest'
 
@@ -26,13 +26,22 @@ export const setUserFactory = (payload) => {
         payload: payload
     }
 }
+export const setIsLoading = (payload) =>{
+    return {
+        type: IS_LOADING,
+        payload: payload
+    }
+}
 
 export const getUserFactory = () => {
+
     return (dispatch, setState) => {
+        dispatch(setIsLoading(true))
         NetworkManager.callAPI(rest.getUserFactory, 'GET', null).then(result => {
             console.log('userfactory result')
             console.log(result)
             dispatch(setUserFactory(result))
+            dispatch(setIsLoading(false))
         }).catch(error => {
 
         })

@@ -41,6 +41,13 @@ class factoryOutputview extends React.Component {
 
         })
     }
+    checkDisabled() {
+        if ((!this.checkJewelAvailability(this.props.material[2 * this.props.index]) && !this.checkJewelAvailability(this.props.material[2 * this.props.index + 1]))) {
+            return false
+        }
+        else
+            return true
+    }
     render() {
         return (
             <SafeAreaView style={{ marginHorizontal: 10, marginVertical: 5, height: 250, backgroundColor: colors.darkcolor3 }}>
@@ -65,23 +72,30 @@ class factoryOutputview extends React.Component {
                         {this.checkJewelAvailability(this.props.material[2 * this.props.index + 1]) ? <Icon name='close' color='red' size={20} /> : <Icon name='check' color='green' size={17} />}
                     </View>
                 </View>
-                <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10 }}
-                    onPress={() => this.startFactory(this.props.factory)}
-                    disabled={!(this.checkJewelAvailability(this.props.material[2 * this.props.index]) && this.checkJewelAvailability(this.props.material[2 * this.props.index + 1])) || this.state.isLoading}
-                >
-                    <View style={{ width: 150, height: 40, zIndex: 1, backgroundColor: colors.darkcolor3, borderColor: colors.darkcolor3, borderRadius: 8, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
-                        <View style={{ width: "100%", height: '100%' }}>
-                            <ImageBackground source={JCImages.colorGrad} style={{
-                                width: '100%', height: '100%', justifyContent: 'center',
-                                alignItems: 'center', overflow: 'hidden'
-                            }}></ImageBackground>
+                {!this.checkDisabled() ?
+                    <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10 }}
+                        onPress={() => this.startFactory(this.props.factory)}
+                        disabled={this.checkDisabled()}
+                    >
+                        <View style={{ width: 150, height: 40, zIndex: 1, backgroundColor: colors.darkcolor3, borderColor: colors.darkcolor3, borderRadius: 8, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
+                            <View style={{ width: "100%", height: '100%' }}>
+                                <ImageBackground source={JCImages.colorGrad} style={{
+                                    width: '100%', height: '100%', justifyContent: 'center',
+                                    alignItems: 'center', overflow: 'hidden'
+                                }}></ImageBackground>
+                            </View>
                         </View>
-                    </View>
-                    <View style={{ position: 'absolute', width: '100%', height: '100%', zIndex: 2, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        {this.state.isLoading ? <ActivityIndicator color={'white'} />
-                            : <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>START</Text>}
-                    </View>
-                </TouchableOpacity>
+                        <View style={{ position: 'absolute', width: '100%', height: '100%', zIndex: 2, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                            {this.state.isLoading ? <ActivityIndicator color={'white'} />
+                                : <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>START</Text>}
+                        </View>
+                    </TouchableOpacity>
+                    :
+                    <View style={{ alignItems: 'center', paddingTop: 10 }}>
+                        <View style={{ justifyContent: 'center', width: 150, alignItems: 'center', backgroundColor: colors.darkcolor2, borderRadius: 5, borderWidth: 1, borderColor: colors.lightcolor1, paddingHorizontal: 25, paddingVertical: 10 }}>
+                            <Text style={{ color: colors.jcgray }}>START</Text>
+                        </View>
+                    </View>}
             </SafeAreaView>
         )
     }

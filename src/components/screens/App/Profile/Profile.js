@@ -9,6 +9,7 @@ import {
   ScrollView,
   FlatList,
   ImageBackground,
+  ActivityIndicator,
 } from "react-native";
 
 import styles from './Profile.styles'
@@ -23,6 +24,7 @@ import actions from "../../../../actions";
 import colors from "../../../shared_styles/colors";
 import ProfileOptionsList from './ProfileOptionsList'
 import ProfilePhotoSection from './ProfilePhotoSection'
+import CustomLoader from "../../../shared_components/CustomLoader";
 const levelArray = [5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120]
 
 class Profile extends React.Component {
@@ -31,7 +33,8 @@ class Profile extends React.Component {
     this.state = {
       referrals: [],
       invitees: 0,
-      levelJson: {}
+      levelJson: {},
+      isLoading: false
     }
   }
   componentDidMount() {
@@ -39,11 +42,17 @@ class Profile extends React.Component {
   }
   getAchievements = () => {
     if (!this.props.userachievements.length > 0)
-      NetworkManager.callAPI(rest.getUsersAchievement, 'POST', null).then(result => {
-        this.props.setUserAchievement(result.userachievements)
-      }).catch(error => {
-
+      this.setState({
+        isLoading: true
       })
+    NetworkManager.callAPI(rest.getUsersAchievement, 'POST', null).then(result => {
+      this.props.setUserAchievement(result.userachievements)
+      this.setState({
+        isLoading: false
+      })
+    }).catch(error => {
+
+    })
     if (!this.props.achievements.length > 0)
       NetworkManager.callAPI(rest.getAchievements, 'POST', null).then(result => {
         this.props.setAchievements(result.achievements)
@@ -101,6 +110,9 @@ class Profile extends React.Component {
   }
   redeemAchievements = (item, index) => {
     if (this.getPercentage(item, index) == 100) {
+      this.setState({
+        isLoading: true
+      })
       let data = {
         id: this.props.userachievements[index].id
       }
@@ -108,6 +120,9 @@ class Profile extends React.Component {
         NetworkManager.callAPI(rest.getUsersAchievement, 'POST', null).then(results => {
           this.props.setUserAchievement(results.userachievements)
           this.props.loadGameState()
+          this.setState({
+            isLoading: false
+          })
           this.props.navigation.navigate('SuccessFullGiftRedeem')
         }).catch(error => {
 
@@ -132,7 +147,7 @@ class Profile extends React.Component {
   render() {
     return (
       <SafeAreaView style={styles.mainContainer}>
-
+        <CustomLoader loading={this.state.isLoading} />
         {this.props.achievements.length > 0 && this.props.userachievements.length > 0 ?
           <FlatList
             ListHeaderComponent={this._renderSectionHeader}
@@ -169,7 +184,11 @@ class Profile extends React.Component {
                     {
                       this.props.game.scores.level >= this.props.userachievements[index].level ?
                         <TouchableOpacity onPress={() => this.redeemAchievements(item, index)} disabled={this.getPercentage(item, index) == 100 ? false : true} style={{ backgroundColor: this.getPercentage(item, index) == 100 ? color.lightcolor2 : colors.darkcolor1, borderColor: colors.lightcolor2, borderWidth: 1, height: 22, width: 70, alignItems: 'center', justifyContent: 'center', borderRadius: 5 }}>
-                          <Text style={{ color: 'white', fontSize: 12 }}>WIN</Text>
+                          {this.state.isLoading ?
+                            <ActivityIndicator />
+                            :
+                            <Text style={{ color: 'white', fontSize: 12 }}>WIN</Text>
+                          }
                         </TouchableOpacity> :
                         <TouchableOpacity style={{ backgroundColor: color.darkcolor1, height: 22, width: 65, alignItems: 'center', borderColor: color.lightcolor2, justifyContent: 'center', borderWidth: 1.5, borderRadius: 5 }}>
                           <Text style={{ color: color.jcgray, fontSize: 12 }}>LEVEL {this.props.userachievements[index].level}</Text>

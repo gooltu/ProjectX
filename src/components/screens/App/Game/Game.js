@@ -16,6 +16,7 @@ import actions from '../../../../actions';
 import GiftTaskView from './GiftTaskView'
 import { InterstitialAd, RewardedAd, RewardedAdEventType, BannerAdSize, BannerAd, TestIds } from '@react-native-firebase/admob';
 import TaskView from './TaskView';
+import CustomLoader from '../../../shared_components/CustomLoader';
 
 class Game extends React.Component {
 
@@ -23,7 +24,8 @@ class Game extends React.Component {
     super(props)
     this.state = {
       reachedEnd: false,
-      page: 0
+      page: 0,
+      isLoading: false
     }
   }
   componentDidMount() {
@@ -33,13 +35,19 @@ class Game extends React.Component {
   }
 
   getTaskDetails() {
-    // if (this.props.tasks.length == 0) {
-    NetworkManager.callAPI(rest.getTasks, 'POST', null).then(result => {
-      console.log(result)
-      this.props.setTaskData(result.tasks)
-    }).catch(error => {
-    })
-    // }
+    if (this.props.tasks.length == 0) {
+      this.setState({
+        isLoading: true
+      })
+      NetworkManager.callAPI(rest.getTasks, 'POST', null).then(result => {
+        console.log(result)
+        this.setState({
+          isLoading: false
+        })
+        this.props.setTaskData(result.tasks)
+      }).catch(error => {
+      })
+    }
   }
   getGiftTask(page) {
     console.log('page', page)
@@ -124,7 +132,7 @@ class Game extends React.Component {
   render() {
     return (
       <SafeAreaView style={styles.mainContainer}>
-
+        <CustomLoader loading={this.state.isLoading} />
         <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
         {this.props.gifttasks.length > 0 ?
           <FlatList

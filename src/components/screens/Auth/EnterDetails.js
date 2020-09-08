@@ -26,7 +26,7 @@ import rest from '../../../network/rest';
 const teamJC = {
   _ID: 1,
   JEWELCHAT_ID: 1,
-  JID: '2@jewelchat.net',
+  JID: '1@jewelchat.net',
   CONTACT_NUMBER: 910000000000,
   CONTACT_NAME: 'Team JewelChat',
   PHONEBOOK_CONTACT_NAME: 'Team JewelChat',
@@ -45,6 +45,25 @@ const teamJC = {
   MSG_TEXT: 'Welcome to JewelChat.'
 }
 
+const incomingMessage = {
+  	CHAT_ROOM_JID: '1@jewelchat.net',
+  	IS_GROUP_MSG: 0,
+  	MSG_TEXT: 'Welcome to JewelChat.',
+  	CREATOR_JID: '1@jewelchat.net',
+  	GROUP_MEMBER_JID: 0,
+  	JEWEL_TYPE: 0,
+  	CREATED_DATE: new Date(),
+  	CREATED_TIME: (new Date()).getTime(),
+  	TIME_CREATED: (new Date()).getTime(),
+  	SENDER_MSG_ID: 1,
+  	MSG_TYPE:  0,
+  	MEDIA_CLOUD: null,
+  	SEQUENCE: -1,
+  	IS_REPLY: 0,
+  	IS_FORWARD: 0,
+  	REPLY_PARENT: null
+  }
+
 class EnterDetails extends React.Component {
 
   state = {
@@ -60,25 +79,23 @@ class EnterDetails extends React.Component {
 
   componentDidMount() {
     this.props.loadGameData()
-    db.insertTeamJC(teamJC).then(result => {
-      db.getChatList().then(results => {
-        console.log('FROM JEWELCHAT COMPONENT GETCHAT LIST SUCCESS')
-        console.log(results.rows.length)
-
-        let chatList = []
-        for (let i = 0; i < results.rows.length; i++) {
-          chatList.push(results.rows.item(i))
-        }
-        this.props.setChatListData(chatList)
-      })
-        .catch(err => {
-          console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
-          console.log(err)
-        })
-    }).catch(err => {
-      console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
-      console.log(err)
-    })
+    // db.insertStropheChatData(incomingMessage).then(result=>{
+    //   db.insertTeamJC(teamJC).then(result => {
+    //     db.getChatList().then(results => {
+    //       console.log('FROM JEWELCHAT COMPONENT GETCHAT LIST SUCCESS')  
+    //       console.log(results)    
+    //       this.props.setChatListData(results)
+    //     })
+    //       .catch(err => {
+    //         console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
+    //         console.log(err)
+    //       })
+    //   }).catch(err => {
+    //     console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
+    //     console.log(err)
+    //   })
+    // })
+    
     this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
     console.log('Token', this.props.mytoken)
   }

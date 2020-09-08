@@ -12,7 +12,7 @@ let _jcdb
 
 export default {
 	getChats,getAllChatsGreaterThanEqual_ID, getChatList, updatePhoneContact, insertStropheChatData, insertAffiliations, updateDeliveryAndReadReceipt, getContactList,updatePickedJewel,
-	updateLastMessageAndText, selectUnreadMessages, selectUnsendMessages, updateContact, insertContactData, checkIfRowExist
+	updateLastMessageAndText, selectUnreadMessages, selectUnsendMessages, updateContact, insertContactData, checkIfRowExist, insertTeamJC
 };
 
 SQLite.openDatabase({
@@ -42,7 +42,7 @@ SQLite.openDatabase({
 	console.log(val)
 }).then((result) => {
 	console.log('APP START TRANSACTION SUCCESSFUL')
-	populateTestData();
+	//populateTestData();
 }).catch(err => {
 	console.log('APP START DATABASE ERROR');
 	console.log(err);
