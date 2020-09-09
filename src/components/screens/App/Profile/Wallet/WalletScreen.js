@@ -1,67 +1,33 @@
 import React from "react";
 import {
-  ActivityIndicator,
-  AsyncStorage,
-  StatusBar,
-  StyleSheet,
   SafeAreaView,
   View,
   Text,
   ScrollView,
   TouchableOpacity,
-  Image,
-  CameraRoll,
-  ImageBackground
 } from "react-native";
 
-import CustomHeader from "../../../../shared_components/customHeader/CustomHeader";
-import JCImages from '../../../../../assets/JCImages'
-import { Button } from 'native-base'
-import color from '../../../../shared_styles/colors'
 import styles from './Wallet.styles'
-import Logo from '../../../../svg_components/Logo';
-import Diamond from '../../../../svg_components/Diamond';
-import Coin from '../../../../svg_components/Coin';
 import NetworkManager from "../../../../../network/NetworkManager";
 import rest from "../../../../../network/rest";
-
-const scrollBarData = [
-  {
-    'image': JCImages.wallet,
-    'text': 'WALLET'
-  },
-  {
-    'image': JCImages.trophy,
-    'text': 'LEADERBOARD'
-  },
-  {
-    'image': JCImages.setting,
-    'text': 'SETTINGS'
-  },
-  {
-    'image': JCImages.share,
-    'text': 'SHARE'
-  }
-]
+import { connect } from "react-redux";
+import actions from "../../../../../actions";
+import { renderJewel } from "../../../../JCUtils/CommonUtils";
+import CustomLoader from "../../../../shared_components/CustomLoader";
 
 
-export default class WalletScreen extends React.Component {
-  /*static navigationOptions = ({ navigation }) => {
-    
-    console.log('HERE');
-    return {
-      header: <CustomHeader levelbar="show" />
-    };
-};*/
+class WalletScreen extends React.Component {
 
   constructor(props) {
     super(props)
     this.state = {
-      money: 0
+      money: 0,
+      isLoading: false
     }
   }
 
   componentDidMount() {
+    this.props.getWalletJewels()
     NetworkManager.callAPI(rest.getWallet, 'GET', null).then(result => {
       this.setState({
         money: result.money
@@ -71,10 +37,28 @@ export default class WalletScreen extends React.Component {
     })
   }
 
+  redeemWalletMoney = (channel) => {
+    if (this.state.money > 0) {
+      this.setState({
+        isLoading: true
+      })
+      NetworkManager.callAPI(rest.redeemMoney, 'POST', { 'channel': channel }).then(result => {
+        console.log(result)
+        this.setState({
+          money: 0,
+          isLoading: false
+        })
+        this.props.naviation.navigate('SuccessFullGiftRedeem')
+      }).catch(error => {
+
+      })
+    }
+  }
 
   render() {
     return (
       <SafeAreaView style={styles.mainContainer}>
+        <CustomLoader loading={this.state.isLoading} />
         <View style={styles.addMoneyContainer}>
           <View>
             <Text style={styles.MoneyText}>{'\u20B9'} {this.state.money}</Text>
@@ -105,68 +89,88 @@ export default class WalletScreen extends React.Component {
           </View>
 
           <View style={styles.paymentOptionConatiner}>
-            <TouchableOpacity style={styles.transferOptionContainer}>
+            <TouchableOpacity style={styles.transferOptionContainer} onPress={() => this.redeemWalletMoney('PAYTM')}>
               <Text style={styles.optionText}>PAYTM</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.transferOptionContainer}>
+            <TouchableOpacity style={styles.transferOptionContainer} onPress={() => this.redeemWalletMoney('PHONEPAY')}>
               <Text style={styles.optionText}>PHONEPE</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.transferOptionContainer}>
+            <TouchableOpacity style={styles.transferOptionContainer} onPress={() => this.redeemWalletMoney('UPI')}>
               <Text style={styles.optionText}>UPI</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.transferOptionContainer}>
+            <TouchableOpacity style={styles.transferOptionContainer} onPress={() => this.redeemWalletMoney('GAPY')}>
               <Text style={styles.optionText}>GPAY</Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        <View style={{ paddingTop: 15 }}>
-          <View style={styles.diamondContainer}>
-            <Text style={styles.buyText}>BUY DIAMONDS</Text>
+        {this.props.walletjewels.length > 0 ?
+          <View>
+            <View style={{ paddingTop: 15 }}>
+              <View style={styles.diamondContainer}>
+                <Text style={styles.buyText}>BUY DIAMONDS</Text>
+              </View>
+              <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                {
+                  this.props.walletjewels.slice(0, this.props.walletjewels.length / 2).map((object) => (
+                    <View style={styles.scrollBar}>
+                      <TouchableOpacity style={styles.scrollBarItem}>
+                        <View style={styles.itemOne}>
+                          <Text style={styles.itemText}>{object.count}</Text>
+                          {renderJewel(object.jeweltype_id, 55, 55, styles.jewelStyle)}
+                        </View>
+                        <View style={styles.itemTwo}>
+                          <Text></Text>
+                          <Text style={styles.itemText}>{'\u20B9'} {object.money}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  ))
+                }
+              </ScrollView>
+            </View>
+            <View style={{ paddingTop: 15 }}>
+              <View style={styles.diamondContainer}>
+                <Text style={styles.buyText}>BUY COINS</Text>
+              </View>
+              <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                {
+                  this.props.walletjewels.slice(this.props.walletjewels.length / 2, this.props.walletjewels.length).map((object) => (
+                    <View style={styles.scrollBar}>
+                      <TouchableOpacity style={styles.scrollBarItem}>
+                        <View style={styles.itemOne}>
+                          <Text style={styles.itemText}>{object.count}</Text>
+                          {renderJewel(object.jeweltype_id, 55, 55, styles.jewelStyle)}
+                        </View>
+                        <View style={styles.itemTwo}>
+                          <Text></Text>
+                          <Text style={styles.itemText}>{'\u20B9'} {object.money}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  ))
+                }
+              </ScrollView>
+            </View>
           </View>
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            {
-              scrollBarData.map((object) => (
-                <View style={styles.scrollBar}>
-                  <TouchableOpacity style={styles.scrollBarItem}>
-                    <View style={styles.itemOne}>
-                      <Text style={styles.itemText}>100</Text>
-                      <Diamond height="55" width="55" />
-                    </View>
-                    <View style={styles.itemTwo}>
-                      <Text></Text>
-                      <Text style={styles.itemText}>{'\u20B9'} 2000</Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              ))
-            }
-          </ScrollView>
-        </View>
-        <View style={{ paddingTop: 15 }}>
-          <View style={styles.diamondContainer}>
-            <Text style={styles.buyText}>BUY COINS</Text>
-          </View>
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            {
-              scrollBarData.map((object) => (
-                <View style={styles.scrollBar}>
-                  <TouchableOpacity style={styles.scrollBarItem}>
-                    <View style={styles.itemOne}>
-                      <Text style={styles.itemText}>100</Text>
-                      <Coin height="55" width="55" />
-                    </View>
-                    <View style={styles.itemTwo}>
-                      <Text></Text>
-                      <Text style={styles.itemText}>{'\u20B9'} 2000</Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              ))
-            }
-          </ScrollView>
-        </View>
+          : null}
       </SafeAreaView>
     );
   }
 }
+
+function mapStateToProps(state) {
+  console.log(state)
+  return {
+    walletjewels: state.walletjewels.prices
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    getWalletJewels: () => dispatch(actions.getWalletJewels())
+  }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(WalletScreen)

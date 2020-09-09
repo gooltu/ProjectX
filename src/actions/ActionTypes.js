@@ -16,3 +16,4 @@ export const SET_LEADERBOARD = 'SET_LEADERBOARD';
 export const SET_FACTORY = 'SET_FACTORY';
 export const SET_USER_FACTORY = 'SET_USER_FACTORY';
 export const IS_LOADING = 'IS_LOADING';
+export const SET_WALLET_JEWELS = 'SET_WALLET_JEWELS';

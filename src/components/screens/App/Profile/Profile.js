@@ -160,11 +160,11 @@ class Profile extends React.Component {
                       <Text style={{ color: colors.lightBlue }}>0</Text>
                       {item.text.includes('img') ?
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <Text style={{ color: 'white', paddingRight: 10 }}>{item.text.split('<x>')[0]} 5</Text>
+                          <Text style={{ color: 'white', paddingRight: 10 }}>{item.text.split('<x>')[0]} {item.text.includes('img') ? this.props.userachievements[index].level * 10 : this.props.userachievements[index].level * 5}</Text>
                           {renderJewel(item.text.replace(/\D/g, ''), 30, 35, styles.jewelStyle)}
                         </View>
                         :
-                        <Text style={{ color: 'white' }}>{item.text.replace('<x>', '5')}</Text>}
+                        <Text style={{ color: 'white' }}>{item.text.replace('<x>', item.text.includes('img') ? this.props.userachievements[index].level * 10 : this.props.userachievements[index].level * 5)}</Text>}
                       <Text style={{ color: colors.lightBlue }}>{item.text.includes('img') ? this.props.userachievements[index].level * 10 : this.props.userachievements[index].level * 5}</Text>
                     </View>
                     <View style={{ width: '100%', height: 5, zIndex: 1, backgroundColor: color.darkcolor3, borderColor: color.darkcolor3, borderRadius: 3, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
@@ -184,11 +184,7 @@ class Profile extends React.Component {
                     {
                       this.props.game.scores.level >= this.props.userachievements[index].level ?
                         <TouchableOpacity onPress={() => this.redeemAchievements(item, index)} disabled={this.getPercentage(item, index) == 100 ? false : true} style={{ backgroundColor: this.getPercentage(item, index) == 100 ? color.lightcolor2 : colors.darkcolor1, borderColor: colors.lightcolor2, borderWidth: 1, height: 22, width: 70, alignItems: 'center', justifyContent: 'center', borderRadius: 5 }}>
-                          {this.state.isLoading ?
-                            <ActivityIndicator />
-                            :
-                            <Text style={{ color: 'white', fontSize: 12 }}>WIN</Text>
-                          }
+                          <Text style={{ color: 'white', fontSize: 12 }}>WIN</Text>
                         </TouchableOpacity> :
                         <TouchableOpacity style={{ backgroundColor: color.darkcolor1, height: 22, width: 65, alignItems: 'center', borderColor: color.lightcolor2, justifyContent: 'center', borderWidth: 1.5, borderRadius: 5 }}>
                           <Text style={{ color: color.jcgray, fontSize: 12 }}>LEVEL {this.props.userachievements[index].level}</Text>

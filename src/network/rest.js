@@ -37,7 +37,9 @@ export default {
     startFactory: '/startFactory',
     stopFactory: '/stopFactory',
     transferJewelsFromFactory: '/transferJewelsFromFactory',
-    flushFactory: '/flushFactory'
+    flushFactory: '/flushFactory',
+    getWalletJewelPrices: '/getWalletJewelPrices',
+    buyJewelsFromWallet: '/buyJewelsFromWallet'
 }
 
 

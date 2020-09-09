@@ -25,7 +25,8 @@ export default styles = StyleSheet.create({
         fontSize: PixelRatio.roundToNearestPixel(15*global.scaleFactor)
     },
     scrollBar: {
-        padding: PixelRatio.roundToNearestPixel(10*global.moderateScaleFactor)
+        paddingVertical: PixelRatio.roundToNearestPixel(10*global.moderateScaleFactor),
+        paddingLeft: PixelRatio.roundToNearestPixel(10*global.moderateScaleFactor)
     },
     scrollBarItem: {
         flexDirection: 'column',
@@ -92,6 +93,12 @@ export default styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-end'
+    },
+    jewelStyle: {
+        width: '100%',
+        height: '100%',
+        alignSelf: 'center',
+        overflow: 'hidden'
     }
 
 })
