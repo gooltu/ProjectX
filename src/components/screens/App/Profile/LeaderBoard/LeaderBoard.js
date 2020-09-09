@@ -23,6 +23,7 @@ import { connect } from 'react-redux';
 import colors from "../../../../shared_styles/colors";
 import { renderJewel } from '../../../../JCUtils/CommonUtils'
 import LeaderBoardRow from "./LeaderBoardRow";
+import CustomLoader from "../../../../shared_components/CustomLoader";
 
 class LeaderBoard extends React.Component {
   /*static navigationOptions = ({ navigation }) => {
@@ -36,19 +37,27 @@ class LeaderBoard extends React.Component {
     super(props)
     this.state = {
       imagepath: '',
-      userProfile: {}
+      userProfile: {},
+      isLoading: false
     }
-    this.user
   }
 
   componentDidMount() {
     console.log(this.props.leaderboard)
     this.loadProfilePicture()
+    if (!Object.keys(this.props.leaderboard).length > 0) {
+      this.setState({
+        isLoading: true
+      })
+    }
     NetworkManager.callAPI(rest.getLeaderBoard, 'GET', null).then(result => {
       console.log(result)
       let top1 = result.top1.concat(result.top2)
       let top2 = result.top3.concat(result.top4)
-      //this.props.setLeaderBoard({ top1: top1, top2: top2 })
+      this.props.setLeaderBoard({ top1: top1, top2: top2 })
+      this.setState({
+        isLoading: false
+      })
     }).catch(error => {
 
     })
@@ -83,25 +92,28 @@ class LeaderBoard extends React.Component {
   render() {
     return (
       <SafeAreaView style={styles.mainContainer}>
-        <ScrollView style={{ padding: 10 }}>
-          {this.props.leaderboard.top1.map(item =>
-            <LeaderBoardRow type={'other'} item={item} />
-          )}
-          {Object.keys(this.props.game).length > 0 ?
-            <LeaderBoardRow type={'user'}  item={
-              {
-                pic: this.state.imagepath,
-                name: 'You',
-                level: this.props.game.scores.level,
-                diamond: this.props.game.jewels[0].total_count,
-                coins: this.props.game.jewels[1].total_count
-              }
-            } />
-            : null}
-          {this.props.leaderboard.top2.map(item =>
-            <LeaderBoardRow type={'other'} item={item} />
-          )}
-        </ScrollView>
+        <CustomLoader loading={this.state.isLoading} />
+        {Object.keys(this.props.leaderboard).length > 0 ?
+          <ScrollView style={{ padding: 10 }}>
+            {this.props.leaderboard.top1.map(item =>
+              <LeaderBoardRow type={'other'} item={item} />
+            )}
+            {Object.keys(this.props.game).length > 0 ?
+              <LeaderBoardRow type={'user'} item={
+                {
+                  pic: this.state.imagepath,
+                  name: 'You',
+                  level: this.props.game.scores.level,
+                  points: this.props.game.scores.points
+                }
+              } />
+              : null}
+            {this.props.leaderboard.top2.map(item =>
+              <LeaderBoardRow type={'other'} item={item} />
+            )}
+          </ScrollView> : null
+        }
+
       </SafeAreaView >
     );
   }

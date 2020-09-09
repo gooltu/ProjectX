@@ -34,7 +34,6 @@ class TaskDetail extends React.Component {
     super(props)
     this.giftTask = this.props.navigation.state.params.giftTask
     console.log(this.giftTask)
-    this.count = 0
     this.state ={
       isLaoding: false
     }
@@ -107,19 +106,21 @@ class TaskDetail extends React.Component {
       return true
     }
     else {
-      this.count++
-      console.log('Count', this.count)
       return false
     }
   }
   checkEligibility() {
-    console.log(this.props.gifttaskdetails[this.giftTask.id].length, this.count)
-    if (this.props.gifttaskdetails[this.giftTask.id].length === this.count) {
-      this.count=0
+    let count = 0
+    this.props.gifttaskdetails[this.giftTask.id].map(item=>{
+      if(!this.CheckAvailablity(item)){
+        count++
+      }
+    })    
+    console.log(count,  this.props.gifttaskdetails[this.giftTask.id])
+    if (this.props.gifttaskdetails[this.giftTask.id].length === count) {
       return true
     }
     else {
-      this.count=0
       return false
     }
   }
