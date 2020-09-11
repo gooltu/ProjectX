@@ -15,7 +15,7 @@ import Diamond from '../../../svg_components/Diamond'
 import Coin from '../../../svg_components/Coin'
 import rest from "../../../../network/rest";
 import NetworkManager from "../../../../network/NetworkManager";
-
+import Icon from 'react-native-vector-icons/MaterialIcons'
 class ProfilePhotoSection extends React.Component {
     constructor(props) {
         super(props)
@@ -59,20 +59,23 @@ class ProfilePhotoSection extends React.Component {
             }
         })
     }
-  
+
 
     componentWillUnmount() {
         this.focusListener.remove()
     }
 
 
-   
+
     render() {
         return (
             <SafeAreaView style={styles.mainContainer}>
                 <View style={{ paddingTop: 40 }}>
                     <View style={styles.profileSection}>
                         <View style={styles.firstDiamond}>
+                            <View>
+                                <Icon name={'add'} size={30} color={'white'} />
+                            </View>
                             <View style={styles.mainLeftLayout}>
                                 <Diamond width={PixelRatio.roundToNearestPixel(35 * global.scaleFactor)} height={PixelRatio.roundToNearestPixel(30 * global.scaleFactor)} />
                                 <Text style={{ color: 'white' }}>{this.props.game.jewels[0].count}</Text>
@@ -85,6 +88,9 @@ class ProfilePhotoSection extends React.Component {
                             <View style={styles.mainRightLayout}>
                                 <Coin width={PixelRatio.roundToNearestPixel(35 * global.scaleFactor)} height={PixelRatio.roundToNearestPixel(30 * global.scaleFactor)} />
                                 <Text style={{ color: 'white' }}>{this.props.game.jewels[1].count}</Text>
+                            </View>
+                            <View>
+                                <Icon name={'add'} size={30} color={'white'} />
                             </View>
                         </View>
                     </View>

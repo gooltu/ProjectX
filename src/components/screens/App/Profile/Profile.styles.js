@@ -15,6 +15,7 @@ export default styles = StyleSheet.create({
     firstDiamond: {
         justifyContent: "center",
         alignItems: 'center',
+        flexDirection:'row',
         backgroundColor: color.darkcolor2,
         width: '30%',
         borderTopRightRadius: PixelRatio.roundToNearestPixel(35 * global.scaleFactor),
@@ -24,7 +25,7 @@ export default styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: "center",
         alignItems: 'center',
-        paddingLeft: PixelRatio.roundToNearestPixel(25 * global.moderateScaleFactor)
+        paddingLeft: PixelRatio.roundToNearestPixel(10 * global.moderateScaleFactor)
     },
     DiamondImage: {
         height: PixelRatio.roundToNearestPixel(25 * global.scaleFactor),
@@ -41,6 +42,7 @@ export default styles = StyleSheet.create({
     SecondDiamond: {
         justifyContent: "center",
         alignItems: 'center',
+        flexDirection:'row',
         backgroundColor: color.darkcolor2,
         width: '30%',
         borderTopLeftRadius: PixelRatio.roundToNearestPixel(35 * global.scaleFactor),
@@ -50,7 +52,7 @@ export default styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: "center",
         alignItems: 'center',
-        paddingRight: PixelRatio.roundToNearestPixel(25 * global.moderateScaleFactor)
+        paddingRight: PixelRatio.roundToNearestPixel(10 * global.moderateScaleFactor)
     },
     scrollBar: {
         padding: PixelRatio.roundToNearestPixel(5 * global.moderateScaleFactor),

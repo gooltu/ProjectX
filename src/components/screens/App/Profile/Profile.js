@@ -34,7 +34,8 @@ class Profile extends React.Component {
       referrals: [],
       invitees: 0,
       levelJson: {},
-      isLoading: false
+      isLoading: false,
+      children: []
     }
   }
   componentDidMount() {
@@ -60,6 +61,9 @@ class Profile extends React.Component {
 
       })
     NetworkManager.callAPI(rest.getChildren, 'GET', null).then(result => {
+      this.setState({
+        children: result.children
+      })
       this.processReferrals(result)
     }).catch(error => {
 
@@ -183,10 +187,10 @@ class Profile extends React.Component {
                     </View>
                     {
                       this.props.game.scores.level >= this.props.userachievements[index].level ?
-                        <TouchableOpacity onPress={() => this.redeemAchievements(item, index)} disabled={this.getPercentage(item, index) == 100 ? false : true} style={{ backgroundColor: this.getPercentage(item, index) == 100 ? color.lightcolor2 : colors.darkcolor1, borderColor: colors.lightcolor2, borderWidth: 1, height: 22, width: 70, alignItems: 'center', justifyContent: 'center', borderRadius: 5 }}>
+                        <TouchableOpacity onPress={() => this.redeemAchievements(item, index)} disabled={this.getPercentage(item, index) == 100 ? false : true} style={{ backgroundColor: this.getPercentage(item, index) == 100 ? color.lightcolor1 : colors.darkcolor1, borderColor: colors.lightcolor1, borderWidth: 1, height: 22, width: 70, alignItems: 'center', justifyContent: 'center', borderRadius: 5 }}>
                           <Text style={{ color: 'white', fontSize: 12 }}>WIN</Text>
                         </TouchableOpacity> :
-                        <TouchableOpacity style={{ backgroundColor: color.darkcolor1, height: 22, width: 65, alignItems: 'center', borderColor: color.lightcolor2, justifyContent: 'center', borderWidth: 1.5, borderRadius: 5 }}>
+                        <TouchableOpacity style={{ backgroundColor: color.darkcolor1, height: 22, width: 70, alignItems: 'center', borderColor: color.lightcolor1, justifyContent: 'center', borderWidth: 1.5, borderRadius: 5 }}>
                           <Text style={{ color: color.jcgray, fontSize: 12 }}>LEVEL {this.props.userachievements[index].level}</Text>
                         </TouchableOpacity>
                     }
