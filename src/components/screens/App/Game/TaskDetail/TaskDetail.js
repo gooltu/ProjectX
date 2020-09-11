@@ -28,6 +28,7 @@ import rest from '../../../../../network/rest';
 import { renderJewel } from '../../../../JCUtils/CommonUtils'
 import actions from '../../../../../actions';
 import Icon from 'react-native-vector-icons/FontAwesome'
+import CustomLoader from '../../../../shared_components/CustomLoader';
 
 class TaskDetail extends React.Component {
 
@@ -59,11 +60,26 @@ class TaskDetail extends React.Component {
         console.log('jewel value')
         console.log(jewel)
         let jewelView = []
-        for (let i = 0; i < jewel.count; i++) {
+        if(jewel.count<=5){
+            for (let i = 0; i < jewel.count; i++) {
+                jewelView.push(
+                    renderJewel(jewel.jeweltype_id, 30, 30, styles.jewelStyle)
+                )
+            }
+        }
+        else{
+            for (let i = 0; i < 5; i++) {
+                jewelView.push(
+                    renderJewel(jewel.jeweltype_id, 30, 30, styles.jewelStyle)
+                )
+            }
             jewelView.push(
-                renderJewel(jewel.jeweltype_id, 30, 30, styles.jewelStyle)
+                <View>
+                    <Text style={{fontSize:20, color: color.lightcolor1, fontWeight:'bold'}}>+{jewel.count-5}</Text>
+                </View>
             )
         }
+       
         return jewelView
     }
     CheckAvailablity(RequiredJewel) {
@@ -91,6 +107,7 @@ class TaskDetail extends React.Component {
     render() {
         return (
             <SafeAreaView style={styles.mainContainer}>
+                <CustomLoader  loading={this.state.isLaoding}/>
                 <View style={{ alignItems: 'center', justifyContent: 'center', padding: 50 }}>
                     <View style={styles.scrollBarItem}>
                         <View style={styles.itemOne}>
@@ -129,6 +146,7 @@ class TaskDetail extends React.Component {
             
                 <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
                 {this.props.taskdetails.hasOwnProperty(this.task.task_id) ?
+                this.CheckAvailablityForAllJewels()?
                 <TouchableOpacity disabled={!this.CheckAvailablityForAllJewels()} style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }} onPress={() => {
                     let data = {
                         task_id: this.task.task_id,
@@ -187,20 +205,14 @@ class TaskDetail extends React.Component {
                     <View style={{ position: 'absolute', width: '100%', height: '100%', zIndex: 2, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>WIN POINTS & COINS</Text>
                     </View>
-                </TouchableOpacity>:null}
-                {
-                    this.state.isLaoding ?
-                        <View style={styles.activityIndicatorWrapper}>
-                            <ActivityIndicator
-                                color={Platform.OS === 'ios' ? 'white' : '#66cdaa'}
-                                size='large'
-                                style={styles.activityIndicator}
-                            />
-                            <Text style={styles.loadingText}>Processing...</Text>
-                        </View>
-                        : null
-                }
-
+                </TouchableOpacity>
+                :
+                <View style={{ alignItems: 'center', paddingTop: 10 }}>
+                <View style={{ justifyContent: 'center', width: 220, alignItems: 'center', backgroundColor: color.darkcolor2, borderRadius: 5, borderWidth: 1, borderColor: color.lightcolor1, paddingHorizontal: 25, paddingVertical: 10 }}>
+                  <Text style={{ color: color.jcgray }}>WIN POINTS & COINS</Text>
+                </View>
+              </View>
+                :null}
             </SafeAreaView>
         );
     }

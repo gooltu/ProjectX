@@ -1,51 +1,42 @@
 import React from "react"
 import {
-    ActivityIndicator,
-    StatusBar,
-    StyleSheet,
     SafeAreaView,
     View,
-    ScrollView,
     Text,
-    TouchableOpacity,
-    Image,
-    FlatList,
-    ImageBackground,
-    PixelRatio,
-    Modal
+    Image
 } from "react-native";
-import styles from './UserProfile.styles'
 import JCImages from '../../../../../assets/JCImages'
 import { connect } from 'react-redux';
-import ImagePicker from 'react-native-image-crop-picker';
-import ImageEditor from "@react-native-community/image-editor";
-import RNFS from 'react-native-fs'
 import NetworkManager from "../../../../../network/NetworkManager";
 import rest from "../../../../../network/rest";
-import AsyncStorage from "@react-native-community/async-storage";
-import AWS from 'aws-sdk/dist/aws-sdk-react-native';
-import { decode } from "base64-arraybuffer";
 import colors from "../../../../shared_styles/colors";
-import { List, ListItem, Left, Body, Right } from 'native-base';
-
+import CustomLoader from '../../../../shared_components/CustomLoader'
 class GiftsWon extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            giftsWon: []
+            giftsWon: [],
+            isLoading: false
         }
     }
     componentDidMount() {
+        this.setState({
+            isLoading: true
+        })
         NetworkManager.callAPI(rest.getAllGiftsWon, 'GET', null).then(result => {
             this.setState({
-                giftsWon: result.gifts
+                giftsWon: result.gifts,
+                isLoading: false
             })
+        }).catch(error=>{
+
         })
     }
 
     render() {
         return (
             <SafeAreaView style={{ flex: 1, backgroundColor: colors.darkcolor1 }}>
+                <CustomLoader  loading={this.state.isLoading}/>
                 <View style={{ padding: 10 }}>
                     {this.state.giftsWon.map(item =>
                         <View style={{ flexDirection: 'row', alignItems: 'center', borderColor: 'grey', borderRadius: 10, borderWidth: 1, padding: 5, marginBottom: 10 }}>

@@ -26,6 +26,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import NetworkManager from '../../../../../network/NetworkManager';
 import rest from '../../../../../network/rest';
 import actions from '../../../../../actions';
+import CustomLoader from '../../../../shared_components/CustomLoader';
 
 
 class TaskDetail extends React.Component {
@@ -34,15 +35,29 @@ class TaskDetail extends React.Component {
     super(props)
     this.giftTask = this.props.navigation.state.params.giftTask
     console.log(this.giftTask)
-    this.state ={
+    this.state = {
       isLaoding: false
     }
   }
   jewelView(jewel) {
     let jewelView = []
-    for (let i = 0; i < jewel.count; i++) {
+    if (jewel.count <= 5) {
+      for (let i = 0; i < jewel.count; i++) {
+        jewelView.push(
+          renderJewel(jewel.jeweltype_id, 30, 30, styles.jewelStyle)
+        )
+      }
+    }
+    else {
+      for (let i = 0; i < 5; i++) {
+        jewelView.push(
+          renderJewel(jewel.jeweltype_id, 30, 30, styles.jewelStyle)
+        )
+      }
       jewelView.push(
-        renderJewel(jewel.jeweltype_id, 30, 30, styles.jewelStyle)
+        <View>
+          <Text style={{ fontSize: 20, color: color.lightcolor1, fontWeight: 'bold' }}>+{jewel.count - 5}</Text>
+        </View>
       )
     }
     return jewelView
@@ -111,12 +126,12 @@ class TaskDetail extends React.Component {
   }
   checkEligibility() {
     let count = 0
-    this.props.gifttaskdetails[this.giftTask.id].map(item=>{
-      if(!this.CheckAvailablity(item)){
+    this.props.gifttaskdetails[this.giftTask.id].map(item => {
+      if (!this.CheckAvailablity(item)) {
         count++
       }
-    })    
-    console.log(count,  this.props.gifttaskdetails[this.giftTask.id])
+    })
+    console.log(count, this.props.gifttaskdetails[this.giftTask.id])
     if (this.props.gifttaskdetails[this.giftTask.id].length === count) {
       return true
     }
@@ -124,17 +139,17 @@ class TaskDetail extends React.Component {
       return false
     }
   }
-  winGift(){
-    let data =  {
+  winGift() {
+    let data = {
       id: this.props.usergifttasks[this.giftTask.id].id,
       gifttask_id: this.props.usergifttasks[this.giftTask.id].gifttask_id
     }
     this.setState({
       isLaoding: true
     })
-    NetworkManager.callAPI(rest.redeemGiftTask, 'POST', data).then(result=>{
+    NetworkManager.callAPI(rest.redeemGiftTask, 'POST', data).then(result => {
       setTimeout(() => {
-        NetworkManager.callAPI(rest.checkGiftTaskCompletion, 'POST', data).then(completionStatus=>{
+        NetworkManager.callAPI(rest.checkGiftTaskCompletion, 'POST', data).then(completionStatus => {
           this.setState({
             isLaoding: false
           })
@@ -143,18 +158,19 @@ class TaskDetail extends React.Component {
           this.props.setUserGiftTask(data)
           this.props.loadGameState()
           this.props.navigation.navigate('SuccessFullGiftRedeem')
-        }).catch(err=>{
+        }).catch(err => {
 
         })
       }, 2000);
-    }).catch(error=>{
+    }).catch(error => {
 
     })
-    
+
   }
   render() {
     return (
       <SafeAreaView style={styles.mainContainer}>
+        <CustomLoader loading={this.state.isLaoding} />
         <View style={{ alignItems: 'center', justifyContent: 'center', padding: 20 }}>
           {this.giftTask.cash === 0 ?
             <Image
@@ -212,8 +228,8 @@ class TaskDetail extends React.Component {
               </View>
             </View>
             :
-            this.checkEligibility() || this.props.usergifttasks[this.giftTask.id].done==1 ?
-              <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }}  disabled={this.props.usergifttasks[this.giftTask.id].done==1?true: false}>
+            this.checkEligibility() || this.props.usergifttasks[this.giftTask.id].done == 1 ?
+              <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }} disabled={this.props.usergifttasks[this.giftTask.id].done == 1 ? true : false}>
                 <View style={{ width: 220, height: 45, zIndex: 1, backgroundColor: color.darkcolor3, borderColor: color.darkcolor3, borderRadius: 8, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
                   <View style={{ width: "100%", height: '100%' }}>
                     <ImageBackground source={JCImages.colorGrad} style={{
@@ -223,10 +239,10 @@ class TaskDetail extends React.Component {
                   </View>
                 </View>
                 <TouchableOpacity
-                  disabled={this.props.usergifttasks[this.giftTask.id].done==1?true: false}
+                  disabled={this.props.usergifttasks[this.giftTask.id].done == 1 ? true : false}
                   onPress={() => this.winGift()}
                   style={{ position: 'absolute', width: '100%', height: '100%', zIndex: 2, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                  <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>{this.props.usergifttasks[this.giftTask.id].done==1?'ALREADY WON':'WIN GIFT'}</Text>
+                  <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>{this.props.usergifttasks[this.giftTask.id].done == 1 ? 'ALREADY WON' : 'WIN GIFT'}</Text>
                 </TouchableOpacity>
               </TouchableOpacity> :
               <View style={{ alignItems: 'center', paddingTop: 10 }}>
@@ -236,23 +252,6 @@ class TaskDetail extends React.Component {
               </View> : null
 
         }
-
-        <View>
-
-        </View>
-
-        {
-                    this.state.isLaoding ?
-                        <View style={styles.activityIndicatorWrapper}>
-                            <ActivityIndicator
-                                color={Platform.OS === 'ios' ? 'white' : '#66cdaa'}
-                                size='large'
-                                style={styles.activityIndicator}
-                            />
-                            <Text style={styles.loadingText}>Processing...</Text>
-                        </View>
-                        : null
-                }
       </SafeAreaView>
     );
   }

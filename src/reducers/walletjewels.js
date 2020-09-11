@@ -1,7 +1,8 @@
-import { SET_WALLET_JEWELS} from '../actions/ActionTypes'
+import { SET_WALLET_JEWELS, SET_WALLET_JEWELS_IS_LOADING } from '../actions/ActionTypes'
 
 let initialState = {
-    "prices": []
+    "prices": [],
+    "networkLoading": false
 }
 
 const walletjewels = (state = initialState, action) => {
@@ -10,6 +11,11 @@ const walletjewels = (state = initialState, action) => {
             return {
                 ...state,
                 prices: action.payload
+            }
+        case SET_WALLET_JEWELS_IS_LOADING:
+            return {
+                ...state,
+                networkLoading: action.payload
             }
         default:
             return state

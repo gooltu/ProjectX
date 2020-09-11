@@ -14,6 +14,8 @@ import { connect } from "react-redux";
 import actions from "../../../../../actions";
 import { renderJewel } from "../../../../JCUtils/CommonUtils";
 import CustomLoader from "../../../../shared_components/CustomLoader";
+import { Snackbar } from 'react-native-paper';
+import colors from "../../../../shared_styles/colors";
 
 
 class WalletScreen extends React.Component {
@@ -22,12 +24,16 @@ class WalletScreen extends React.Component {
     super(props)
     this.state = {
       money: 0,
-      isLoading: false
+      isLoading: false,
+      visible: false
     }
   }
 
   componentDidMount() {
     this.props.getWalletJewels()
+   this.loadWallet()
+  }
+  loadWallet = () => {
     NetworkManager.callAPI(rest.getWallet, 'GET', null).then(result => {
       this.setState({
         money: result.money
@@ -36,7 +42,6 @@ class WalletScreen extends React.Component {
 
     })
   }
-
   redeemWalletMoney = (channel) => {
     if (this.state.money > 0) {
       this.setState({
@@ -53,12 +58,37 @@ class WalletScreen extends React.Component {
 
       })
     }
+    else {
+      this.setState({
+        visible: true
+      })
+    }
+  }
+  _onDismissSnackBar = () => this.setState({ visible: false });
+
+  purchaseJewels = (item) => {
+    if (this.state.money >= item.money) {
+      NetworkManager.callAPI(rest.buyJewelsFromWallet, 'POST', { id: item.id }).then(result => {
+        if(!result.error){
+          this.loadWallet()
+          this.props.loadGameState()
+        }
+      }).catch(error => {
+
+      })
+    }
+    else {
+      this.setState({
+        visible: true
+      })
+    }
+
   }
 
   render() {
     return (
       <SafeAreaView style={styles.mainContainer}>
-        <CustomLoader loading={this.state.isLoading} />
+        <CustomLoader loading={this.state.isLoading || this.props.networkLoading} />
         <View style={styles.addMoneyContainer}>
           <View>
             <Text style={styles.MoneyText}>{'\u20B9'} {this.state.money}</Text>
@@ -114,7 +144,7 @@ class WalletScreen extends React.Component {
                 {
                   this.props.walletjewels.slice(0, this.props.walletjewels.length / 2).map((object) => (
                     <View style={styles.scrollBar}>
-                      <TouchableOpacity style={styles.scrollBarItem}>
+                      <TouchableOpacity style={styles.scrollBarItem} onPress={()=>this.purchaseJewels(object)}>
                         <View style={styles.itemOne}>
                           <Text style={styles.itemText}>{object.count}</Text>
                           {renderJewel(object.jeweltype_id, 55, 55, styles.jewelStyle)}
@@ -137,7 +167,7 @@ class WalletScreen extends React.Component {
                 {
                   this.props.walletjewels.slice(this.props.walletjewels.length / 2, this.props.walletjewels.length).map((object) => (
                     <View style={styles.scrollBar}>
-                      <TouchableOpacity style={styles.scrollBarItem}>
+                      <TouchableOpacity style={styles.scrollBarItem} onPress={()=>this.purchaseJewels(object)}>
                         <View style={styles.itemOne}>
                           <Text style={styles.itemText}>{object.count}</Text>
                           {renderJewel(object.jeweltype_id, 55, 55, styles.jewelStyle)}
@@ -154,6 +184,13 @@ class WalletScreen extends React.Component {
             </View>
           </View>
           : null}
+        <Snackbar
+          duration={1000}
+          style={{ backgroundColor: colors.lightcolor1, alignItems: 'center' }}
+          visible={this.state.visible}
+          onDismiss={this._onDismissSnackBar}>
+          Not Enough Money in Wallet.
+        </Snackbar>
       </SafeAreaView>
     );
   }
@@ -162,13 +199,15 @@ class WalletScreen extends React.Component {
 function mapStateToProps(state) {
   console.log(state)
   return {
-    walletjewels: state.walletjewels.prices
+    walletjewels: state.walletjewels.prices,
+    networkLoading: state.walletjewels.networkLoading
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    getWalletJewels: () => dispatch(actions.getWalletJewels())
+    getWalletJewels: () => dispatch(actions.getWalletJewels()),
+    loadGameState: () => dispatch(actions.loadGameState())
   }
 }
 

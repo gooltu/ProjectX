@@ -27,12 +27,14 @@ import AWS from 'aws-sdk/dist/aws-sdk-react-native';
 import { decode } from "base64-arraybuffer";
 import colors from "../../../../shared_styles/colors";
 import { Button } from 'native-base';
+import CustomLoader from "../../../../shared_components/CustomLoader";
 
 class ImageEdit extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            imagepath: ''
+            imagepath: '',
+            isLoading: false
         }
     }
     componentDidMount() {
@@ -46,6 +48,9 @@ class ImageEdit extends React.Component {
         })
     }
     getAWSTaken(image, pic) {
+        this.setState({
+            isLoading: true
+        })
         NetworkManager.callAPI(rest.awsToken, 'get', null).then((responseJson) => {
             console.log('AWS token result')
             this.uploadImagetoAWS(image, pic, responseJson)
@@ -89,6 +94,9 @@ class ImageEdit extends React.Component {
         }
         NetworkManager.callAPI(rest.updateProfilepic, 'POST', data).then((responseJson) => {
             console.log(responseJson)
+            this.setState({
+                isLoading: false
+            })
         }).catch((error) => {
             console.log(error)
         })
@@ -130,6 +138,7 @@ class ImageEdit extends React.Component {
     render() {
         return (
             <SafeAreaView style={{ flex: 1, backgroundColor: colors.darkcolor1 }}>
+                <CustomLoader loading={this.state.isLoading}/>
                 <ScrollView contentContainerStyle={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                     <Image style={{ width: 400, height: 400, alignItems: 'center', justifyContent: 'center' }} key={this.state.imagepath} source={this.state.imagepath!=null && this.state.imagepath!='' ? { uri: this.state.imagepath } : JCImages.placeholderImage} />
                 </ScrollView>
