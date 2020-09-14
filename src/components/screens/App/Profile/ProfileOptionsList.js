@@ -31,7 +31,7 @@ const scrollBarData = [
    
 ]
 
-scrollBarNaviagtion = (text, navigation) => {
+scrollBarNaviagtion = (text, navigation, children) => {
     if (text === 'LEADERBOARD') {
         navigation.navigate("LeaderBoard")
     }
@@ -44,6 +44,9 @@ scrollBarNaviagtion = (text, navigation) => {
     if (text === 'GIFTS WON') {
         navigation.navigate("GiftsWon")
     }
+    if (text === 'SHARE') {
+        navigation.navigate("ShareScreen", {children: children})
+    }
 }
 const ProfileOptionsList = (props) => {
     return (
@@ -52,7 +55,7 @@ const ProfileOptionsList = (props) => {
                 {
                     scrollBarData.map((object) => (
                         <View style={styles.scrollBar}>
-                            <TouchableOpacity style={styles.scrollBarItem} onPress={() => scrollBarNaviagtion(object.text, props.navigation)}>
+                            <TouchableOpacity style={styles.scrollBarItem} onPress={() => scrollBarNaviagtion(object.text, props.navigation, props.children)}>
                                 {object.image}
                                 <Text style={styles.itemText}>{object.text}</Text>
                             </TouchableOpacity>

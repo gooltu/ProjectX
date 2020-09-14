@@ -140,7 +140,7 @@ class Profile extends React.Component {
     return (
       <View>
         <ProfilePhotoSection navigation={this.props.navigation} />
-        <ProfileOptionsList navigation={this.props.navigation} />
+        <ProfileOptionsList children={this.state.referrals} navigation={this.props.navigation} />
 
         <View style={styles.diamondContainer} >
           <Text style={styles.buyText}>WIN GAME DIAMONDS</Text>

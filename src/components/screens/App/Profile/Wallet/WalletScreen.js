@@ -31,7 +31,7 @@ class WalletScreen extends React.Component {
 
   componentDidMount() {
     this.props.getWalletJewels()
-   this.loadWallet()
+    this.loadWallet()
   }
   loadWallet = () => {
     NetworkManager.callAPI(rest.getWallet, 'GET', null).then(result => {
@@ -68,10 +68,16 @@ class WalletScreen extends React.Component {
 
   purchaseJewels = (item) => {
     if (this.state.money >= item.money) {
+      this.setState({
+        isLoading: true
+      })
       NetworkManager.callAPI(rest.buyJewelsFromWallet, 'POST', { id: item.id }).then(result => {
-        if(!result.error){
+        if (!result.error) {
           this.loadWallet()
           this.props.loadGameState()
+          this.setState({
+            isLoading: false
+          })
         }
       }).catch(error => {
 
@@ -144,7 +150,7 @@ class WalletScreen extends React.Component {
                 {
                   this.props.walletjewels.slice(0, this.props.walletjewels.length / 2).map((object) => (
                     <View style={styles.scrollBar}>
-                      <TouchableOpacity style={styles.scrollBarItem} onPress={()=>this.purchaseJewels(object)}>
+                      <TouchableOpacity style={styles.scrollBarItem} onPress={() => this.purchaseJewels(object)}>
                         <View style={styles.itemOne}>
                           <Text style={styles.itemText}>{object.count}</Text>
                           {renderJewel(object.jeweltype_id, 55, 55, styles.jewelStyle)}
@@ -167,7 +173,7 @@ class WalletScreen extends React.Component {
                 {
                   this.props.walletjewels.slice(this.props.walletjewels.length / 2, this.props.walletjewels.length).map((object) => (
                     <View style={styles.scrollBar}>
-                      <TouchableOpacity style={styles.scrollBarItem} onPress={()=>this.purchaseJewels(object)}>
+                      <TouchableOpacity style={styles.scrollBarItem} onPress={() => this.purchaseJewels(object)}>
                         <View style={styles.itemOne}>
                           <Text style={styles.itemText}>{object.count}</Text>
                           {renderJewel(object.jeweltype_id, 55, 55, styles.jewelStyle)}

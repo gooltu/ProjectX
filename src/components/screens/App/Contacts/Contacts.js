@@ -8,7 +8,8 @@ import {
   FlatList,
   View,
   Text,
-  ImageBackground
+  ImageBackground,
+  SafeAreaView
 } from "react-native";
 import J6 from '../../../svg_components/J6';
 import styles from './Contacts.styles'
@@ -21,7 +22,7 @@ import rest from "../../../../network/rest";
 import db from "../../../../db/localdatabase";
 import actions from '../../../../actions/index'
 import { getContacts } from '../../../JCUtils/CommonUtils'
-
+import CustomLoader from '../../../shared_components/CustomLoader'
 
 class Contacts extends React.Component {
   /*static navigationOptions = ({ navigation }) => {
@@ -36,10 +37,14 @@ class Contacts extends React.Component {
     this.state = {
       searchQuery: '',
       displayContactData: [],
-      contactData: []
+      contactData: [],
+      isLoading: false
     }
   }
   componentDidMount() {
+    this.setState({
+      isLoading: true
+    })
     this.getContactsCallback()
     getContacts(this.getContactsCallback)
   }
@@ -52,7 +57,8 @@ class Contacts extends React.Component {
       }
       this.setState({
         contactData: chatList,
-        displayContactData: chatList
+        displayContactData: chatList,
+        isLoading: false
       })
     }).catch(err => {
       console.log(err)
@@ -61,7 +67,7 @@ class Contacts extends React.Component {
 
   _onChangeSearch = (query) => {
     this.setState({ searchQuery: query })
-    if(query.length>0){
+    if (query.length > 0) {
       var filteredContacts = this.state.contactData.filter(item => {
         return item.PHONEBOOK_CONTACT_NAME.toLowerCase().includes(query.toLowerCase())
       })
@@ -69,7 +75,7 @@ class Contacts extends React.Component {
         displayContactData: filteredContacts
       })
     }
-    else{
+    else {
       this.setState({
         displayContactData: this.state.contactData
       })
@@ -77,7 +83,8 @@ class Contacts extends React.Component {
   }
   render() {
     return (
-      <View style={styles.rootContainer}>
+      <SafeAreaView style={styles.rootContainer}>
+        <CustomLoader loading={this.state.isLoading} />
         <Searchbar
           placeholder="Search Contacts"
           onChangeText={this._onChangeSearch}
@@ -100,7 +107,7 @@ class Contacts extends React.Component {
           keyExtractor={item => item._ID + ''}
         />
         <StatusBar barStyle="light-content" hidden={false} translucent={true} />
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -150,7 +157,6 @@ function inviteUser(item, props) {
   console.log(item)
   let data = {
     phone: item.CONTACT_NUMBER
-    //  phone: '918756463536'
   }
   NetworkManager.callAPI(rest.inviteUser, 'post', data).then(result => {
     console.log(result)

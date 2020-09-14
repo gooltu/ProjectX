@@ -29,6 +29,7 @@ import SuccessFullGiftRedeem from './screens/App/Game/SuccessFullGiftRedeem'
 import Profile from "./screens/App/Profile/Profile";
 import LeaderBoard from './screens/App/Profile/LeaderBoard/LeaderBoard'
 import Wallet from './screens/App/Profile/Wallet/WalletScreen'
+import ShareScreen from './screens/App/Profile/Share/ShareScreen'
 
 import FriendProfile from './screens/App/FriendProfile/FriendProfile'
 import UserProfile from './screens/App/Profile/UserProfile/UserProfile'
@@ -227,6 +228,14 @@ const AppMainStack = createStackNavigator({
         navigationOptions: ({ navigation }) => {
             return {
                 header: <CustomHeader navigation={navigation} title='Gifts Won'/>
+            };
+        }
+    },
+    ShareScreen: {
+        screen: ShareScreen,
+        navigationOptions: ({ navigation }) => {
+            return {
+                header: <CustomHeader navigation={navigation} title='Referrals'/>
             };
         }
     }
