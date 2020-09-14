@@ -25,13 +25,14 @@ class Game extends React.Component {
     this.state = {
       reachedEnd: false,
       page: 0,
-      isLoading: false
+      isLoading: false,
+      giftTaskLoading: false
     }
   }
   componentDidMount() {
     console.log(this.props.gifttasks)
     this.getTaskDetails()
-    this.getGiftTask(this.state.page)
+    this.getGiftTask()
   }
 
   getTaskDetails() {
@@ -49,46 +50,42 @@ class Game extends React.Component {
       })
     }
   }
-  getGiftTask(page) {
-    console.log('page', page)
-    NetworkManager.callAPI(rest.getGiftTasks, 'POST', { page: page }).then(result => {
-      console.log(result.gifttasks)
+  getGiftTask() {
+    this.setState({
+      giftTaskLoading: true
+    })
+    NetworkManager.callAPI(rest.getGiftTasks, 'POST', { page: this.state.page }).then(result => {
       if (result.gifttasks.length > 0) {
-        this.setState({
-          reachedEnd: false
-        })
-        let data = page == 0 ? [] : JSON.parse(JSON.stringify(this.props.gifttasks))
-        let dataToInsert = { title: 'section' + page, data: [result.gifttasks] }
+        let data = (this.state.page == 0 ? [] : JSON.parse(JSON.stringify(this.props.gifttasks)))
+        let dataToInsert = { title: 'section' + this.state.page, data: [result.gifttasks] }
         data.push(dataToInsert)
         console.log(dataToInsert)
         this.props.setGiftTaskData(data)
       }
-      else
-        this.setState({
-          reachedEnd: true,
-          page: 0
-        })
+      this.setState({
+        giftTaskLoading: false
+      })
     }).catch(error => {
 
     })
   }
-
+  LoadMoreRandomData = () => {
+    if (!this.state.giftTaskLoading) {
+      this.setState({
+        page: this.state.page + 1
+      }, () => {
+        this.getGiftTask()
+      })
+    }
+  }
   _renderList = (data) => {
     console.log('itemm', data)
     return (
       <FlatList numColumns={2}
         style={{ padding: 10 }}
         data={data}
-        onEndReached={() => {
-          console.log('test end reached')
-          if (this.state.reachedEnd == false) {
-            this.getGiftTask(this.state.page + 1)
-          }
-          this.setState({
-            page: this.state.page + 1
-          })
-        }
-        }
+        onEndReached={this.LoadMoreRandomData}
+        onEndReachedThreshold={0.5}
         ListFooterComponent={this._renderSectionFooter}
         renderItem={({ item, index }) =>
           <GiftTaskView navigation={this.props.navigation} giftTask={item} />
@@ -141,9 +138,7 @@ class Game extends React.Component {
             renderItem={({ item, index }) =>
               this._renderList(item.data[0])
             }
-            onEndReachedThreshold={0.5}
             ListHeaderComponent={this._renderSectionHeader}
-
             keyExtractor={(item, index) => item + index}
           />
           : null}
