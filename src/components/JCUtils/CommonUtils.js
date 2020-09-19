@@ -92,6 +92,7 @@ function insertContacts(Contacts, callback) {
 
 
 export const renderJewel = (id, width, height, style) => {
+    //console.log('Render Jewel');
     let jewelView
     if (id == 0)
         jewelView = <Diamond width={width} height={height} style={style} />
