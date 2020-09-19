@@ -68,14 +68,14 @@ class TaskDetail extends React.Component {
             }
         }
         else{
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 3; i++) {
                 jewelView.push(
                     renderJewel(jewel.jeweltype_id, 30, 30, styles.jewelStyle)
                 )
             }
             jewelView.push(
                 <View>
-                    <Text style={{fontSize:20, color: color.lightcolor1, fontWeight:'bold'}}>+{jewel.count-5}</Text>
+                    <Text style={{fontSize:20, color: color.lightcolor1, fontWeight:'bold'}}>...({jewel.count})</Text>
                 </View>
             )
         }

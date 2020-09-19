@@ -41,6 +41,7 @@ class TaskDetail extends React.Component {
   }
   jewelView(jewel) {
     let jewelView = []
+    // show 3 dots with exact count
     if (jewel.count <= 5) {
       for (let i = 0; i < jewel.count; i++) {
         jewelView.push(
@@ -49,14 +50,14 @@ class TaskDetail extends React.Component {
       }
     }
     else {
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 3; i++) {
         jewelView.push(
           renderJewel(jewel.jeweltype_id, 30, 30, styles.jewelStyle)
         )
       }
       jewelView.push(
         <View>
-          <Text style={{ fontSize: 20, color: color.lightcolor1, fontWeight: 'bold' }}>+{jewel.count - 5}</Text>
+          <Text style={{ fontSize: 20, color: color.lightcolor1, fontWeight: 'bold' }}>...({jewel.count})</Text>
         </View>
       )
     }
@@ -178,7 +179,8 @@ class TaskDetail extends React.Component {
               source={{ uri: this.giftTask.product_pic }}
             /> :
             <View style={{ backgroundColor: color.jcgray, width: 160, height: 200, borderRadius: 7, alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={{ color: color.darkcolor1, fontSize: 30, fontWeight: 'bold' }}>{'\u20B9'} {this.giftTask.money}</Text>
+               <Text style={{ color: color.darkcolor1, fontSize: 60, fontWeight: 'bold' }}>{'\u20B9'}</Text>
+                <Text style={{ color: color.darkcolor1, fontSize: 30, fontWeight: 'bold' }}> {this.giftTask.money}</Text>
             </View>
           }
         </View>

@@ -29,7 +29,8 @@ const GiftTaskView = (props) => {
               onPress={() => props.navigation.navigate('GiftTaskDetail', { giftTask: item })}
             >
               <View style={{ backgroundColor: color.jcgray, width: '100%', height: 180, borderTopRightRadius: 7, borderTopLeftRadius: 7, alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ color: color.darkcolor1, fontSize: 30, fontWeight: 'bold' }}>{'\u20B9'} {item.money}</Text>
+                <Text style={{ color: color.darkcolor1, fontSize: 60, fontWeight: 'bold' }}>{'\u20B9'}</Text>
+                <Text style={{ color: color.darkcolor1, fontSize: 30, fontWeight: 'bold' }}> {item.money}</Text>
               </View>
               <View style={{ paddingVertical: 5 }}>
                 <Text numberOfLines={1} style={{ color: 'white', fontWeight: '600', fontSize: 13, paddingBottom: 3 }}>{item.productname}</Text>

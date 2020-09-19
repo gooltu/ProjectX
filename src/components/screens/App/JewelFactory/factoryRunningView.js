@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, SafeAreaView, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, SafeAreaView, ActivityIndicator, Animated, Easing } from 'react-native'
 import { renderJewel } from '../../../JCUtils/CommonUtils'
 import styles from './jewelFactory.styles'
 import colors from '../../../shared_styles/colors'
@@ -17,11 +17,19 @@ class factoryRunningview extends React.Component {
             curTime: '',
             isLoading: false
         }
+        this.animation = new Animated.Value(0);
     }
     componentDidMount() {
+        Animated.loop(
+            Animated.timing(this.animation, {toValue: 1, duration: 2000, easing: Easing.ease})
+          ).start();    
         setInterval(() => {
             this.setState({
                 curTime: this.props.factory[this.props.index].duration - (parseInt(new Date().getTime() - new Date(this.props.userFactory[this.props.index].start_time).getTime()) / 1000)
+            },()=>{
+                if(this.state.curTime<0){
+                    this.props.makeJewelReady()
+                }
             })
         }, 1000)
     }
@@ -55,10 +63,39 @@ class factoryRunningview extends React.Component {
     }
 
     render() {
+        const rotation = this.animation.interpolate({
+            inputRange: [0, 1],
+            outputRange: ['0deg', '360deg']
+        });
         return (
             <SafeAreaView style={{ marginHorizontal: 10, marginVertical: 5, height: 250, backgroundColor: colors.darkcolor3 }}>
                 <View style={{ marginHorizontal: 5, alignItems: 'center', justifyContent: 'center', marginVertical: 5, height: 150, backgroundColor: colors.darkcolor1 }}>
-                    {renderJewel(this.props.factory[this.props.index].jeweltype_id, 75, 75, styles.jewelStyle)}
+                    <Animated.View style={{ transform: [{ rotate: rotation,  }, {
+                                translateX: this.animation.interpolate({
+                                    inputRange: [0, 1],
+                                    outputRange: [0, 1.5]
+                                })
+                            },
+                            {
+                                translateY: this.animation.interpolate({
+                                    inputRange: [0, 1],
+                                    outputRange: [0, 1.5]
+                                })
+                            },
+                            {
+                                scaleX: this.animation.interpolate({
+                                    inputRange: [0, 1],
+                                    outputRange: [1, 1.5]
+                                })
+                            },
+                            {
+                                scaleY: this.animation.interpolate({
+                                    inputRange: [0, 1],
+                                    outputRange: [1, 1.5]
+                                })
+                            }] }}>
+                        {renderJewel(this.props.factory[this.props.index].jeweltype_id, 75, 75, styles.jewelStyle)}
+                    </Animated.View>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                     <Icon name='clock-o' color='white' size={25} /><Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold', paddingLeft: 7 }}>{this.msToTime(this.state.curTime)}</Text>
