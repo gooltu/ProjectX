@@ -54,7 +54,7 @@ class JewelStore extends React.Component {
                         borderTopColor: 'white'
                     }}
                     >
-                        <Text style={styles.labelStyle}>{this.props.modalprops.navigation.getParam('subType')=='status'?'UPDATE STATUS':'UPDATE NAME'}</Text>
+                        <Text style={styles.labelStyle}>{this.props.modalprops.navigation.getParam('subType')}</Text>
                         <View style={styles.TextInputContainer}>
                             <TextInput
                                 maxLength={255}

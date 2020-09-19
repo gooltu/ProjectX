@@ -21,13 +21,13 @@ class factoryRunningview extends React.Component {
     }
     componentDidMount() {
         Animated.loop(
-            Animated.timing(this.animation, {toValue: 1, duration: 2000, easing: Easing.ease})
-          ).start();    
+            Animated.timing(this.animation, { toValue: 1, duration: 4000, easing: Easing.linear, useNativeDriver: true })
+        ).start();
         setInterval(() => {
             this.setState({
                 curTime: this.props.factory[this.props.index].duration - (parseInt(new Date().getTime() - new Date(this.props.userFactory[this.props.index].start_time).getTime()) / 1000)
-            },()=>{
-                if(this.state.curTime<0){
+            }, () => {
+                if (this.state.curTime < 0) {
                     this.props.makeJewelReady()
                 }
             })
@@ -70,30 +70,34 @@ class factoryRunningview extends React.Component {
         return (
             <SafeAreaView style={{ marginHorizontal: 10, marginVertical: 5, height: 250, backgroundColor: colors.darkcolor3 }}>
                 <View style={{ marginHorizontal: 5, alignItems: 'center', justifyContent: 'center', marginVertical: 5, height: 150, backgroundColor: colors.darkcolor1 }}>
-                    <Animated.View style={{ transform: [{ rotate: rotation,  }, {
-                                translateX: this.animation.interpolate({
-                                    inputRange: [0, 1],
-                                    outputRange: [0, 1.5]
-                                })
-                            },
-                            {
-                                translateY: this.animation.interpolate({
-                                    inputRange: [0, 1],
-                                    outputRange: [0, 1.5]
-                                })
-                            },
-                            {
-                                scaleX: this.animation.interpolate({
-                                    inputRange: [0, 1],
-                                    outputRange: [1, 1.5]
-                                })
-                            },
-                            {
-                                scaleY: this.animation.interpolate({
-                                    inputRange: [0, 1],
-                                    outputRange: [1, 1.5]
-                                })
-                            }] }}>
+                    <Animated.View style={{
+                        transform: [{ rotate: rotation, },
+                        {
+                            translateX: this.animation.interpolate({
+                                inputRange: [0, 0.5, 1],
+                                outputRange: [0, 1.5, 0]
+                            })
+                        },
+                        {
+                            translateY: this.animation.interpolate({
+                                inputRange: [0, 0.5, 1],
+                                outputRange: [0, 1.5, 0]
+                            })
+                        },
+                        {
+                            scaleX: this.animation.interpolate({
+                                inputRange: [0, 0.5, 1],
+                                outputRange: [1, 1.5, 1]
+                            })
+                        },
+                        {
+                            scaleY: this.animation.interpolate({
+                                inputRange: [0, 0.5, 1],
+                                outputRange: [1, 1.5, 1]
+                            })
+                        }
+                        ]
+                    }}>
                         {renderJewel(this.props.factory[this.props.index].jeweltype_id, 75, 75, styles.jewelStyle)}
                     </Animated.View>
                 </View>

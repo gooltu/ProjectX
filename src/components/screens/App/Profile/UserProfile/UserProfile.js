@@ -45,12 +45,11 @@ class UserProfile extends React.Component {
         this.state = {
             imagepath: '',
             imageUri: '',
-            userProfile: {name:''}
+            userProfile: { name: '' }
         }
         this.getProfileData()
     }
     componentDidMount() {
-        console.log('AWS', AWS)
     }
     getProfileData() {
         var data = {
@@ -109,6 +108,12 @@ class UserProfile extends React.Component {
             console.log(error)
         })
     }
+    updateUpi = (upi) => {
+        console.log(upi)
+    }
+    updateDob = (dob) => {
+        console.log(dob)
+    }
     render() {
         return (
             <SafeAreaView style={styles.mainContainer}>
@@ -124,37 +129,71 @@ class UserProfile extends React.Component {
                 <List>
                     <ListItem>
                         <Body>
-                            <Text style={{ color: colors.lightcolor1,fontWeight:'bold' }}>NAME</Text>
-                            <Text style={{ color: 'white' }} note  onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'UpdateStatus',subType: 'name', value: this.state.userProfile.name, UpdateStatus: this.updateName })}>{this.state.userProfile.name}</Text>
+                            <Text style={{ color: colors.lightcolor1, fontWeight: 'bold' }}>NAME</Text>
+                            <Text style={{ color: 'white' }} note onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'UpdateStatus', subType: 'UPDATE NAME', value: this.state.userProfile.name, UpdateStatus: this.updateName })}>{this.state.userProfile.name}</Text>
                         </Body>
                         <Right>
-                            <TouchableOpacity  onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'UpdateStatus',subType: 'name',  value: this.state.userProfile.name, UpdateStatus: this.updateName })}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'UpdateStatus', subType: 'UPDATE NAME', value: this.state.userProfile.name, UpdateStatus: this.updateName })}>
                                 <Icon name='edit' size={20} color='white' />
                             </TouchableOpacity>
                         </Right>
                     </ListItem>
                     <ListItem>
                         <Body>
-                            <Text style={{ color: colors.lightcolor1,fontWeight:'bold' }}>STATUS</Text>
-                            <Text style={{ color: 'white' }} note onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'UpdateStatus',subType: 'status',  value: this.state.userProfile.status, UpdateStatus: this.updateStatus })}>{this.state.userProfile.status}</Text>
+                            <Text style={{ color: colors.lightcolor1, fontWeight: 'bold' }}>STATUS</Text>
+                            <Text style={{ color: 'white' }} note onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'UpdateStatus', subType: 'UPDATE STATUS', value: this.state.userProfile.status, UpdateStatus: this.updateStatus })}>{this.state.userProfile.status}</Text>
                         </Body>
                         <Right>
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'UpdateStatus',subType: 'status',  value: this.state.userProfile.status, UpdateStatus: this.updateStatus })}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'UpdateStatus', subType: 'UPDATE STATUS', value: this.state.userProfile.status, UpdateStatus: this.updateStatus })}>
                                 <Icon name='edit' size={20} color='white' />
                             </TouchableOpacity>
                         </Right>
                     </ListItem>
-                    {/* <ListItem>
+
+                    <ListItem>
                         <Body>
-                            <Text style={{ color: colors.lightcolor1,fontWeight:'bold' }}>GIFTS WON</Text>
-                            <Text style={{ color: 'white' }} note >Find list of all gifts won.</Text>
+                            <Text style={{ color: colors.lightcolor1, fontWeight: 'bold' }}>UPI Address</Text>
+                            <Text style={{ color: 'white' }} note onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'UpdateStatus', subType: 'UPDATE UPI', value: this.state.userProfile.status, UpdateStatus: this.updateUpi })}>hradcodedValue@okhdfcbank</Text>
                         </Body>
                         <Right>
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate('GiftsWon')}>
-                                <Icon name='arrow-right' size={20} color='white' />
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'UpdateStatus', subType: 'UPDATE UPI', value: this.state.userProfile.status, UpdateStatus: this.updateUpi })}>
+                                <Icon name='edit' size={20} color='white' />
                             </TouchableOpacity>
                         </Right>
-                    </ListItem> */}
+                    </ListItem>
+                    <ListItem>
+                        <Body>
+                            <Text style={{ color: colors.lightcolor1, fontWeight: 'bold' }}>Date of Birth</Text>
+                            <Text style={{ color: 'white' }} note onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'UpdateStatus', subType: 'UPDATE DOB', value: this.state.userProfile.status, UpdateStatus: this.updateDob })}>20-04-1995</Text>
+                        </Body>
+                        <Right>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'UpdateStatus', subType: 'UPDATE DOB', value: this.state.userProfile.status, UpdateStatus: this.updateDob })}>
+                                <Icon name='edit' size={20} color='white' />
+                            </TouchableOpacity>
+                        </Right>
+                    </ListItem>
+                    <ListItem>
+                        <Body>
+                            <Text style={{ color: colors.lightcolor1, fontWeight: 'bold' }}>Gender</Text>
+                            <Text style={{ color: 'white' }} note>Male</Text>
+                        </Body>
+                        {/* <Right>
+                            <TouchableOpacity onPress={() => console.log('DOB')}>
+                                <Icon name='edit' size={20} color='white' />
+                            </TouchableOpacity>
+                        </Right> */}
+                    </ListItem>
+                    <ListItem>
+                        <Body>
+                            <Text style={{ color: colors.lightcolor1, fontWeight: 'bold' }}>Shipping Address</Text>
+                            <Text style={{ color: 'white' }} note>test Address</Text>
+                        </Body>
+                        <Right>
+                            <TouchableOpacity onPress={() => console.log('Address')}>
+                                <Icon name='edit' size={20} color='white' />
+                            </TouchableOpacity>
+                        </Right>
+                    </ListItem>
                 </List>
 
                 {/* <Button onPress={() => this.openImagePicker()} title='Select Image' /> */}
