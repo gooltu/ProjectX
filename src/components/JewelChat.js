@@ -36,6 +36,7 @@ import ImageEdit from './screens/App/Profile/UserProfile/ImageEdit'
 import GiftsWon from './screens/App/Profile/UserProfile/GiftsWon'
 
 import ChatPage from "./screens/App/Chat/ChatPage/ChatPage";
+import ChatMediaViewer from "./screens/App/Chat/ChatMediaViewer/ChatMediaViewer"
 import ForwardMessage from './screens/App/Chat/ForwardMessage/ForwardMessage'
 import NewGroup from "./screens/App/NewGroup";
 import JewelFactory from "./screens/App/JewelFactory/jewelFactory";
@@ -123,6 +124,14 @@ const AppMainStack = createStackNavigator({
         navigationOptions: ({ navigation }) => {
             return {
                 header: <CustomHeader navigation={navigation} title='Chat Page' />
+            };
+        }
+    },
+    ChatMediaViewer: {
+        screen: ChatMediaViewer,
+        navigationOptions: ({ navigation }) => {
+            return {
+                header: <CustomHeader navigation={navigation} title='Media' />
             };
         }
     },

@@ -327,13 +327,13 @@ function insertAffiliations(data) {
 	})
 }
 
-function updatePickedJewel(id) {
+function updatePickedJewel(id, flag) {
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 				let sql;
-				sql = "UPDATE ChatMessage SET IS_JEWEL_PICKED = 1  WHERE _ID =  " + id
+				sql = "UPDATE ChatMessage SET IS_JEWEL_PICKED = " + flag + "  WHERE _ID =  " + id;
 				console.log(sql)
 				txn.executeSql(sql).then((results) => {
 					console.log('Chat updated for picked Jewel');
@@ -343,6 +343,7 @@ function updatePickedJewel(id) {
 				})
 			})
 		}).then(result => {
+			resolve('success')
 		}).catch(error => {
 			reject(error)
 		})

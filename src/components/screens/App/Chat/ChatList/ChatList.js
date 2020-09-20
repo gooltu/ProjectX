@@ -128,7 +128,7 @@ class ChatList extends React.Component {
                 <Item item={item}
                   onpressitem={(item) => {
                     this.props.setActiveChat(item);
-                    this.props.updateChatPageRedux();
+                    //this.props.updateChatPageRedux();
                     this.props.navigation.navigate('ChatPage', item);
                   }}                  
                 />
