@@ -79,7 +79,7 @@ class EnterDetails extends React.Component {
     //   console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
     //   console.log(err)
     // })
-    // this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+    this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
     // console.log('Token', this.props.mytoken)
   }
 

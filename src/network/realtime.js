@@ -11,8 +11,8 @@ import {getServerTime, detectMessagetype } from './realtime-utils/utilities';
 import {insertIncomingMessageViaHistoryDownload, insertIncomingMessage, updateChatPageRedux, updateChatlistRedux } from './realtime-utils/messages';
 import {handleReadAndDeliveryMessages, handleReadAndDeliveryMessagesViaHistoryDownload} from './realtime-utils/read-delivery-messages'
 
-// const URL = 'ws://13.127.197.210:5280/ws-xmpp';
-const URL = 'ws://localhost:5280/ws-xmpp';
+const URL = 'ws://192.168.1.5:5280/ws-xmpp';
+//const URL = 'ws://localhost:5280/ws-xmpp';
 let connection = new XMPP.Strophe.Connection(URL);
 connection.registerSASLMechanism = XMPP.Strophe.SASLXOAuth2;
 

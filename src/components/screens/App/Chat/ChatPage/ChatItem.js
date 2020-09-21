@@ -47,7 +47,10 @@ export default class ChatItem extends React.Component {
                 </TouchableOpacity> 
             )    
         }else 
-          return null;      
+          return(
+            !this.mychat &&  
+              <TouchableOpacity style={styles.jewelContainer} onPress={this.props.onjewelpress}></TouchableOpacity> 
+          );      
       
     }
 

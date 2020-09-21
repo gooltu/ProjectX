@@ -116,7 +116,7 @@ class MainChatBar extends React.Component {
                 ref={ref => {
                   this.textInput = ref;
                 }}
-                onContentCommitEvent={(event) => { this.submitChatToChannel(event.nativeEvent); console.log(event.nativeEvent); console.log('Content Commit'); }}
+                onContentCommitEvent={(event) => {  console.log(event.nativeEvent); console.log('Content Commit'); }}
                 onChangeText={(value) => this.processChatText(value)}
                 style={this.state.chattextboxstyle}
                 //style={{overflow:'scroll'}}                 

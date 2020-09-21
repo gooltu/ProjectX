@@ -104,6 +104,9 @@ class ChatPage extends React.Component {
                   db.updatePickedJewel(item._ID, 1)
                   .then(result => {
                     this.props.updateChatPageRedux();
+                    this.setState({ collectingJewel: false, collectionId: null });
+                    this.props.game.jewels[item.JEWEL_TYPE].count = this.props.game.jewels[item.JEWEL_TYPE].count + 1
+                    this.props.loadGameState(this.props.game)
                   })
                   .catch(error => {
                     this.setState({ collectingJewel: false, collectionId: null })
@@ -186,8 +189,8 @@ class ChatPage extends React.Component {
               keyExtractor={item => item._ID + ''}
             />
             <Snackbar
-              duration={1000}
-              style={{ backgroundColor: colors.lightcolor1, alignItems: 'center' }}
+              duration={2000}
+              style={{ backgroundColor: colors.darkcolor2, borderColor: colors.lightcolor1 , borderWidth:2, alignItems: 'center' }}
               visible={this.state.visible}
               onDismiss={this._onDismissSnackBar}>
               Jewel Store is FULL.
