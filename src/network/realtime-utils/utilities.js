@@ -29,13 +29,36 @@ export const getServerTime = (myphone) => {
 
 }
 
+export const composeMessage = (msgtype, msgtext, media_cloud) => {
+
+	let outgoingMessage = {
+		CHAT_ROOM_JID: msg.getAttribute('from').split('/')[0],
+		IS_GROUP_MSG: IS_GROUP_MSG,
+		MSG_TEXT: message,
+		CREATOR_JID: (IS_GROUP_MSG == 1 ? msg.getAttribute('from').split('/')[1] : msg.getAttribute('from').split('/')[0]),		
+		JEWEL_TYPE: parseInt(jewelType),
+		CREATED_DATE: createdDateTime.date,
+		CREATED_TIME: createdDateTime.time,
+		TIME_CREATED: createdDateTime.fulltime,
+		SENDER_MSG_ID: IS_GROUP_MSG == 0 ? msgid : ( fromjid === tojid ? null : msgid ),
+		MSG_TYPE: msgtype,
+		MEDIA_CLOUD: media_cloud,
+		MEDIA_CLOUD_THUMBNAIL: media_thumbnail,
+		SEQUENCE: -1,
+		IS_REPLY: reply,
+		IS_FORWARD: forward,
+		REPLY_PARENT: parent
+	}
+
+}
+
 
 export const detectMessagetype = (incomingStanza) => {
 	var type, subtype, data;	
 	var fwd = incomingStanza.getElementsByTagName('forwarded');
 	var recieved = incomingStanza.getElementsByTagName('received')
 	var read = incomingStanza.getElementsByTagName('read')
-	var date = _dateToYMD((new Date()).getTime() + global.TimeDelta)
+	var date = dateToYMD((new Date()).getTime() + global.TimeDelta)
 
 	console.log('>>>>>>>>>'+incomingStanza.getAttribute('type').toString());
 
@@ -43,7 +66,7 @@ export const detectMessagetype = (incomingStanza) => {
 		type = 'DownLoad'
 		var delay = incomingStanza.getElementsByTagName('delay')
 		var stamp = delay[0].getAttribute('stamp')
-		var delayDate = _dateToYMD(new Date(stamp).getTime())
+		var delayDate = dateToYMD(new Date(stamp).getTime())
 		if (incomingStanza.getElementsByTagName('message').toString()) {
 			var msg = incomingStanza.getElementsByTagName('message')[0]
 			//Downloaded Delivery
@@ -215,7 +238,7 @@ function getFormattedMessages(msg, createdDateTime, IS_GROUP_MSG ) {
 
 
 // function to convert date in ms to specified format ('YYYY-DD-MM' & 'HH:MM:SS')
-function _dateToYMD(createdDateTime) {
+export const dateToYMD = (createdDateTime) => {
 	console.log(createdDateTime)
 	var d = new Date(parseInt(createdDateTime))
 	//	var date = new Date(1590419829139)

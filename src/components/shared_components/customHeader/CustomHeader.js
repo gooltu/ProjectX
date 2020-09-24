@@ -9,6 +9,7 @@ import {
     Platform,
     TouchableOpacity,
     Text,
+    Image,
     ImageBackground
 } from "react-native";
 
@@ -23,6 +24,13 @@ import { realtimeConnect, realtimeDisconnect } from "../../../network/realtime"
 import actions from "../../../actions";
 
 class CustomHeader extends React.Component {
+
+
+    state = {
+        profileimageerror: true
+    }
+
+    randomstring = '?'+Math.ceil(Math.random()*1000000);
 
     componentDidMount() {
         console.log('CUSTOM HEADER MOUNT', this.props.navigation.state.routeName)    
@@ -51,7 +59,34 @@ class CustomHeader extends React.Component {
         if (this.props.navigation.state.routeName == 'ChatPage')
             logoView =
                 <TouchableOpacity style={styles.profilepic} onPress={() => this.props.navigation.navigate('FriendProfile')}>
-                    {this.props.activeChat.SMALL_IMAGE && this.props.activeChat.JEWELCHAT_ID != 1 &&
+
+                    {
+                    this.props.activeChat.JEWELCHAT_ID == 1 && <Logo height="75%" width="75%" style={{margin: 10, width: '100%', height: '100%', alignItems: 'center', overflow: 'hidden'}} />
+                    }
+                    {
+                    this.state.profileimageerror && this.props.activeChat.JEWELCHAT_ID != 1 && (this.props.activeChat.IS_GROUP_MSG == 0 || this.props.activeChat.IS_GROUP_MSG == null ) && <Icon  name='user' color={colors.jcgray} size={18} solid />
+                    }
+                    {
+                    this.state.profileimageerror && this.props.activeChat.JEWELCHAT_ID != 1 && this.props.activeChat.IS_GROUP_MSG == 1 && <Icon  name='users' color={colors.jcgray} size={18} solid />
+                    }
+
+                    { this.props.activeChat.JEWELCHAT_ID != 1 &&
+                        <Image
+                            source={{ headers: { Pragma: 'no-cache' }, uri: 'https://kuchbhi.com/'+this.props.activeChat.CHAT_ROOM_JID.split('@')[0]+this.randomstring}}
+                            style={[{ position:'absolute', top:0, left:0 },{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', overflow: 'hidden'}]}
+                            onLoad={()=>{
+                                this.setState( { profileimageerror: false } ) 
+                            }}
+                            onError={(error) => { 
+                                //console.log('Image')
+                                this.setState( { profileimageerror: true } ) 
+                            } 
+                            }
+                            ></Image>
+                    }
+                    
+
+                    {/* {this.props.activeChat.SMALL_IMAGE && this.props.activeChat.JEWELCHAT_ID != 1 &&
                         <ImageBackground
                             source={{ uri: this.props.activeChat.SMALL_IMAGE }}
                             style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', overflow: 'hidden'}}></ImageBackground>
@@ -64,7 +99,7 @@ class CustomHeader extends React.Component {
                     }
                     {
                         !this.props.activeChat.SMALL_IMAGE && this.props.activeChat.JEWELCHAT_ID != 1 && this.props.activeChat.IS_GROUP_MSG == 1 && <Icon  name='users' color={colors.jcgray} size={18} solid />
-                    }   
+                    }    */}
                 </TouchableOpacity>
         else if (this.props.navigation.state.routeName == 'FriendProfile') {
             logoView = null
@@ -150,7 +185,7 @@ class CustomHeader extends React.Component {
             titleView = <TouchableOpacity onPress={() => this.props.navigation.navigate('FriendProfile')} style={{ flexDirection: 'column', paddingLeft: 5, height: 32, justifyContent: 'center' }}>
                 <Text style={{ fontSize: 14, color: 'white', fontWeight: 'bold' }}>{this.props.activeChat.PHONEBOOK_CONTACT_NAME ? this.props.activeChat.PHONEBOOK_CONTACT_NAME.substring(0, 35)+'...'
                     : (this.props.activeChat.JEWELCHAT_ID == 1 ? 'Team JewelChat' 
-                    : (this.props.activeChat.IS_GROUP_MSG == 0 ? '+' + this.props.activeChat.CHAT_ROOM_JID.split('@')[0]
+                    : (this.props.activeChat.IS_GROUP_MSG == 0 || this.props.activeChat.IS_GROUP_MSG == null ? '+' + this.props.activeChat.CHAT_ROOM_JID.split('@')[0]
                     : (this.props.activeChat.CONTACT_NAME ? this.props.activeChat.CONTACT_NAME.substring(0, 35)+'...' : 'Group Chat') ) )}</Text>
                 { 
                     this.props.activeChat.IS_GROUP_MSG == 0 && this.props.presence.hasOwnProperty(this.props.activeChat.JID) 

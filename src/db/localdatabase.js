@@ -167,7 +167,7 @@ function getChatList() {
 				+ 'INNER JOIN ( '
 				+ 'select _ID, max(_ID) as MAX_ID, count(_ID) as UNREAD_COUNT, max(TIME_CREATED) as LAST_MSG_CREATED_TIME'
 				+ ' from ChatMessage'
-				+ ' where IS_READ = 0'
+				+ ' where IS_READ = 0 AND SENDER_MSG_ID IS NOT NULL'
 				+ ' group by CHAT_ROOM_JID'
 				+ ' ) b ON a._ID = b.MAX_ID'
 				+ ' LEFT OUTER JOIN Contact c ON c.JID = a.CHAT_ROOM_JID '
