@@ -29,10 +29,10 @@ import { connect } from 'react-redux';
 import colors from "../../../../shared_styles/colors";
 import Icon1 from 'react-native-vector-icons/MaterialIcons'
 
-
+import {getConnectionObj} from '../../../../../network/realtime';
 import { sendReply, sendSubscriptionRequest } from '../../../../../network/realtime'
 import {dateToYMD} from '../../../../../network/realtime-utils/utilities'
-import { updateChatPageRedux, updateChatlistRedux } from '../../../../../network/realtime-utils/messages';
+import { sendOutgoingMessage, updateChatPageRedux, updateChatlistRedux } from '../../../../../network/realtime-utils/messages';
 import db from '../../../../../db/localdatabase';
 
 class MainChatBar extends React.Component {
@@ -109,7 +109,7 @@ class MainChatBar extends React.Component {
 
       let outgoingMessage = {
         CHAT_ROOM_JID: this.props.activeChat.CHAT_ROOM_JID,
-        IS_GROUP_MSG: this.props.IS_GROUP_MSG,
+        IS_GROUP_MSG: this.props.activeChat.IS_GROUP_MSG,
         MSG_TEXT: msgtext,
         CREATOR_JID: this.props.mytoken.myphone+'@jewelchat.net',        
         CREATED_DATE: createdDateTime.date,
@@ -122,7 +122,21 @@ class MainChatBar extends React.Component {
 
       db.insertStropheChatData(outgoingMessage).then((_id) => {
         this.props.updateChatPageRedux();
-        this.props.updateChatlistRedux();          
+        this.props.updateChatlistRedux();    
+
+        outgoingMessage['_ID'] = _id;
+        outgoingMessage['SENDER_MSG_ID'] = _id;
+
+        sendOutgoingMessage(outgoingMessage)
+        .then( () => {
+            db.updateDeliveryAndReadRecipt('Submit', _id, createdDateTime).then(status => {
+              this.props.updateChatPageRedux();
+              this.props.updateChatlistRedux();
+            })
+        })
+        .catch(err => {
+            console.log('Error Sending message');
+        })
         
       })
 

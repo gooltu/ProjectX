@@ -356,7 +356,7 @@ function updateDeliveryAndReadReceipt(type, id, time) {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 				let sql;
-				if (type == 'Delivery') {
+				if (type === 'Delivery') {
 					sql = "UPDATE ChatMessage SET IS_DELIVERED = 1, TIME_DELIVERED = " + time + " WHERE _ID =  " + id
 					txn.executeSql(sql).then((results) => {
 						console.log('ChatMessage Delivered Query COMPLETED for id, ', id);
@@ -365,7 +365,7 @@ function updateDeliveryAndReadReceipt(type, id, time) {
 						reject(err)
 					})
 				}
-				else if (type == 'Both') {
+				else if (type === 'Both') {
 					sql = "UPDATE ChatMessage SET IS_READ = 1,TIME_READ=" + time + ", IS_DELIVERED = 1, TIME_DELIVERED = " + time + "  WHERE _ID =  " + id
 					txn.executeSql(sql).then((results) => {
 						console.log('ChatMessage Read Query COMPLETED for id, ', id);
@@ -374,7 +374,7 @@ function updateDeliveryAndReadReceipt(type, id, time) {
 						reject(err)
 					})
 				}
-				else if (type == 'Read') {
+				else if (type === 'Read') {
 					sql = "UPDATE ChatMessage SET IS_READ = 1,TIME_READ=" + time + " WHERE _ID = " + id
 					txn.executeSql(sql).then((results) => {
 						console.log('ChatMessage Delivered Query COMPLETED for id, ', id);
@@ -383,7 +383,7 @@ function updateDeliveryAndReadReceipt(type, id, time) {
 						reject(err)
 					})
 				}
-				else if (type == 'Submit') {
+				else if (type === 'Submit') {
 					sql = "UPDATE ChatMessage SET IS_SUBMITTED = 1,TIME_SUBMITTED=" + time + " WHERE _ID = " + id
 					txn.executeSql(sql).then((results) => {
 						console.log('ChatMessage Delivered Query COMPLETED for id, ', id);
