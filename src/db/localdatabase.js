@@ -74,10 +74,10 @@ function getChats(JID, offset, isgroupmsg) {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 
-				if( isgroupmsg == 0 ){
-					txn.executeSql('select * FROM ChatMessage JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) where CHAT_ROOM_JID ="' + JID + '" ORDER BY _ID DESC LIMIT 20 OFFSET ' + offset)
+				if( isgroupmsg == 0 || isgroupmsg == null ){
+					txn.executeSql('select * FROM ChatMessage a JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) b where a.CHAT_ROOM_JID ="' + JID + '" ORDER BY a._ID DESC LIMIT 20 OFFSET ' + offset)
 					.then((results) => {
-						console.log('QUERY COMPLETED for Chat room', JID);
+						console.log('QUERY COMPLETED for Chat room', offset );
 						console.log(results[1])
 						resolve(results[1].rows.raw())
 					})
@@ -89,9 +89,9 @@ function getChats(JID, offset, isgroupmsg) {
 									'FROM ChatMessage a '+
 									'JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) b '+ 
 									'LEFT OUTER JOIN Contact c ON c.JID = a.CREATOR_JID '+
-									'where CHAT_ROOM_JID ="' + JID + '" ORDER BY _ID DESC LIMIT 20 OFFSET ' + offset)
+									'where a.CHAT_ROOM_JID ="' + JID + '" ORDER BY a._ID DESC LIMIT 20 OFFSET ' + offset)
 					.then((results) => {
-						console.log('QUERY COMPLETED for Chat room', JID);
+						console.log('QUERY COMPLETED for Chat room', offset);
 						console.log(results[1])
 						resolve(results[1].rows.raw())
 					})
@@ -162,7 +162,7 @@ function getChatList() {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
-				txn.executeSql('select a._ID, a.MSG_TEXT, a.MSG_TYPE, b.UNREAD_COUNT, b.LAST_MSG_CREATED_TIME, a.CHAT_ROOM_JID, a.IS_GROUP_MSG, c.JID, c.SMALL_IMAGE, c.PHONEBOOK_CONTACT_NAME, c.CONTACT_NAME, c.JEWELCHAT_ID'
+				txn.executeSql('select a._ID, a.MSG_TEXT, a.MSG_TYPE, b.UNREAD_COUNT, b.LAST_MSG_CREATED_TIME, a.CHAT_ROOM_JID, a.IS_GROUP_MSG, c.JID, c.SMALL_IMAGE, c.PHONEBOOK_CONTACT_NAME, c.CONTACT_NAME, c.JEWELCHAT_ID, c.IS_PHONEBOOK_CONTACT'
 				+ ' from ChatMessage a '
 				+ 'INNER JOIN ( '
 				+ 'select _ID, max(_ID) as MAX_ID, count(_ID) as UNREAD_COUNT, max(TIME_CREATED) as LAST_MSG_CREATED_TIME'

@@ -138,8 +138,9 @@ class ChatPage extends React.Component {
 
   onListEndReached() {
     console.log('end');
-      db.getChats(this.props.activeChat.JID, this.props.chatroom.length)
-      .then(chats => {         
+      db.getChats(this.props.activeChat.CHAT_ROOM_JID, this.props.chatroom.length, this.props.activeChat.IS_GROUP_MSG)
+      .then(chats => {    
+          console.log('CONCAT '+ chats.length)     
           this.props.setChatData(this.props.chatroom.concat(chats))       
       })      
   }

@@ -105,6 +105,8 @@ class MainChatBar extends React.Component {
         msgtext = this.state.chatboxtext.trim();
       }
 
+      this.processChatText('');
+
       let createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
 
       let outgoingMessage = {
@@ -186,8 +188,8 @@ class MainChatBar extends React.Component {
             {this.state.chatboxempty && <TouchableOpacity style={styles.secondItem}></TouchableOpacity>}
             {this.state.chatboxempty && <TouchableOpacity style={styles.thirdItem}></TouchableOpacity>}
             {!this.state.chatboxempty && <TouchableOpacity onPress={() => {
-              this.textInput.clear();
               this.sendMessage();
+              this.textInput.clear();             
             }} style={styles.fourthItem}><Icon1 name='send' size={25} color='white' /></TouchableOpacity>}
           </View>
       </View>  
