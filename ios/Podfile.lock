@@ -98,9 +98,9 @@ PODS:
   - libwebp/mux (1.1.0):
     - libwebp/demux
   - libwebp/webp (1.1.0)
-  - lottie-ios (3.1.8)
-  - lottie-react-native (3.5.0):
-    - lottie-ios (~> 3.1.8)
+  - lottie-ios (3.1.6)
+  - lottie-react-native (3.3.2):
+    - lottie-ios (~> 3.1.3)
     - React
   - nanopb (1.30906.0):
     - nanopb/decode (= 1.30906.0)
@@ -275,7 +275,7 @@ PODS:
     - React-cxxreact (= 0.61.5)
     - React-jsi (= 0.61.5)
   - React-jsinspector (0.61.5)
-  - react-native-contacts (5.2.7):
+  - react-native-contacts (5.2.0):
     - React
   - react-native-image-editor (2.3.0):
     - React
@@ -319,7 +319,7 @@ PODS:
     - React-cxxreact (= 0.61.5)
     - React-jsi (= 0.61.5)
     - ReactCommon/jscallinvoker (= 0.61.5)
-  - RNCAsyncStorage (1.12.0):
+  - RNCAsyncStorage (1.9.0):
     - React
   - RNFastImage (8.3.2):
     - React
@@ -339,7 +339,7 @@ PODS:
     - RNFBApp
   - RNFS (2.16.6):
     - React
-  - RNGestureHandler (1.8.0):
+  - RNGestureHandler (1.6.1):
     - React
   - RNImageCropPicker (0.31.1):
     - React-Core
@@ -354,7 +354,7 @@ PODS:
     - React
   - RNSVG (9.13.6):
     - React
-  - RNVectorIcons (6.7.0):
+  - RNVectorIcons (6.6.0):
     - React
   - SDWebImage (5.9.0):
     - SDWebImage/Core (= 5.9.0)
@@ -547,14 +547,14 @@ SPEC CHECKSUMS:
   GoogleUserMessagingPlatform: 9dc714d2e1f0aa727b9cc52d266dc1b155f4c3f2
   GoogleUtilities: 7f2f5a07f888cdb145101d6042bc4422f57e70b3
   libwebp: 946cb3063cea9236285f7e9a8505d806d30e07f3
-  lottie-ios: 48fac6be217c76937e36e340e2d09cf7b10b7f5f
-  lottie-react-native: 1fb4ce21d6ad37dab8343eaff8719df76035bd93
+  lottie-ios: 85ce835dd8c53e02509f20729fc7d6a4e6645a0a
+  lottie-react-native: 2a1a82bb326ae51331a5520de0cf706733c6db69
   nanopb: 59317e09cf1f1a0af72f12af412d54edf52603fc
   PersonalizedAdConsent: dbecabb3467df967c16d9cebc2ef4a8890e4bbd8
   PromisesObjC: b14b1c6b68e306650688599de8a45e49fae81151
   Protobuf: 3dac39b34a08151c6d949560efe3f86134a3f748
   RCTRequired: b153add4da6e7dbc44aebf93f3cf4fcae392ddf1
-  RCTRestart: dd19aab87fc1118e05b6b5b91b959105647f56b4
+  RCTRestart: e8e3868a71dbec2cf8055fc2c0635db23c8c4479
   RCTTypeSafety: 9aa1b91d7f9310fc6eadc3cf95126ffe818af320
   React: b6a59ef847b2b40bb6e0180a97d0ca716969ac78
   React-Core: 688b451f7d616cc1134ac95295b593d1b5158a04
@@ -563,10 +563,10 @@ SPEC CHECKSUMS:
   React-jsi: cb2cd74d7ccf4cffb071a46833613edc79cdf8f7
   React-jsiexecutor: d5525f9ed5f782fdbacb64b9b01a43a9323d2386
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
-  react-native-contacts: 23a5a68151740bae84d5d379545bf5c3579b0d94
-  react-native-image-editor: 9361a215c3991cafbe5e7f28cbbad6e72c9c2705
-  react-native-netinfo: 0da34082d2cec3100c9b5073bb217e35f1142bdd
-  react-native-sqlite-storage: a339b4163d54955b57a02a974d3f70a4efa40b1a
+  react-native-contacts: 439dd9c7ea7e0d86190f8370898b82cfb7cf4ef4
+  react-native-image-editor: bd67912f38a8e7a895bf6eb8f445acdcefd8fd0c
+  react-native-netinfo: 27d908bc7ee7b9f29400c02938a0b2a27a1015be
+  react-native-sqlite-storage: 8bb5eff6f85243bda9c27daf9dc7c6d1c2dd34af
   React-RCTActionSheet: 600b4d10e3aea0913b5a92256d2719c0cdd26d76
   React-RCTAnimation: 791a87558389c80908ed06cc5dfc5e7920dfa360
   React-RCTBlob: d89293cc0236d9cb0933d85e430b0bbe81ad1d72
@@ -577,17 +577,17 @@ SPEC CHECKSUMS:
   React-RCTText: 9ccc88273e9a3aacff5094d2175a605efa854dbe
   React-RCTVibration: a49a1f42bf8f5acf1c3e297097517c6b3af377ad
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
-  RNCAsyncStorage: 2a692bcb9b69b76a2f1a95f33db057129700af64
+  RNCAsyncStorage: b16697280b08bab4b5f2f67f752d93d13a52e9ed
   RNFastImage: e19ba191922e7dab9d932a4d59d62d76660aa222
   RNFBAdMob: a7034e31eff7c58174278666bdba522d8a94e330
   RNFBApp: cd70a6c061bc485994e28c7d58ab760538850f0e
   RNFBMessaging: 1cc80c7d1c2df4cf654ea0509d62fda6c23e5976
   RNFS: 2bd9eb49dc82fa9676382f0585b992c424cd59df
-  RNGestureHandler: 7a5833d0f788dbd107fbb913e09aa0c1ff333c39
+  RNGestureHandler: 8f09cd560f8d533eb36da5a6c5a843af9f056b38
   RNImageCropPicker: 38865ab4af1b0b2146ad66061196bc0184946855
   RNScreens: f28b48b8345f2f5f39ed6195518291515032a788
   RNSVG: 8ba35cbeb385a52fd960fd28db9d7d18b4c2974f
-  RNVectorIcons: 368d6d8b8301224e5ffb6254191f4f8876c2be0d
+  RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   SDWebImage: 62ae4a18473520c67b79e9724c31a63599cc9423
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   TOCropViewController: 2a1ae1242600b1f2d996fd91a5268b2309a33b5c
@@ -595,4 +595,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 7f808709fe3cfdb48a39a18a2ec85a3909de0e49
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.9.3

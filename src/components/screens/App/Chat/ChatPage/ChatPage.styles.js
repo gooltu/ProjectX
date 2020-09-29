@@ -71,6 +71,7 @@ export default styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column'        
     },
+
     sectionheaderdate: {
         marginTop: 10,
         marginBottom: 10,
@@ -81,30 +82,38 @@ export default styles = StyleSheet.create({
         backgroundColor: colors.darkcolor3,
         alignSelf: 'center'
     },
-    mychatbox: {
+
+    chatbox: {
         flex:1,
-        flexDirection: 'column', 
-        alignSelf: 'flex-end',
-        backgroundColor: colors.lightcolor2,
-        color: 'black',
+        flexDirection: 'column',             
         maxWidth: 250,
         minWidth: 100,
         paddingHorizontal: 3,
-        paddingVertical:2,
-        borderRadius: 5
+        paddingVertical:2,  
+        borderRadius: 5,      
+        
     },
 
-    friendschatbox: {
-        flex:1,
-        flexDirection: 'column', 
+    mychatbox: {        
+        alignSelf: 'flex-end',
+        backgroundColor: colors.lightcolor2 
+    },
+
+    friendschatbox: {        
         alignSelf: 'flex-start',
-        backgroundColor: 'white',
-        color: 'black',
-        maxWidth: 250,
-        minWidth: 100,
-        paddingHorizontal: 3,
-        paddingVertical:2,
-        borderRadius: 5
+        backgroundColor: 'white'
+    },
+
+    mychatboxBottomStrip:{
+        flex:1,
+        flexDirection: 'row',
+        justifyContent: 'flex-end'        
+    },
+
+    friendschatboxBottomStrip:{
+        flex:1,
+        flexDirection: 'row-reverse',
+        justifyContent: 'space-between'        
     },
 
     myMsgContainer: {
@@ -154,5 +163,13 @@ export default styles = StyleSheet.create({
         color: colors.jcgray,
         fontSize: 10,
         paddingRight: 5
+    },
+    groupMsgSender: {
+        color: 'black',
+        fontSize: 12,
+        fontWeight: '700',
+        marginRight:20,
+        paddingTop:7,
+        paddingLeft: 5
     }
 })

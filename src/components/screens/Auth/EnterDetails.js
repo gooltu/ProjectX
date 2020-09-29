@@ -78,26 +78,28 @@ class EnterDetails extends React.Component {
   }
 
   componentDidMount() {
-    this.props.loadGameData()
-    // db.insertStropheChatData(incomingMessage).then(result=>{
-    //   db.insertTeamJC(teamJC).then(result => {
-    //     db.getChatList().then(results => {
-    //       console.log('FROM JEWELCHAT COMPONENT GETCHAT LIST SUCCESS')  
-    //       console.log(results)    
-    //       this.props.setChatListData(results)
-    //     })
-    //       .catch(err => {
-    //         console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
-    //         console.log(err)
-    //       })
-    //   }).catch(err => {
-    //     console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
-    //     console.log(err)
+    // this.props.loadGameData()
+    // db.insertTeamJC(teamJC).then(result => {
+    //   db.getChatList().then(results => {
+    //     console.log('FROM JEWELCHAT COMPONENT GETCHAT LIST SUCCESS')
+    //     console.log(results.rows.length)
+
+    //     let chatList = []
+    //     for (let i = 0; i < results.rows.length; i++) {
+    //       chatList.push(results.rows.item(i))
+    //     }
+    //     this.props.setChatListData(chatList)
     //   })
+    //     .catch(err => {
+    //       console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
+    //       console.log(err)
+    //     })
+    // }).catch(err => {
+    //   console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
+    //   console.log(err)
     // })
-    
-    this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
-    console.log('Token', this.props.mytoken)
+    // this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+    // console.log('Token', this.props.mytoken)
   }
 
   componentWillUnmount() {
