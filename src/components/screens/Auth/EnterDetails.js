@@ -78,7 +78,7 @@ class EnterDetails extends React.Component {
   }
 
   componentDidMount() {
-    // this.props.loadGameData()
+     this.props.loadGameData()
     // db.insertTeamJC(teamJC).then(result => {
     //   db.getChatList().then(results => {
     //     console.log('FROM JEWELCHAT COMPONENT GETCHAT LIST SUCCESS')
@@ -98,7 +98,7 @@ class EnterDetails extends React.Component {
     //   console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
     //   console.log(err)
     // })
-    // this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+    this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
     // console.log('Token', this.props.mytoken)
   }
 
