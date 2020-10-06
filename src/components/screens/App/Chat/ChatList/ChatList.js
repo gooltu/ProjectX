@@ -38,56 +38,81 @@ import { updateChatPageRedux, updateChatlistRedux } from '../../../../../network
 //import Icon from 'react-native-vector-icons/FontAwesome'
 
 
-function Item({ item, onpressitem, onlongpressitem }) {
+class Item extends React.Component {
 
-  return (
-    <TouchableOpacity
-      onPress={() => onpressitem(item)}
-      onLongPress={() => onlongpressitem(item._ID)}
-      style={styles.mainConatiner}
-    >
-      <View style={styles.subContainer}>
-        <View style={styles.marginstyle} />
-        <View style={styles.chatBox}>
-          {item.SMALL_IMAGE && item.JEWELCHAT_ID != 1 &&
-            <ImageBackground
-              source={{ uri: item.SMALL_IMAGE }}
-              style={styles.imgBackground}></ImageBackground>
-          }
-          {
-            item.JEWELCHAT_ID == 1 && <Logo height="75%" width="75%" style={styles.jewelStyle} />
-          }
-          {
-            !item.SMALL_IMAGE && item.JEWELCHAT_ID != 1 && item.IS_GROUP_MSG == 0 && <Icon name='user' color={colors.jcgray} size={24} solid />
-          }
-          {
-            !item.SMALL_IMAGE && item.JEWELCHAT_ID != 1 && item.IS_GROUP_MSG == 1 && <Icon  name='users' color={colors.jcgray} size={24} solid />
-          }
+  constructor(props) {
+    super(props);        
+  }
+
+  state = {
+    profileimageerror: true
+  }
+
+  randomstring = '?'+Math.ceil(Math.random()*1000000);
+
+  //({ item, onpressitem, onlongpressitem })
+  render(){
+    return (
+      <TouchableOpacity
+        onPress={() => this.props.onpressitem(this.props.item)}
+        onLongPress={() => this.props.onlongpressitem(item._ID)}
+        style={styles.mainConatiner}
+      >
+        <View style={styles.subContainer}>
+          <View style={styles.marginstyle} />
+          <View style={styles.chatBox}>
+            { this.props.item.JEWELCHAT_ID != 1 &&
+              <Image
+                source={{ headers: { Pragma: 'no-cache' }, uri: 'https://kuchbhi.com/'+this.props.item.CHAT_ROOM_JID.split('@')[0]+this.randomstring/*item.SMALL_IMAGE */}}
+                style={[{ position:'absolute', top:0, left:0 },styles.imgBackground]}
+                onLoad={()=>{
+                  this.setState( { profileimageerror: false } ) 
+                }}
+                onError={(error) => {                    
+                    console.log('https://kuchbhi.com/'+this.props.item.CHAT_ROOM_JID.split('@')[0]+'?'+Math.ceil(Math.random()*1000000));
+                    this.setState( { profileimageerror: true } ) 
+                  } 
+                }
+                ></Image>
+            }
+            {
+              this.props.item.JEWELCHAT_ID == 1 && <Logo height="75%" width="75%" style={styles.jewelStyle} />
+            }
+            {
+              this.state.profileimageerror && this.props.item.JEWELCHAT_ID != 1 && (this.props.item.IS_GROUP_MSG == 0 || this.props.item.IS_GROUP_MSG == null ) && <Icon  name='user' color={colors.jcgray} size={24} solid />
+            }
+            {
+              this.state.profileimageerror && this.props.item.JEWELCHAT_ID != 1 && this.props.item.IS_GROUP_MSG == 1 && <Icon  name='users' color={colors.jcgray} size={24} solid />
+            }
+          </View>
+          <View style={styles.chatboxLeftContainer} >
+            <Text style={styles.name}>{this.props.item.PHONEBOOK_CONTACT_NAME ? this.props.item.PHONEBOOK_CONTACT_NAME 
+            : (this.props.item.JEWELCHAT_ID == 1 ? 'Team JewelChat' 
+            : (this.props.item.IS_GROUP_MSG == 0 || this.props.item.IS_GROUP_MSG == null ? '+' + this.props.item.CHAT_ROOM_JID.split('@')[0]
+            : (this.props.item.CONTACT_NAME ? this.props.item.CONTACT_NAME : 'Group Chat') ) )}</Text>
+            <Text style={styles.msgText}>{this.props.item.MSG_TEXT != null ? this.props.item.MSG_TEXT.substring(0, 25) + (this.props.item.MSG_TEXT.length > 25 ? '...' : '') : ''}</Text>
+          </View>
         </View>
-        <View style={styles.chatboxLeftContainer} >
-          <Text style={styles.name}>{item.PHONEBOOK_CONTACT_NAME ? item.PHONEBOOK_CONTACT_NAME 
-          : (item.JEWELCHAT_ID == 1 ? 'Team JewelChat' 
-          : (item.IS_GROUP_MSG == 0 ? '+' + item.CHAT_ROOM_JID.split('@')[0]
-          : (item.CONTACT_NAME ? item.CONTACT_NAME : 'Group Chat') ) )}</Text>
-          <Text style={styles.msgText}>{item.MSG_TEXT != null ? item.MSG_TEXT.substring(0, 25) + (item.MSG_TEXT.length > 25 ? '...' : '') : ''}</Text>
+        <View style={styles.itemLeftConatiner} >
+          <View style={styles.itemLeftSubContainer}>
+            <Text style={styles.msgCreateTime}>{relativeDateSting(this.props.item.LAST_MSG_CREATED_TIME)}</Text>
+            {this.props.item.UNREAD_COUNT > 0 &&
+              <View style={styles.unreadCount}>
+                <Text
+                  style={styles.countText} >
+                  {this.props.item.UNREAD_COUNT}
+                </Text>
+              </View>
+            }
+          </View>
+          <View style={styles.marginStyleLeft} />
         </View>
-      </View>
-      <View style={styles.itemLeftConatiner} >
-        <View style={styles.itemLeftSubContainer}>
-          <Text style={styles.msgCreateTime}>{relativeDateSting(item.LAST_MSG_CREATED_TIME)}</Text>
-          {item.UNREAD_COUNT > 0 &&
-            <View style={styles.unreadCount}>
-              <Text
-                style={styles.countText} >
-                {item.UNREAD_COUNT}
-              </Text>
-            </View>
-          }
-        </View>
-        <View style={styles.marginStyleLeft} />
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+
+  }
+
+
 }
 
 
@@ -128,7 +153,7 @@ class ChatList extends React.Component {
                 <Item item={item}
                   onpressitem={(item) => {
                     this.props.setActiveChat(item);
-                    this.props.updateChatPageRedux();
+                    //this.props.updateChatPageRedux();
                     this.props.navigation.navigate('ChatPage', item);
                   }}                  
                 />

@@ -1,25 +1,7 @@
 import React from 'react';
-import {
-  ActivityIndicator,
-  AsyncStorage,
-  Button,
-  StatusBar,
-  StyleSheet,
+import {  
   View,
-  Text,
-  Image,
-  ScrollView,
-  TextInput,
-  InputAccessoryView,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
-  Keyboard,
-  FlatList,
-  Animated,
-  Alert,
-  PanResponder,
+  Text,  
   TouchableOpacity
 } from 'react-native';
 
@@ -39,12 +21,36 @@ export default class ChatItem extends React.Component {
 
     renderJewel(){
       //console.log('Jewel');
-      return(
-        !this.mychat &&  <TouchableOpacity style={styles.jewelContainer}>
-          {(this.props.item.MAX_SEQUENCE - this.props.item.SEQUENCE < 25 || this.props.item.SEQUENCE == -1) && this.props.item.IS_JEWEL_PICKED == 0 
-            ? renderJewel(this.props.item.JEWEL_TYPE, "75%", "75%", styles.jewelStyle): null}
-        </TouchableOpacity> 
-      )
+
+        if( this.props.item.IS_JEWEL_PICKED == 0 ){
+
+            return(
+              !this.mychat &&  
+                <TouchableOpacity style={styles.jewelContainer} onPress={this.props.onjewelpress}>
+                  {
+                    (this.props.item.MAX_SEQUENCE - this.props.item.SEQUENCE < 25 || this.props.item.SEQUENCE == -1)               
+                    ? renderJewel(this.props.item.JEWEL_TYPE, "75%", "75%", styles.jewelStyle)
+                    : null
+                  }
+                </TouchableOpacity> 
+            )
+
+        }else if( this.props.item.IS_JEWEL_PICKED == 2 ){      
+            return(
+              !this.mychat &&  
+                <TouchableOpacity style={styles.jewelContainer} onPress={this.props.onjewelpress}>
+                  {
+                    (this.props.item.MAX_SEQUENCE - this.props.item.SEQUENCE < 25 || this.props.item.SEQUENCE == -1)               
+                    ? renderJewel(this.props.item.JEWEL_TYPE, "25%", "25%", styles.jewelStyle)
+                    : null
+                  }
+                </TouchableOpacity> 
+            )    
+        }else 
+          return(
+            !this.mychat &&  
+              <TouchableOpacity style={styles.jewelContainer} onPress={this.props.onjewelpress}></TouchableOpacity> 
+          );      
       
     }
 
@@ -66,7 +72,7 @@ export default class ChatItem extends React.Component {
     renderImageMsg(){     
       
       return(
-        <View style={[ styles.chatbox, this.mychat ? styles.mychatbox : styles.friendschatbox ]}>    
+        <TouchableOpacity style={[ styles.chatbox, this.mychat ? styles.mychatbox : styles.friendschatbox ]} onPress={this.props.onmediapress}>    
               <View style={{ justifyContent:'center', alignSelf:'center', marginTop:1 }}>
                   
                   <Icon style={{ position:'absolute', top:40, left:40}} name='image' size={20} color='black' />                    
@@ -85,7 +91,7 @@ export default class ChatItem extends React.Component {
                 <Text style={styles.msgTime}>{this.props.item.CREATED_TIME}</Text>
                 { !this.mychat && this.props.item.IS_GROUP_MSG == 1 ? <Text style={styles.groupMsgSender}>+919005835709</Text> : null }
               </View> 
-        </View>
+        </TouchableOpacity>
       )
       
     }
@@ -94,7 +100,7 @@ export default class ChatItem extends React.Component {
     renderVideoMsg(){
       
       return(
-        <View style={[ styles.chatbox, this.mychat ? styles.mychatbox : styles.friendschatbox ]}>                                  
+        <TouchableOpacity style={[ styles.chatbox, this.mychat ? styles.mychatbox : styles.friendschatbox ]} onPress={this.props.onmediapress} >                                  
               <View style={{ justifyContent:'center', alignSelf:'center', marginTop:1 }}>
                   
                   <Icon style={{ position:'absolute', top:40, left:40}} name='play-circle' size={20} color='black' />                    
@@ -114,7 +120,7 @@ export default class ChatItem extends React.Component {
                 <Text style={styles.msgTime}>{this.props.item.CREATED_TIME}</Text>
                 { !this.mychat && this.props.item.IS_GROUP_MSG == 1 ? <Text style={styles.groupMsgSender}>+919005835709</Text> : null }
               </View>   
-        </View>
+        </TouchableOpacity>
       )
       
     }
@@ -123,7 +129,7 @@ export default class ChatItem extends React.Component {
     renderGifMsg(){
       
       return(
-        <View style={[ styles.chatbox, this.mychat ? styles.mychatbox : styles.friendschatbox ]}>                                  
+        <TouchableOpacity style={[ styles.chatbox, this.mychat ? styles.mychatbox : styles.friendschatbox ]} onPress={this.props.onmediapress} >                                  
               <View style={{ justifyContent:'center', alignSelf:'center', marginTop:1 }}>
                   
                   <Icon style={{ position:'absolute', top:40, left:40}} name='image' size={20} color='black' />                    
@@ -142,7 +148,7 @@ export default class ChatItem extends React.Component {
                 <Text style={styles.msgTime}>{this.props.item.CREATED_TIME}</Text>
                 { !this.mychat && this.props.item.IS_GROUP_MSG == 1 ? <Text style={styles.groupMsgSender}>+919005835709</Text> : null }
               </View>  
-        </View>
+        </TouchableOpacity>
       )
       
     }
@@ -151,7 +157,7 @@ export default class ChatItem extends React.Component {
     renderStickerMsg(){
       
       return(
-        <View style={[ styles.chatbox, this.mychat ? styles.mychatbox : styles.friendschatbox, { backgroundColor: 'transparent' } ]}>                                  
+        <TouchableOpacity style={[ styles.chatbox, this.mychat ? styles.mychatbox : styles.friendschatbox, { backgroundColor: 'transparent' } ]} onPress={this.props.onmediapress}>                                  
               <View style={{ justifyContent:'center', alignSelf:'center', marginTop:1 }}>
                   
                                     
@@ -170,7 +176,7 @@ export default class ChatItem extends React.Component {
                 <Text style={styles.msgTime}>{this.props.item.CREATED_TIME}</Text>
                 { !this.mychat && this.props.item.IS_GROUP_MSG == 1 ? <Text style={styles.groupMsgSender}>+919005835709</Text> : null }
               </View>  
-        </View>
+        </TouchableOpacity>
       )
       
     }

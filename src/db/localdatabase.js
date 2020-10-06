@@ -74,10 +74,10 @@ function getChats(JID, offset, isgroupmsg) {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 
-				if( isgroupmsg == 0 ){
-					txn.executeSql('select * FROM ChatMessage JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) where CHAT_ROOM_JID ="' + JID + '" ORDER BY _ID DESC LIMIT 20 OFFSET ' + offset)
+				if( isgroupmsg == 0 || isgroupmsg == null ){
+					txn.executeSql('select * FROM ChatMessage a JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) b where a.CHAT_ROOM_JID ="' + JID + '" ORDER BY a._ID DESC LIMIT 20 OFFSET ' + offset)
 					.then((results) => {
-						console.log('QUERY COMPLETED for Chat room', JID);
+						console.log('QUERY COMPLETED for Chat room', offset );
 						console.log(results[1])
 						resolve(results[1].rows.raw())
 					})
@@ -89,9 +89,9 @@ function getChats(JID, offset, isgroupmsg) {
 									'FROM ChatMessage a '+
 									'JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) b '+ 
 									'LEFT OUTER JOIN Contact c ON c.JID = a.CREATOR_JID '+
-									'where CHAT_ROOM_JID ="' + JID + '" ORDER BY _ID DESC LIMIT 20 OFFSET ' + offset)
+									'where a.CHAT_ROOM_JID ="' + JID + '" ORDER BY a._ID DESC LIMIT 20 OFFSET ' + offset)
 					.then((results) => {
-						console.log('QUERY COMPLETED for Chat room', JID);
+						console.log('QUERY COMPLETED for Chat room', offset);
 						console.log(results[1])
 						resolve(results[1].rows.raw())
 					})
@@ -162,12 +162,12 @@ function getChatList() {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
-				txn.executeSql('select a._ID, a.MSG_TEXT, a.MSG_TYPE, b.UNREAD_COUNT, b.LAST_MSG_CREATED_TIME, a.CHAT_ROOM_JID, a.IS_GROUP_MSG, c.JID, c.SMALL_IMAGE, c.PHONEBOOK_CONTACT_NAME, c.CONTACT_NAME, c.JEWELCHAT_ID'
+				txn.executeSql('select a._ID, a.MSG_TEXT, a.MSG_TYPE, b.UNREAD_COUNT, b.LAST_MSG_CREATED_TIME, a.CHAT_ROOM_JID, a.IS_GROUP_MSG, c.JID, c.SMALL_IMAGE, c.PHONEBOOK_CONTACT_NAME, c.CONTACT_NAME, c.JEWELCHAT_ID, c.IS_PHONEBOOK_CONTACT'
 				+ ' from ChatMessage a '
 				+ 'INNER JOIN ( '
 				+ 'select _ID, max(_ID) as MAX_ID, count(_ID) as UNREAD_COUNT, max(TIME_CREATED) as LAST_MSG_CREATED_TIME'
 				+ ' from ChatMessage'
-				+ ' where IS_READ = 0'
+				+ ' where IS_READ = 0 AND SENDER_MSG_ID IS NOT NULL'
 				+ ' group by CHAT_ROOM_JID'
 				+ ' ) b ON a._ID = b.MAX_ID'
 				+ ' LEFT OUTER JOIN Contact c ON c.JID = a.CHAT_ROOM_JID '
@@ -327,13 +327,13 @@ function insertAffiliations(data) {
 	})
 }
 
-function updatePickedJewel(id) {
+function updatePickedJewel(id, flag) {
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 				let sql;
-				sql = "UPDATE ChatMessage SET IS_JEWEL_PICKED = 1  WHERE _ID =  " + id
+				sql = "UPDATE ChatMessage SET IS_JEWEL_PICKED = " + flag + "  WHERE _ID =  " + id;
 				console.log(sql)
 				txn.executeSql(sql).then((results) => {
 					console.log('Chat updated for picked Jewel');
@@ -343,6 +343,7 @@ function updatePickedJewel(id) {
 				})
 			})
 		}).then(result => {
+			resolve('success')
 		}).catch(error => {
 			reject(error)
 		})
@@ -355,7 +356,7 @@ function updateDeliveryAndReadReceipt(type, id, time) {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 				let sql;
-				if (type == 'Delivery') {
+				if (type === 'Delivery') {
 					sql = "UPDATE ChatMessage SET IS_DELIVERED = 1, TIME_DELIVERED = " + time + " WHERE _ID =  " + id
 					txn.executeSql(sql).then((results) => {
 						console.log('ChatMessage Delivered Query COMPLETED for id, ', id);
@@ -364,7 +365,7 @@ function updateDeliveryAndReadReceipt(type, id, time) {
 						reject(err)
 					})
 				}
-				else if (type == 'Both') {
+				else if (type === 'Both') {
 					sql = "UPDATE ChatMessage SET IS_READ = 1,TIME_READ=" + time + ", IS_DELIVERED = 1, TIME_DELIVERED = " + time + "  WHERE _ID =  " + id
 					txn.executeSql(sql).then((results) => {
 						console.log('ChatMessage Read Query COMPLETED for id, ', id);
@@ -373,7 +374,7 @@ function updateDeliveryAndReadReceipt(type, id, time) {
 						reject(err)
 					})
 				}
-				else if (type == 'Read') {
+				else if (type === 'Read') {
 					sql = "UPDATE ChatMessage SET IS_READ = 1,TIME_READ=" + time + " WHERE _ID = " + id
 					txn.executeSql(sql).then((results) => {
 						console.log('ChatMessage Delivered Query COMPLETED for id, ', id);
@@ -382,7 +383,7 @@ function updateDeliveryAndReadReceipt(type, id, time) {
 						reject(err)
 					})
 				}
-				else if (type == 'Submit') {
+				else if (type === 'Submit') {
 					sql = "UPDATE ChatMessage SET IS_SUBMITTED = 1,TIME_SUBMITTED=" + time + " WHERE _ID = " + id
 					txn.executeSql(sql).then((results) => {
 						console.log('ChatMessage Delivered Query COMPLETED for id, ', id);

@@ -11,8 +11,8 @@ import {getServerTime, detectMessagetype } from './realtime-utils/utilities';
 import {insertIncomingMessageViaHistoryDownload, insertIncomingMessage, updateChatPageRedux, updateChatlistRedux } from './realtime-utils/messages';
 import {handleReadAndDeliveryMessages, handleReadAndDeliveryMessagesViaHistoryDownload} from './realtime-utils/read-delivery-messages'
 
-// const URL = 'ws://13.127.197.210:5280/ws-xmpp';
-const URL = 'ws://localhost:5280/ws-xmpp';
+const URL = 'ws://192.168.1.5:5280/ws-xmpp';
+//const URL = 'ws://localhost:5280/ws-xmpp';
 let connection = new XMPP.Strophe.Connection(URL);
 connection.registerSASLMechanism = XMPP.Strophe.SASLXOAuth2;
 
@@ -151,7 +151,50 @@ export const realtimeDisconnect = () => {
 	}
 }
 
+export const sendReply = (messageText, chatroom, type, parent) => {
 
+	return (dispatch, getState) => {
+
+		var createdDateTime = (new Date()).getTime() + global.TimeDelta
+		var date = _dateToYMD(createdDateTime);
+		var reply = type == 'reply' ? 1 : 0
+		var forward = type == 'forward' ? 1 : 0
+		var message = {
+			CHAT_ROOM_JID: chatroom,
+			MSG_TEXT: messageText,
+			CREATOR_JID: getState().mytoken.myphone + '@jewelchat.net',
+			JEWEL_TYPE: null,
+			CREATED_DATE: date.date,
+			CREATED_TIME: date.time,
+			MSG_TYPE: 0,
+			SENDER_MSG_ID: null,
+			IS_REPLY: reply,
+			IS_FORWARD: forward,
+			REPLY_PARENT: parent
+		}
+		console.log(message)
+		db.insertStropheChatData(message).then((result) => {
+			message['_ID'] = result
+			message['SENDER_MSG_ID'] = result
+			dispatch(actions.addChatMessage(message))
+
+			var reply = $msg({ to: message.CHAT_ROOM_JID, from: message.CREATOR_JID, type: 'chat', subtype: type, parent: parent, id: message._ID })
+				.cnode(Strophe.xmlElement('body', message.MSG_TEXT))
+				.up()
+				.c('active', { xmlns: "http://jabber.org/protocol/chatstates" });
+			connection.send(reply.tree(), () => {
+				console.log('reply triggered')
+				db.updateDeliveryAndReadRecipt('Submit', result, createdDateTime).then(status => {
+					dispatch(updateChatData('Submitted', result, createdDateTime))
+				})
+			});
+			dispatch(updateChatlist(message, createdDateTime, 'Active'))
+		}).catch(err => {
+
+		})
+		
+	}
+}
 
 
 

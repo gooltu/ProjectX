@@ -54,7 +54,8 @@ class ChatPage extends React.Component {
 
   componentDidMount() {
     console.log('ChatPage did mount');
-    //this.props.updateChatPageRedux();
+    this.props.setChatData([]);    
+    this.props.updateChatPageRedux();
     
     //TO DO
     //Update Contacts or Group details
@@ -71,6 +72,13 @@ class ChatPage extends React.Component {
   }
 
 
+  onMediaPress(item) {
+    console.log('Media Press');
+    this.props.navigation.navigate('ChatMediaViewer', item);
+
+  }
+
+
   onJewelPress(item) {
     if (!this.state.collectingJewel) {
       if (this.jewelCount() >= 25) {
@@ -79,39 +87,50 @@ class ChatPage extends React.Component {
         })
       }
       else {
-        this.setState({
-          collectingJewel: true,
-          collectionId: item._ID
-        })
-        let data = {
-          jeweltype: item.JEWEL_TYPE
-        }
-        NetworkManager.callAPI(rest.pickJewel, 'POST', data).then(response => {
-          db.updatePickedJewel(item._ID).then(resutl => {
-            db.getChats(item.CHAT_ROOM_JID, 0)
-              .then(results => {
-                console.log('FROM JEWELCHAT COMPONENT GETCHAT SUCCESS')
-                console.log(results.rows.length)
-                let chatroom = []
-                for (let i = 0; i < results.rows.length; i++) {
-                  chatroom.push(results.rows.item(i))
-                }
-                this.props.setChatData(chatroom)
-              })
-              .catch(err => {
-                console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
-                console.log(err)
-              })
-          })
-          this.setState({
-            collectingJewel: false,
-            collectionId: null
-          })
-          this.props.game.jewels[item.JEWEL_TYPE].count = this.props.game.jewels[item.JEWEL_TYPE].count + 1
-          this.props.loadGameState(this.props.game)
-        }).catch(error => {
 
-        })
+          this.setState({ collectingJewel: true, collectionId: item._ID });
+          let data = {
+            jeweltype: item.JEWEL_TYPE
+          };
+
+
+          db.updatePickedJewel(item._ID, 2)
+          .then(result => {
+              
+              this.props.updateChatPageRedux();
+              NetworkManager.callAPI(rest.pickJewel, 'POST', data)
+              .then(response => {
+
+                  db.updatePickedJewel(item._ID, 1)
+                  .then(result => {
+                    this.props.updateChatPageRedux();
+                    this.setState({ collectingJewel: false, collectionId: null });
+                    this.props.game.jewels[item.JEWEL_TYPE].count = this.props.game.jewels[item.JEWEL_TYPE].count + 1
+                    this.props.loadGameState(this.props.game)
+                  })
+                  .catch(error => {
+                    this.setState({ collectingJewel: false, collectionId: null })
+                  })
+
+              })
+              .catch(error => {
+
+                  db.updatePickedJewel(item._ID, 0)
+                  .then(result => {
+                    this.props.updateChatPageRedux();
+                  })
+                  .catch(error => {
+                    
+                  })
+                  this.setState({ collectingJewel: false, collectionId: null })
+              })
+
+          })
+          .catch(error => {
+              this.setState({ collectingJewel: false, collectionId: null })
+          });        
+             
+
       }
 
     }
@@ -119,8 +138,9 @@ class ChatPage extends React.Component {
 
   onListEndReached() {
     console.log('end');
-      db.getChats(this.props.activeChat.JID, this.props.chatroom.length)
-      .then(chats => {         
+      db.getChats(this.props.activeChat.CHAT_ROOM_JID, this.props.chatroom.length, this.props.activeChat.IS_GROUP_MSG)
+      .then(chats => {    
+          console.log('CONCAT '+ chats.length)     
           this.props.setChatData(this.props.chatroom.concat(chats))       
       })      
   }
@@ -159,6 +179,8 @@ class ChatPage extends React.Component {
               renderItem={({ item, index }) => (
                 <ChatItem item={item} index={index}                
                   allchats={this.props.chatroom}
+                  onjewelpress={() => { this.onJewelPress(item) }}
+                  onmediapress={() => { this.onMediaPress(item) }}
                 />
               )}
               onEndReached={() => {
@@ -168,8 +190,8 @@ class ChatPage extends React.Component {
               keyExtractor={item => item._ID + ''}
             />
             <Snackbar
-              duration={1000}
-              style={{ backgroundColor: colors.lightcolor1, alignItems: 'center' }}
+              duration={2000}
+              style={{ backgroundColor: colors.darkcolor2, borderColor: colors.lightcolor1 , borderWidth:2, alignItems: 'center' }}
               visible={this.state.visible}
               onDismiss={this._onDismissSnackBar}>
               Jewel Store is FULL.
@@ -198,7 +220,7 @@ function mapDispatchToProps(dispatch) {
     sendReply: (message, JID, type = 'normal', parent = null) => dispatch(sendReply(message, JID, type, parent)),
     addChatMessage: (chatData) => dispatch(actions.addChatMessage(chatData)),
     sendReadReceipt: (JID) => dispatch(sendReadReceipt(JID)),
-    setChatData: (id) => dispatch(actions.setChatData(id)),
+    setChatData: (data) => dispatch(actions.setChatData(data)),
     setChatListData: (chatlistData) => dispatch(actions.setChatListData(chatlistData)),
     sendSubscriptionRequest: (JID) => dispatch(sendSubscriptionRequest(JID)),
     loadGameState: (gamestate) => dispatch(actions.loadGameState(gamestate)),
