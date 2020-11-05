@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  SafeAreaView,
   View,
   Text,
   ScrollView,
@@ -16,7 +15,7 @@ import { renderJewel } from "../../../../JCUtils/CommonUtils";
 import CustomLoader from "../../../../shared_components/CustomLoader";
 import { Snackbar } from 'react-native-paper';
 import colors from "../../../../shared_styles/colors";
-
+import { SafeAreaView } from 'react-navigation'
 
 class WalletScreen extends React.Component {
 

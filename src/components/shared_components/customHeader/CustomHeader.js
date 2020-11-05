@@ -1,12 +1,7 @@
 import React from "react";
 import {
     ActivityIndicator,
-    AsyncStorage,
-    Button,
-    StatusBar,
-    StyleSheet,
     View,
-    Platform,
     TouchableOpacity,
     Text,
     Image,

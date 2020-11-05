@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
     Animated,
     Platform,
-    StatusBar,
+    ScrollView,
     StyleSheet,
     Text,
     View,
@@ -17,6 +17,10 @@ const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 import styles from './FriendProfile.styles'
 import { Container, Header, Content, Button, ListItem, Icon, Left, Body, Right, Switch } from 'native-base';
 import Logo from '../../../svg_components/Logo';
+import NetworkManager from '../../../../network/NetworkManager';
+import rest from '../../../../network/rest';
+import { Snackbar } from 'react-native-paper';
+
 
 const HEADER_MAX_HEIGHT = 300;
 const HEADER_MIN_HEIGHT = 0;
@@ -26,13 +30,45 @@ class FriendProfile extends Component {
     constructor(props) {
         super(props);
 
+
         this.state = {
             scrollY: new Animated.Value(
                 // iOS has negative initial scroll value because content inset...
                 Platform.OS === 'ios' ? -HEADER_MAX_HEIGHT : 0,
             ),
             refreshing: false,
+            visible: false,
+            userDetail: {
+                "id": null,
+                "pic": "",
+                "large_pic": "",
+                "name": "",
+                "phone": "",
+                "status": ""
+            }
         };
+    }
+    componentDidMount() {
+        this.getContactInfo()
+    }
+    getContactInfo = () => {
+        let data = {
+            phone: (this.props.activeChat.CHAT_ROOM_JID).split('@')[0]
+            // phone: '918756463536'
+        }
+        NetworkManager.callAPI(rest.downloadContact_Phone, 'POST', data).then(result => {
+            if (result.contact!=null) {
+                this.setState({
+                    userDetail: result.contact
+                })
+            }
+
+        }).catch(error => {
+            this.setState({
+                visible: true
+            })
+            console.log(error)
+        })
     }
 
     _renderScrollViewContent() {
@@ -40,12 +76,8 @@ class FriendProfile extends Component {
         return (
             <SafeAreaView style={styles.scrollViewContent}>
                 {this.contactView()}
-                <View style={{width:'100%', height:1, backgroundColor:colors.darkcolor3}}></View>
+                <View style={{ width: '100%', height: 1, backgroundColor: colors.darkcolor3 }}></View>
                 {this.StatusView()}
-                {this.seprator()}
-                {this.firstSection()}
-                {this.seprator()}
-                {this.SecondSection()}
                 {this.seprator()}
                 {this.groupsInCommon()}
                 {this.seprator()}
@@ -57,13 +89,13 @@ class FriendProfile extends Component {
         return (
             <View style={styles.contact}>
                 <View style={{ flexDirection: 'column' }}>
-                    <Text style={styles.name}>{this.props.activeChat.PHONEBOOK_CONTACT_NAME}</Text>
-                    <Text style={styles.ContactNumber}>+{this.props.activeChat.CONTACT_NUMBER}</Text>
+                    <Text style={styles.name}>{this.state.userDetail.name}</Text>
+                    <Text style={styles.ContactNumber}>+{(this.props.activeChat.CHAT_ROOM_JID).split('@')[0]}</Text>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
 
                     <TouchableOpacity style={{ width: 30, height: 30, borderRadius: 20, backgroundColor: 'gray', alignItems: 'center', justifyContent: 'center' }}>
-                        <Icon style={{ fontSize: 20, color: 'white' }} active name="text" />
+                        <Icon onPress={() => this.props.navigation.goBack()} style={{ fontSize: 20, color: 'white' }} active name="text" />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -73,7 +105,7 @@ class FriendProfile extends Component {
         return (
             <View style={styles.contact}>
                 <View style={{ flexDirection: 'column' }}>
-                    <Text style={styles.statusMessage}>{this.props.activeChat.STATUS_MSG}</Text>
+                    <Text style={styles.statusMessage}>{this.state.userDetail.status}</Text>
                     <Text style={styles.ContactNumber}>last modified 11:58 PM</Text>
                 </View>
             </View>
@@ -83,118 +115,6 @@ class FriendProfile extends Component {
     seprator() {
         return (
             <View style={{ height: 20, backgroundColor: colors.darkcolor3, width: '100%' }}>
-            </View>
-        )
-    }
-    firstSection = () => {
-        return (
-            <View>
-                <ListItem icon>
-                    <Left>
-                        <Button style={{ backgroundColor: "#007AFF" }}>
-                            <Icon active name="image" />
-                        </Button>
-                    </Left>
-                    <Body>
-                        <Text style={styles.rowText}>Media, Links and Docs</Text>
-                    </Body>
-                    <Right>
-                        <Text style={styles.number}>28</Text>
-                        <Icon active name="ios-arrow-forward" />
-                    </Right>
-                </ListItem>
-                <ListItem icon>
-                    <Left>
-                        <Button style={{ backgroundColor: "green" }}>
-                            <Icon active name="star" />
-                        </Button>
-                    </Left>
-                    <Body>
-                        <Text style={styles.rowText}>Starred Messages</Text>
-                    </Body>
-                    <Right>
-                        <Text style={styles.number}>None</Text>
-                        <Icon active name="ios-arrow-forward" />
-                    </Right>
-                </ListItem>
-                <ListItem icon>
-                    <Left>
-                        <Button style={{ backgroundColor: "#FF9501" }}>
-                            <Icon active name="search" />
-                        </Button>
-                    </Left>
-                    <Body style={{borderBottomWidth:null}}>
-                        <Text style={styles.rowText}>Chat Search</Text>
-                    </Body>
-                    <Right style={{borderBottomWidth:null}}>
-                        <Text style={styles.number}>On</Text>
-                        <Icon active name="ios-arrow-forward" />
-                    </Right>
-                </ListItem>
-            </View>
-        )
-    }
-
-    SecondSection = () => {
-        return (
-            <View>
-                <ListItem icon>
-                    <Left>
-                        <Button style={{ backgroundColor: "#007AFF" }}>
-                            <Icon active name="volume-mute" />
-                        </Button>
-                    </Left>
-                    <Body>
-                        <Text style={styles.rowText}>Mute</Text>
-                    </Body>
-                    <Right>
-                        <Text style={styles.number}>28</Text>
-                        <Icon active name="ios-arrow-forward" />
-                    </Right>
-                </ListItem>
-                <ListItem icon>
-                    <Left>
-                        <Button style={{ backgroundColor: "green" }}>
-                            <Icon active name="search" />
-                        </Button>
-                    </Left>
-                    <Body>
-                        <Text style={styles.rowText}>Custom Tone</Text>
-                    </Body>
-                    <Right>
-                        <Text style={styles.number}>None</Text>
-                        <Icon active name="ios-arrow-forward" />
-                    </Right>
-                </ListItem>
-                <ListItem icon>
-                    <Left>
-                        <Button style={{ backgroundColor: "#FF9501" }}>
-                            <Icon active name="download" />
-                        </Button>
-                    </Left>
-                    <Body>
-                        <Text style={styles.rowText}>Save to camera roll</Text>
-                    </Body>
-                    <Right>
-                        <Text style={styles.number}>On</Text>
-                        <Icon active name="ios-arrow-forward" />
-                    </Right>
-                </ListItem>
-                <ListItem icon style={{borderBottomWidth:0}}>
-                    <Left>
-                        <Button style={{ backgroundColor: "#007AFF" }}>
-                            <Icon active name="lock" />
-                        </Button>
-                    </Left>
-                    <Body style={{borderBottomWidth:null}}>
-                        <Text style={styles.rowText}>Encryption</Text>
-                        <Text style={{ fontSize: 10, color: 'white' }}>Messages to this chat are secured with end to end encryption.</Text>
-                    </Body>
-                    <Right style={{borderBottomWidth:null}}>
-                        <Text style={styles.number}>On</Text>
-                        <Icon active name="ios-arrow-forward" />
-                    </Right>
-                </ListItem>
             </View>
         )
     }
@@ -208,10 +128,10 @@ class FriendProfile extends Component {
                             <Icon active name="people" />
                         </Button>
                     </Left>
-                    <Body style={{borderBottomWidth:null }}>
+                    <Body style={{ borderBottomWidth: null }}>
                         <Text style={styles.rowText}>Groups In Common</Text>
                     </Body>
-                    <Right style={{ borderBottomWidth:null }}>
+                    <Right style={{ borderBottomWidth: null }}>
                         <Text style={styles.number}>3</Text>
                         <Icon active name="ios-arrow-forward" />
                     </Right>
@@ -228,16 +148,18 @@ class FriendProfile extends Component {
                             <Icon active name="contact" />
                         </Button>
                     </Left>
-                    <Body style={{ borderBottomWidth:null}} noBorder>
+                    <Body style={{ borderBottomWidth: null }} noBorder>
                         <Text style={styles.rowText}>Contact Details</Text>
                     </Body>
-                    <Right style={{ borderBottomWidth:null }}>
+                    <Right style={{ borderBottomWidth: null }}>
                         <Icon active name="ios-arrow-forward" />
                     </Right>
                 </ListItem>
             </View>
         )
     }
+    _onDismissSnackBar = () => this.setState({ visible: false });
+
     render() {
         // Because of content inset the scroll value will be negative on iOS so bring
         // it back to 0.
@@ -246,8 +168,8 @@ class FriendProfile extends Component {
             Platform.OS === 'ios' ? HEADER_MAX_HEIGHT : 0,
         );
         const headerTranslate = scrollY.interpolate({
-            inputRange: [-HEADER_SCROLL_DISTANCE,0, HEADER_SCROLL_DISTANCE],
-            outputRange: [HEADER_SCROLL_DISTANCE,0, -HEADER_SCROLL_DISTANCE],
+            inputRange: [-HEADER_SCROLL_DISTANCE, 0, HEADER_SCROLL_DISTANCE],
+            outputRange: [HEADER_SCROLL_DISTANCE, 0, -HEADER_SCROLL_DISTANCE],
             extrapolate: 'clamp',
         });
 
@@ -265,41 +187,50 @@ class FriendProfile extends Component {
 
         return (
             <SafeAreaView style={styles.fill}>
-                <Animated.ScrollView
-                    style={styles.fill}
-                    scrollEventThrottle={1}
-                    onScroll={Animated.event(
-                        [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
-                        { useNativeDriver: true },
-                    )}
-                    contentInset={{
-                        top: HEADER_MAX_HEIGHT,
-                    }}
-                    contentOffset={{
-                        y: -HEADER_MAX_HEIGHT,
-                    }}
-                >
-                    {this._renderScrollViewContent()}
-                </Animated.ScrollView>
-                <Animated.View
-                    pointerEvents="none"
-                    style={[
-                        styles.header,
-                        { transform: [{ translateY: headerTranslate }] },
-                    ]}
-                >
-                    <Animated.Image
+                <ScrollView>
+                    <Animated.ScrollView
+                        style={styles.fill}
+                        scrollEventThrottle={1}
+                        onScroll={Animated.event(
+                            [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
+                            { useNativeDriver: true },
+                        )}
+                        contentInset={{
+                            top: HEADER_MAX_HEIGHT,
+                        }}
+                        contentOffset={{
+                            y: -HEADER_MAX_HEIGHT,
+                        }}
+                    >
+                        {this._renderScrollViewContent()}
+                    </Animated.ScrollView>
+                    <Animated.View
+                        pointerEvents="none"
                         style={[
-                            styles.backgroundImage,
-                            {
-                                opacity: imageOpacity,
-                                transform: [{ translateY: imageTranslate }],
-                            },
+                            styles.header,
+                            { transform: [{ translateY: headerTranslate }] },
                         ]}
-                        source={this.props.activeChat.IMAGE_PATH?{ uri: this.props.activeChat.IMAGE_PATH }:require('../../../../assets/placeholder_img.png')}
-                    />
+                    >
+                        <Animated.Image
+                            style={[
+                                styles.backgroundImage,
+                                {
+                                    opacity: imageOpacity,
+                                    transform: [{ translateY: imageTranslate }],
+                                },
+                            ]}
+                            source={(this.state.userDetail.large_pic != "") ? { uri: this.state.userDetail.large_pic } : require('../../../../assets/placeholder_img.png')}
+                        />
 
-                </Animated.View>
+                    </Animated.View>
+                </ScrollView>
+                <Snackbar
+                    duration={1000}
+                    style={{ backgroundColor: colors.lightcolor1, alignItems: 'center' }}
+                    visible={this.state.visible}
+                    onDismiss={this._onDismissSnackBar}>
+                    Failed to load Profile Data.
+                </Snackbar>
             </SafeAreaView>
         );
     }
