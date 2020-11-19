@@ -15,8 +15,9 @@ import BackButton from '../../../svg_components/BackButton';
 import colors from "../../../shared_styles/colors";
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 import styles from './FriendProfile.styles'
-import { Container, Header, Content, Button, ListItem, Icon, Left, Body, Right, Switch } from 'native-base';
+import { Container, Header, Content, Button, ListItem, Left, Body, Right, Switch } from 'native-base';
 import Logo from '../../../svg_components/Logo';
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import NetworkManager from '../../../../network/NetworkManager';
 import rest from '../../../../network/rest';
 import { Snackbar } from 'react-native-paper';
@@ -57,7 +58,7 @@ class FriendProfile extends Component {
             // phone: '918756463536'
         }
         NetworkManager.callAPI(rest.downloadContact_Phone, 'POST', data).then(result => {
-            if (result.contact!=null) {
+            if (result.contact != null) {
                 this.setState({
                     userDetail: result.contact
                 })
@@ -95,7 +96,7 @@ class FriendProfile extends Component {
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
 
                     <TouchableOpacity style={{ width: 30, height: 30, borderRadius: 20, backgroundColor: 'gray', alignItems: 'center', justifyContent: 'center' }}>
-                        <Icon onPress={() => this.props.navigation.goBack()} style={{ fontSize: 20, color: 'white' }} active name="text" />
+                        <Icon onPress={() => this.props.navigation.goBack()} size={20} color={'white'} name="textsms" />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -125,7 +126,7 @@ class FriendProfile extends Component {
                 <ListItem icon noBorder>
                     <Left>
                         <Button style={{ backgroundColor: "#007AFF" }}>
-                            <Icon active name="people" />
+                            <Icon color={"white"} name="group" size={18} />
                         </Button>
                     </Left>
                     <Body style={{ borderBottomWidth: null }}>
@@ -133,7 +134,7 @@ class FriendProfile extends Component {
                     </Body>
                     <Right style={{ borderBottomWidth: null }}>
                         <Text style={styles.number}>3</Text>
-                        <Icon active name="ios-arrow-forward" />
+                        <Icon color={"white"} name="arrow-forward" size={18} />
                     </Right>
                 </ListItem>
             </View>
@@ -145,14 +146,14 @@ class FriendProfile extends Component {
                 <ListItem icon>
                     <Left>
                         <Button style={{ backgroundColor: "#007AFF" }}>
-                            <Icon active name="contact" />
+                        <Icon color={"white"} name="perm-contact-calendar" size={18}/>
                         </Button>
                     </Left>
                     <Body style={{ borderBottomWidth: null }} noBorder>
                         <Text style={styles.rowText}>Contact Details</Text>
                     </Body>
                     <Right style={{ borderBottomWidth: null }}>
-                        <Icon active name="ios-arrow-forward" />
+                        <Icon color={"white"} name="arrow-forward" size={18} />
                     </Right>
                 </ListItem>
             </View>

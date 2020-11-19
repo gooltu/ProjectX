@@ -47,7 +47,7 @@ const NetworkUtil = async function (options, requireAuth) {
       
                   AsyncStorage.multiSet([['myid', myTokens.myid + ''], ['myphone', myTokens.myphone], ['token', myTokens.token], ['cookie', myTokens.cookie]])
                     .then(() => {
-                      store.dispatch(tokenLoad({ type: 'USER_TOKEN_LOADED', myTokens }));
+                      store.dispatch(({ type: 'USER_TOKEN_LOADED', myTokens }));
                     })
                 console.log(response)
             }).catch(error => {

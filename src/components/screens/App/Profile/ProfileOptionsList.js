@@ -5,7 +5,7 @@ import styles from './Profile.styles'
 import { renderJewel } from '../../../JCUtils/CommonUtils'
 import colors from "../../../shared_styles/colors";
 import Icon from 'react-native-vector-icons/FontAwesome5'
-import Icon1 from 'react-native-vector-icons/Ionicons'
+import Icon1 from 'react-native-vector-icons/MaterialIcons'
 
 const scrollBarData = [
     {
@@ -25,7 +25,7 @@ const scrollBarData = [
         'text': 'SHARE'
     },
     {
-        'image': <Icon1 name='md-settings' size={35} color='white' />,
+        'image': <Icon1 name='settings' size={35} color='white' />,
         'text': 'SETTINGS'
     }
    
