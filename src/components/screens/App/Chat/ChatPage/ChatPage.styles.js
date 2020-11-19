@@ -37,14 +37,14 @@ export default styles = StyleSheet.create({
     firstItemMainBar: {
         height: 24,
         width: 24,
-        backgroundColor: 'black',
+        // backgroundColor: 'black',
         marginLeft: 8,
         marginRight: 4
     },
     secondItem: {
         height: 24,
         width: 24,
-        backgroundColor: 'red',
+        // backgroundColor: 'red',
         marginLeft: 4,
         marginRight: 4
     },

@@ -37,7 +37,7 @@ export const getUserFactory = () => {
 
     return (dispatch, setState) => {
         dispatch(setIsLoading(true))
-        NetworkManager.callAPI(rest.getUserFactory, 'GET', null).then(result => {
+        NetworkManager.callAPI(rest.getUserFactory, 'POST', null).then(result => {
             console.log('userfactory result')
             console.log(result)
             dispatch(setUserFactory(result))

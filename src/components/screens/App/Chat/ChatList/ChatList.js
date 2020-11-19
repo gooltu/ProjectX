@@ -168,7 +168,7 @@ class ChatList extends React.Component {
               open={this.state.open}
               icon={this.state.open ? 'today' : 'add'}
               actions={[
-                { icon: 'email', label: 'New Group', color: 'white', style: { backgroundColor: colors.lightcolor2 }, onPress: () => console.log('Pressed email') },
+                { icon: 'group', label: 'New Group', color: 'white', style: { backgroundColor: colors.lightcolor2 }, onPress: () => this.props.navigation.navigate('CreateGroupScreen') },
                 { icon: 'phone', label: 'Contacts', color: 'white', style: { backgroundColor: colors.lightcolor2 }, onPress: () => this.props.navigation.navigate('Contacts') },
               ]}
               onStateChange={({ open }) => this.setState({ open })}

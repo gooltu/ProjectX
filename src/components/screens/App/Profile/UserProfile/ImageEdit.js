@@ -88,7 +88,7 @@ class ImageEdit extends React.Component {
     }
 
     updateInServer = (largePic, pic) => {
-        let data ={
+        let data = {
             "picbase64": pic,
             "pic_url": largePic
         }
@@ -138,13 +138,13 @@ class ImageEdit extends React.Component {
     render() {
         return (
             <SafeAreaView style={{ flex: 1, backgroundColor: colors.darkcolor1 }}>
-                <CustomLoader loading={this.state.isLoading}/>
+                <CustomLoader loading={this.state.isLoading} />
                 <ScrollView contentContainerStyle={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                    <Image style={{ width: 400, height: 400, alignItems: 'center', justifyContent: 'center' }} key={this.state.imagepath} source={this.state.imagepath!=null && this.state.imagepath!='' ? { uri: this.state.imagepath } : JCImages.placeholderImage} />
+                    <Image style={{ width: 400, height: 400, alignItems: 'center', justifyContent: 'center' }} key={this.state.imagepath} source={this.state.imagepath != null && this.state.imagepath != '' ? { uri: this.state.imagepath } : JCImages.placeholderImage} />
                 </ScrollView>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20 }}>
-                    <Button style={{ width: '45%', alignItems: 'center', justifyContent: 'center' }} primary><Text style={{ color: 'white' }}>CLEAR</Text></Button>
-                    <Button style={{ width: '45%', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.openImagePicker()} primary><Text style={{ color: 'white' }}>UPLOAD</Text></Button>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, paddingBottom: 20 }}>
+                    <Button style={{ width: '45%', alignItems: 'center', justifyContent: 'center', backgroundColor: colors.lightcolor2 }} primary><Text style={{ color: 'white' }}>CLEAR</Text></Button>
+                    <Button style={{ width: '45%', alignItems: 'center', justifyContent: 'center', backgroundColor: colors.lightcolor2 }} onPress={() => this.openImagePicker()} primary><Text style={{ color: 'white' }}>UPLOAD</Text></Button>
                 </View>
             </SafeAreaView>
         )

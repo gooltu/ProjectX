@@ -11,7 +11,7 @@ SQLite.enablePromise(true);
 let _jcdb
 
 export default {
-	getChats,getAllChatsGreaterThanEqual_ID, getChatList, updatePhoneContact, insertStropheChatData, insertAffiliations, updateDeliveryAndReadReceipt, getContactList,updatePickedJewel,
+	getChats, getAllChatsGreaterThanEqual_ID, getChatList, updatePhoneContact, insertStropheChatData, insertAffiliations, updateDeliveryAndReadReceipt, getContactList, updatePickedJewel,
 	updateLastMessageAndText, selectUnreadMessages, selectUnsendMessages, updateContact, insertContactData, checkIfRowExist, insertTeamJC
 };
 
@@ -74,31 +74,31 @@ function getChats(JID, offset, isgroupmsg) {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 
-				if( isgroupmsg == 0 || isgroupmsg == null ){
+				if (isgroupmsg == 0 || isgroupmsg == null) {
 					txn.executeSql('select * FROM ChatMessage a JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) b where a.CHAT_ROOM_JID ="' + JID + '" ORDER BY a._ID DESC LIMIT 20 OFFSET ' + offset)
-					.then((results) => {
-						console.log('QUERY COMPLETED for Chat room', offset );
-						console.log(results[1])
-						resolve(results[1].rows.raw())
-					})
-					.catch(err => {
-						reject(err)
-					})
-				}else{
-					txn.executeSql('select a.*, b.MAX_SEQUENCE, c.CONTACT_NAME as GROUP_NAME '+
-									'FROM ChatMessage a '+
-									'JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) b '+ 
-									'LEFT OUTER JOIN Contact c ON c.JID = a.CREATOR_JID '+
-									'where a.CHAT_ROOM_JID ="' + JID + '" ORDER BY a._ID DESC LIMIT 20 OFFSET ' + offset)
-					.then((results) => {
-						console.log('QUERY COMPLETED for Chat room', offset);
-						console.log(results[1])
-						resolve(results[1].rows.raw())
-					})
-					.catch(err => {
-						reject(err)
-					})
-				}	
+						.then((results) => {
+							console.log('QUERY COMPLETED for Chat room', offset);
+							console.log(results[1])
+							resolve(results[1].rows.raw())
+						})
+						.catch(err => {
+							reject(err)
+						})
+				} else {
+					txn.executeSql('select a.*, b.MAX_SEQUENCE, c.CONTACT_NAME as GROUP_NAME ' +
+						'FROM ChatMessage a ' +
+						'JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) b ' +
+						'LEFT OUTER JOIN Contact c ON c.JID = a.CREATOR_JID ' +
+						'where a.CHAT_ROOM_JID ="' + JID + '" ORDER BY a._ID DESC LIMIT 20 OFFSET ' + offset)
+						.then((results) => {
+							console.log('QUERY COMPLETED for Chat room', offset);
+							console.log(results[1])
+							resolve(results[1].rows.raw())
+						})
+						.catch(err => {
+							reject(err)
+						})
+				}
 			})
 		}).then(result => {
 		}).catch(err => {
@@ -108,46 +108,46 @@ function getChats(JID, offset, isgroupmsg) {
 }
 
 
-function getAllChatsGreaterThanEqual_ID(JID, _id, isgroupmsg ) {
+function getAllChatsGreaterThanEqual_ID(JID, _id, isgroupmsg) {
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 
-				if( isgroupmsg == 0 ){
+				if (isgroupmsg == 0) {
 					txn.executeSql('select * FROM ChatMessage JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) where CHAT_ROOM_JID = ? AND _ID >= ? ORDER BY _ID DESC', [JID, _id])
-					.then((results) => {
-						console.log(' f(getAllChatsGreaterThanEqual_ID) QUERY COMPLETED for Chat room', JID);
-						console.log(results[1])
-						// let chats = []
-						// for(let i=0;i<results.rows.length;i++){
-						// 	chats.push(results.rows.item(i))
-						// }
-						resolve(results[1].rows.raw())
-					})
-					.catch(err => {
-						reject(err)
-					})
-				}else{
+						.then((results) => {
+							console.log(' f(getAllChatsGreaterThanEqual_ID) QUERY COMPLETED for Chat room', JID);
+							console.log(results[1])
+							// let chats = []
+							// for(let i=0;i<results.rows.length;i++){
+							// 	chats.push(results.rows.item(i))
+							// }
+							resolve(results[1].rows.raw())
+						})
+						.catch(err => {
+							reject(err)
+						})
+				} else {
 
-					txn.executeSql('select a.*, b.MAX_SEQUENCE, c.CONTACT_NAME as GROUP_NAME FROM ChatMessage a '+
-									'JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) b '+
-									'LEFT OUTER JOIN Contact c ON c.JID = a.CREATOR_JID '+
-									'where a.CHAT_ROOM_JID = ? AND a._ID >= ? ORDER BY a._ID DESC', [JID, _id])
-					.then((results) => {
-						console.log(' f(getAllChatsGreaterThanEqual_ID) QUERY COMPLETED for Chat room', JID);
-						console.log(results[1])
-						// let chats = []
-						// for(let i=0;i<results.rows.length;i++){
-						// 	chats.push(results.rows.item(i))
-						// }
-						resolve(results[1].rows.raw())
-					})
-					.catch(err => {
-						reject(err)
-					})
+					txn.executeSql('select a.*, b.MAX_SEQUENCE, c.CONTACT_NAME as GROUP_NAME FROM ChatMessage a ' +
+						'JOIN (select MAX(SEQUENCE) as MAX_SEQUENCE from ChatMessage) b ' +
+						'LEFT OUTER JOIN Contact c ON c.JID = a.CREATOR_JID ' +
+						'where a.CHAT_ROOM_JID = ? AND a._ID >= ? ORDER BY a._ID DESC', [JID, _id])
+						.then((results) => {
+							console.log(' f(getAllChatsGreaterThanEqual_ID) QUERY COMPLETED for Chat room', JID);
+							console.log(results[1])
+							// let chats = []
+							// for(let i=0;i<results.rows.length;i++){
+							// 	chats.push(results.rows.item(i))
+							// }
+							resolve(results[1].rows.raw())
+						})
+						.catch(err => {
+							reject(err)
+						})
 
-				}	
+				}
 
 			})
 		}).then(result => {
@@ -163,17 +163,17 @@ function getChatList() {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 				txn.executeSql('select a._ID, a.MSG_TEXT, a.MSG_TYPE, b.UNREAD_COUNT, b.LAST_MSG_CREATED_TIME, a.CHAT_ROOM_JID, a.IS_GROUP_MSG, c.JID, c.SMALL_IMAGE, c.PHONEBOOK_CONTACT_NAME, c.CONTACT_NAME, c.JEWELCHAT_ID, c.IS_PHONEBOOK_CONTACT'
-				+ ' from ChatMessage a '
-				+ 'INNER JOIN ( '
-				+ 'select _ID, max(_ID) as MAX_ID, count(_ID) as UNREAD_COUNT, max(TIME_CREATED) as LAST_MSG_CREATED_TIME'
-				+ ' from ChatMessage'
-				+ ' where IS_READ = 0 AND SENDER_MSG_ID IS NOT NULL'
-				+ ' group by CHAT_ROOM_JID'
-				+ ' ) b ON a._ID = b.MAX_ID'
-				+ ' LEFT OUTER JOIN Contact c ON c.JID = a.CHAT_ROOM_JID '
-				+ ' order by b.LAST_MSG_CREATED_TIME DESC')				
+					+ ' from ChatMessage a '
+					+ 'INNER JOIN ( '
+					+ 'select _ID, max(_ID) as MAX_ID, count(_ID) as UNREAD_COUNT, max(TIME_CREATED) as LAST_MSG_CREATED_TIME'
+					+ ' from ChatMessage'
+					+ ' where IS_READ = 0 AND SENDER_MSG_ID IS NOT NULL'
+					+ ' group by CHAT_ROOM_JID'
+					+ ' ) b ON a._ID = b.MAX_ID'
+					+ ' LEFT OUTER JOIN Contact c ON c.JID = a.CHAT_ROOM_JID '
+					+ ' order by b.LAST_MSG_CREATED_TIME DESC')
 					.then((results) => {
-						console.log('Contact query COMPLETED for');						
+						console.log('Contact query COMPLETED for');
 						console.log(results[1].rows.raw());
 						let chatlist = results[1].rows.raw();
 						// for(let i=0;i<results.rows.length;i++){
@@ -269,17 +269,17 @@ function insertStropheChatData(data) {
 			jcdb.transaction((txn) => {
 				let sql; let q = ',?'
 				sql = "INSERT INTO ChatMessage "
-					+ "( " + Object.keys(data).join(', ') + " ) " 				
-					+ " VALUES (?"+ q.repeat( Object.keys(data).length - 1 ) + ")";
-				
+					+ "( " + Object.keys(data).join(', ') + " ) "
+					+ " VALUES (?" + q.repeat(Object.keys(data).length - 1) + ")";
+
 				txn.executeSql(sql, Object.values(data))
 					.then((results) => {
-					console.log('ChatMessage insert Query COMPLETED for');
-					console.log(results[1].insertId)
-					resolve(results[1].insertId)
-				}).catch(err => {
-					reject(err)
-				})
+						console.log('ChatMessage insert Query COMPLETED for');
+						console.log(results[1].insertId)
+						resolve(results[1].insertId)
+					}).catch(err => {
+						reject(err)
+					})
 			})
 		}).then(result => {
 		}).catch(error => {
@@ -300,25 +300,25 @@ function insertStropheChatData(data) {
 // 	MSG_TYPE: -1		
 // }
 
-function insertAffiliations(data) {	
-	
+function insertAffiliations(data) {
+
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 				let sql;
 				sql = "INSERT INTO ChatMessage "
-					+ "( " + Object.keys(data).join(', ') + " ) " 				
+					+ "( " + Object.keys(data).join(', ') + " ) "
 					+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				console.log(sql);
-				txn.executeSql(sql, Object.values(data) )
-				.then((results) => {
-					console.log('Affiliation insert Query COMPLETED for');
-					console.log(results[1].insertId)
-					resolve(results[1].insertId)
-				}).catch(err => {
-					reject(err)
-				})
+				txn.executeSql(sql, Object.values(data))
+					.then((results) => {
+						console.log('Affiliation insert Query COMPLETED for');
+						console.log(results[1].insertId)
+						resolve(results[1].insertId)
+					}).catch(err => {
+						reject(err)
+					})
 			})
 		}).then(result => {
 		}).catch(error => {
@@ -351,6 +351,7 @@ function updatePickedJewel(id, flag) {
 }
 
 function updateDeliveryAndReadReceipt(type, id, time) {
+	console.log(type, id, time)
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
 			jcdb = instance;
@@ -565,7 +566,7 @@ function insertTeamJC(data) {
 			jcdb.transaction((txn) => {
 				let sql = "INSERT INTO Contact " +
 					" (JID, CONTACT_NUMBER, IS_PHONEBOOK_CONTACT , PHONEBOOK_CONTACT_NAME, IS_REGIS, LAST_MSG_CREATED_TIME,MSG_TEXT,UNREAD_COUNT) " +
-					" VALUES (" + _handleString(data.JID) + "," + _handleString(data.CONTACT_NUMBER) + ", " + data.IS_PHONEBOOK_CONTACT + "," + _handleString(data.PHONEBOOK_CONTACT_NAME) + "," + data.IS_REGIS + "," + data.LAST_MSG_CREATED_TIME + "," + _handleString(data.MSG_TEXT) + ","+ data.UNREAD_COUNT +") "
+					" VALUES (" + _handleString(data.JID) + "," + _handleString(data.CONTACT_NUMBER) + ", " + data.IS_PHONEBOOK_CONTACT + "," + _handleString(data.PHONEBOOK_CONTACT_NAME) + "," + data.IS_REGIS + "," + data.LAST_MSG_CREATED_TIME + "," + _handleString(data.MSG_TEXT) + "," + data.UNREAD_COUNT + ") "
 				txn.executeSql(sql).then(val => {
 					resolve('Success')
 				}).catch(err => {
@@ -927,56 +928,56 @@ const chatList = [
 /*
 export const initLocalDatabase = () => {
 
-    return (dispatch, getState) => {
+	return (dispatch, getState) => {
 
-        //console.log('GET STATE');
-        //console.log(getState());
+		//console.log('GET STATE');
+		//console.log(getState());
 
-        dispatch({ type: 'INIT_DATABASE_START' })
+		dispatch({ type: 'INIT_DATABASE_START' })
 
-        SQLite.openDatabase({
-            name: 'jewelchat.db',
-            version: '1.0'
-        })
-        .then(instance => {
+		SQLite.openDatabase({
+			name: 'jewelchat.db',
+			version: '1.0'
+		})
+		.then(instance => {
 
-            jcdb = instance;
+			jcdb = instance;
 
-            jcdb.transaction((txn) => {
-                console.log('SQL')
-                console.log(SQL.Create_Contact)
+			jcdb.transaction((txn) => {
+				console.log('SQL')
+				console.log(SQL.Create_Contact)
 
-                let queries = [];
+				let queries = [];
 
-                let q = txn.executeSql(SQL.Create_Contact);
-                queries.push(q);
+				let q = txn.executeSql(SQL.Create_Contact);
+				queries.push(q);
 
-                q = txn.executeSql(SQL.Create_ChatMessage);
-                queries.push(q);
+				q = txn.executeSql(SQL.Create_ChatMessage);
+				queries.push(q);
 
-                Promise.all(queries).then( val => {
-                    console.log('PROMISE ALL')
-                    console.log(val)
-                    dispatch({ type: 'INIT_DATABASE_DONE', payload: { dbInit: 'DONE' } })
-                }).catch( err => {
-                    throw err;
-                })
-
-
-            }).then((result) =>{
-              console.log('Result:'+ result);
-            }).catch((err) => {
-                throw err;
-            })
+				Promise.all(queries).then( val => {
+					console.log('PROMISE ALL')
+					console.log(val)
+					dispatch({ type: 'INIT_DATABASE_DONE', payload: { dbInit: 'DONE' } })
+				}).catch( err => {
+					throw err;
+				})
 
 
+			}).then((result) =>{
+			  console.log('Result:'+ result);
+			}).catch((err) => {
+				throw err;
+			})
 
-        })
-        .catch( err => {
-            dispatch({ type: 'INIT_DATABASE_ERROR', payload: { dbInit: 'FAILED' } })
-        });
 
-    }
+
+		})
+		.catch( err => {
+			dispatch({ type: 'INIT_DATABASE_ERROR', payload: { dbInit: 'FAILED' } })
+		});
+
+	}
 
 
 }
@@ -984,35 +985,35 @@ export const initLocalDatabase = () => {
 
 
 function listProduct() {
-    return new Promise((resolve) => {
-        const products = [];
-        this.initDB().then((db) => {
-            db.transaction((tx) => {
-                tx.executeSql('SELECT p.prodId, p.prodName, p.prodImage FROM Product p', []).then(([tx, results]) => {
-                    console.log("Query completed");
-                    var len = results.rows.length;
-                    for (let i = 0; i < len; i++) {
-                        let row = results.rows.item(i);
-                        console.log(`Prod ID: ${row.prodId}, Prod Name: ${row.prodName}`)
-                        const { prodId, prodName, prodImage } = row;
-                        products.push({
-                            prodId,
-                            prodName,
-                            prodImage
-                        });
-                    }
-                    console.log(products);
-                    resolve(products);
-                });
-            }).then((result) => {
-                this.closeDatabase(db);
-            }).catch((err) => {
-                console.log(err);
-            });
-        }).catch((err) => {
-            console.log(err);
-        });
-    });
+	return new Promise((resolve) => {
+		const products = [];
+		this.initDB().then((db) => {
+			db.transaction((tx) => {
+				tx.executeSql('SELECT p.prodId, p.prodName, p.prodImage FROM Product p', []).then(([tx, results]) => {
+					console.log("Query completed");
+					var len = results.rows.length;
+					for (let i = 0; i < len; i++) {
+						let row = results.rows.item(i);
+						console.log(`Prod ID: ${row.prodId}, Prod Name: ${row.prodName}`)
+						const { prodId, prodName, prodImage } = row;
+						products.push({
+							prodId,
+							prodName,
+							prodImage
+						});
+					}
+					console.log(products);
+					resolve(products);
+				});
+			}).then((result) => {
+				this.closeDatabase(db);
+			}).catch((err) => {
+				console.log(err);
+			});
+		}).catch((err) => {
+			console.log(err);
+		});
+	});
 }
 
 */

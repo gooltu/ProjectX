@@ -21,6 +21,7 @@ import CustomLoader from '../../shared_components/CustomLoader';
 import axios from 'axios'
 import { createDatabaseTables } from "../../../db/localdatabase";
 import actions from '../../../actions';
+import rest from '../../../network/rest';
 
 
 class EnterOTP extends React.Component {
@@ -64,7 +65,7 @@ class EnterOTP extends React.Component {
       this.setState({ networkloading: true })
       axios({
         method: 'post',
-        url: 'https://testjc1984.herokuapp.com/resendVcode',
+        url: 'http://serverprojectx-env.eba-phwjizve.ap-south-1.elasticbeanstalk.com/resendVcode',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
@@ -115,7 +116,7 @@ class EnterOTP extends React.Component {
       this.setState({ networkloading: true })
       axios({
         method: 'post',
-        url: 'https://testjc1984.herokuapp.com/verifyCode',
+        url: 'http://serverprojectx-env.eba-phwjizve.ap-south-1.elasticbeanstalk.com/verifyCode',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
@@ -126,31 +127,35 @@ class EnterOTP extends React.Component {
         },
       })
         .then((response) => {
-          console.log(response)
-          let responseheader = response.headers;
-          console.log(responseheader)
-          let cookie = responseheader["jc-cookie"];
-          global.cookie = cookie
-          console.log(cookie)
-          let token = cookie.split('=')[1];
-          console.log(token)
-          let myTokens = {
-            myid: this.state.userId,
-            myphone: this.state.phone,
-            cookie,
-            token
-          };
+          let refreshToken = response.data.refreshToken
+          console.log(response.data.refreshToken)
+          axios.post(rest.baseURL + rest.getAccessToken,
+            { "refreshToken": response.data.refreshToken },
+          ).then(response => {
+            console.log(response.data.accessToken)
+            global.cookie = response.data.accessToken
+            let cookie = response.data.accessToken
+            let token = refreshToken
+            let myTokens = {
+              myid: this.state.userId,
+              myphone: this.state.phone,
+              cookie,
+              token
+            };
 
-          AsyncStorage.multiSet([['myid', myTokens.myid + ''], ['myphone', myTokens.myphone], ['token', myTokens.token], ['cookie', myTokens.cookie]])
-            .then(() => {
-              this.props.tokenLoad(myTokens);
-              this.setState({ networkloading: false })
-              if (!response.data.error) {
-                this.props.navigation.navigate('EnterDetails', response.data);
-              } else
-                throw (new Error(error.message))
-            })
+            AsyncStorage.multiSet([['myid', myTokens.myid + ''], ['myphone', myTokens.myphone], ['token', myTokens.token], ['cookie', myTokens.cookie]])
+              .then(() => {
+                this.props.tokenLoad(myTokens);
+                this.setState({ networkloading: false })
+                if (!response.data.error) {
+                  this.props.navigation.navigate('EnterDetails', response.data);
+                } else
+                  throw (new Error(error.message))
+              })
 
+          }).catch(error => {
+            console.log(error)
+          })
         })
         .catch((error) => {
           this.setState({ networkloading: false })

@@ -64,7 +64,7 @@ export default styles = StyleSheet.create({
         flexDirection: 'row'
     },
     transferTextContainer: {
-        width: '30%',
+        width: '25%',
         alignItems: 'center',
         justifyContent: 'center'
     },

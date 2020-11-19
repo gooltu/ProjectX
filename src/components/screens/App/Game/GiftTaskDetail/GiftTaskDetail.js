@@ -19,7 +19,6 @@ import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
 import color from '../../../../shared_styles/colors'
 import XP from '../../../../svg_components/XP';
-import { FlatList } from 'react-native-gesture-handler';
 import JCImages from '../../../../../assets/JCImages'
 import { renderJewel } from '../../../../JCUtils/CommonUtils';
 import Icon from 'react-native-vector-icons/FontAwesome'

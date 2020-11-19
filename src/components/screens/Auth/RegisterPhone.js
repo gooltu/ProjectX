@@ -72,7 +72,7 @@ export default class RegisterPhone extends React.Component {
 
       axios({
         method: 'post', 
-        url:'https://testjc1984.herokuapp.com/registerPhoneNumber', 
+        url:'http://serverprojectx-env.eba-phwjizve.ap-south-1.elasticbeanstalk.com/registerPhoneNumber', 
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',

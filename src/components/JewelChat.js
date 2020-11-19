@@ -52,6 +52,7 @@ import { realtimeConnect, realtimeDisconnect } from "../network/realtime"
 import actions from '../actions'
 import ContactsScreen from '../components/screens/App/Contacts/Contacts'
 
+import CreateGroupScreen from '../components/screens/App/CreateGroup/CreateGroupScreen'
 
 const MainTabs = createBottomTabNavigator({
 
@@ -245,6 +246,14 @@ const AppMainStack = createStackNavigator({
         navigationOptions: ({ navigation }) => {
             return {
                 header: <CustomHeader navigation={navigation} title='Referrals'/>
+            };
+        }
+    },
+    CreateGroupScreen: {
+        screen: CreateGroupScreen,
+        navigationOptions: ({ navigation }) => {
+            return {
+                header: <CustomHeader navigation={navigation} title='Create New Group'/>
             };
         }
     }

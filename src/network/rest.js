@@ -1,8 +1,8 @@
 export default {
-    baseURL: 'https://testjc1984.herokuapp.com',
+    baseURL: 'http://serverprojectx-env.eba-phwjizve.ap-south-1.elasticbeanstalk.com',
     TIMEOUT_DURATION: 120000,
     enterOTP: '/resendVcode',
-    initialDetails:'/initialDetails',
+    initialDetails: '/initialDetails',
     downloadContact: '/downloadContact',
     downloadContact_Phone: '/downloadContact_Phone',
     inviteUser: '/inviteUser',
@@ -39,7 +39,9 @@ export default {
     transferJewelsFromFactory: '/transferJewelsFromFactory',
     flushFactory: '/flushFactory',
     getWalletJewelPrices: '/getWalletJewelPrices',
-    buyJewelsFromWallet: '/buyJewelsFromWallet'
+    buyJewelsFromWallet: '/buyJewelsFromWallet',
+    getAccessToken: '/getAccessToken'// POST
+    //refreshToken: 'REFRESH_TOKEN' 
 }
 
 

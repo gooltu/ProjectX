@@ -28,6 +28,7 @@ import JCTextInput from "../../../../../utilities/JCTextInput/JCTextInput";
 import { connect } from 'react-redux';
 import colors from "../../../../shared_styles/colors";
 import Icon1 from 'react-native-vector-icons/MaterialIcons'
+import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { getConnectionObj } from '../../../../../network/realtime';
 import { sendReply, sendSubscriptionRequest } from '../../../../../network/realtime'
@@ -131,7 +132,8 @@ class MainChatBar extends React.Component {
 
       sendOutgoingMessage(outgoingMessage)
         .then(() => {
-          db.updateDeliveryAndReadRecipt('Submit', _id, createdDateTime).then(status => {
+          db.updateDeliveryAndReadReceipt('Submit', _id, createdDateTime.fulltime).then(status => {
+            console.log('status', status)
             this.props.updateChatPageRedux();
             this.props.updateChatlistRedux();
           })
@@ -150,7 +152,7 @@ class MainChatBar extends React.Component {
     return (
       <View style={this.state.chatbarstyle}>
         <View style={styles.mainBarConatiner}>
-          <TouchableOpacity style={styles.firstItemMainBar}></TouchableOpacity>
+          <TouchableOpacity style={styles.firstItemMainBar}><Icon2 name="sticker-emoji" color={'white'} size={24} /></TouchableOpacity>
           {Platform.OS === 'ios' && <TextInput
             placeholder="Type here"
             placeholderTextColor="white"
@@ -185,7 +187,7 @@ class MainChatBar extends React.Component {
             //value={value}                    
             onContentSizeChange={(e) => this.updateChatTextboxHeight(e.nativeEvent.contentSize.height)}
           />}
-          {this.state.chatboxempty && <TouchableOpacity style={styles.secondItem}></TouchableOpacity>}
+          {this.state.chatboxempty && <TouchableOpacity style={styles.secondItem}><Icon1 name="photo-camera" color={'white'} size={24} /></TouchableOpacity>}
           {this.state.chatboxempty && <TouchableOpacity style={styles.thirdItem}></TouchableOpacity>}
           {!this.state.chatboxempty && <TouchableOpacity onPress={() => {
             this.sendMessage();
@@ -213,6 +215,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     sendReply: (message, JID, type = 'normal', parent = null) => dispatch(sendReply(message, JID, type, parent)),
+    // sendOutgoingMessage: (message) => dispatch(sendOutgoingMessage(message)),
     sendSubscriptionRequest: (JID) => dispatch(sendSubscriptionRequest(JID)),
     updateChatPageRedux: () => dispatch(updateChatPageRedux()),
     updateChatlistRedux: () => dispatch(updateChatlistRedux())
