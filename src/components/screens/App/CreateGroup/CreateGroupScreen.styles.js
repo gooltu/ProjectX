@@ -91,5 +91,17 @@ export default styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
         fontWeight: '600'
+    },
+    chatBox: {
+        height: 48,
+        width: 48,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderColor: 'white',
+        borderRadius: 24,
+        marginTop: 8,
+        marginRight: 8,
+        borderWidth: StyleSheet.hairlineWidth,
+        overflow: 'hidden'
     }
 })

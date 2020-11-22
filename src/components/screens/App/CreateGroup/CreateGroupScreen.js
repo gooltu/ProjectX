@@ -4,7 +4,7 @@ import {
     ImageBackground,
     TouchableOpacity,
     StatusBar,
-    StyleSheet,
+    ScrollView,
     FlatList,
     View,
     Text,
@@ -23,6 +23,7 @@ import actions from '../../../../actions/index'
 import { CheckBox } from 'native-base'
 import Icon1 from 'react-native-vector-icons/MaterialIcons'
 import { sendReply, sendReadReceipt, sendSubscriptionRequest } from '../../../../network/realtime'
+import Icon from 'react-native-vector-icons/FontAwesome5'
 
 
 class CreateGroupScreen extends React.Component {
@@ -48,7 +49,7 @@ class CreateGroupScreen extends React.Component {
         this.getContactsCallback()
     }
     getContactsCallback = () => {
-        db.getContactList('Forward').then(results => {
+        db.getContactList('random').then(results => {
             let chatList = []
             for (let i = 0; i < results.rows.length; i++) {
                 chatList.push(results.rows.item(i))
@@ -137,28 +138,31 @@ class CreateGroupScreen extends React.Component {
                     keyExtractor={item => item._ID + ''}
                 />
                 {this.state.selectedCount > 0 ?
-                    <View style={{ paddingHorizontal: 20, backgroundColor: colors.darkcolor2, justifyContent: 'space-between', flexDirection: 'row' }}>
-                        <View style={{ paddingBottom: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                    <View style={{ paddingHorizontal: 10, justifyContent: 'space-between', borderTopWidth: 0.5, borderTopColor: colors.jcgray, flexDirection: 'row' }}>
+                        <ScrollView horizontal={true} contentContainerStyle={{ paddingBottom: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                             {Object.values(this.state.selectedContacts).map((item, index) =>
                                 <View>
-                                    {index == 0 ?
-                                        <Text style={{ color: 'white' }}>{item.data.PHONEBOOK_CONTACT_NAME ? item.data.PHONEBOOK_CONTACT_NAME : '+' + item.data.CONTACT_NUMBER}</Text>
+                                    {item.data.IMAGE_PATH ?
+                                        <View style={{ flexDirection: 'column' }}>
+                                            <Image source={{ uri: item.data.IMAGE_PATH }} />
+                                            <Text maxLength={10} style={{ color: 'white' }}>{item.data.PHONEBOOK_CONTACT_NAME ? item.data.PHONEBOOK_CONTACT_NAME.length > 8 ? item.data.PHONEBOOK_CONTACT_NAME.substring(0, 8) + '...' : item.data.PHONEBOOK_CONTACT_NAME : '+' + item.data.CONTACT_NUMBER}</Text>
+                                        </View>
                                         :
-                                        <Text style={{ color: 'white' }}>{item.data.PHONEBOOK_CONTACT_NAME ? ', ' + item.data.PHONEBOOK_CONTACT_NAME : ', +' + item.data.CONTACT_NUMBER}</Text>
+                                        <View style={{ flexDirection: 'column' }}>
+                                            <View style={styles.chatBox}>
+                                                <Icon name='user' color={colors.jcgray} size={24} solid />
+                                            </View>
+                                            <Text style={{ color: 'white', fontSize: 10 }}>{item.data.PHONEBOOK_CONTACT_NAME ? item.data.PHONEBOOK_CONTACT_NAME.length > 8 ? item.data.PHONEBOOK_CONTACT_NAME.substring(0, 8) + '...' : item.data.PHONEBOOK_CONTACT_NAME : '+' + item.data.CONTACT_NUMBER}</Text>
+                                        </View>
                                     }
                                 </View>
                             )
                             }
-                        </View>
+                        </ScrollView>
 
                         <TouchableOpacity onPress={() => {
-                            // this.messages.map((item, index) => {
-                            //     Object.values(this.state.selectedContacts).map((contact, ContactIndex) => {
-                            //         // this.props.sendReply(item.data.MSG_TEXT, contact.data.JID, 'forward')
-                            //     })
-                            // })
-                            console.log('rgoup Created')
-                        }} style={{ alignItems: 'center', justifyContent: 'center' }}><Icon1 style={{ padding: 10 }} name='send' size={25} color='white' /></TouchableOpacity>
+                            this.props.navigation.navigate('NewGroupScreen', { members: this.state.selectedContacts })
+                        }} style={{ alignItems: 'center', justifyContent: 'center' }}><Icon style={{ paddingLeft: 10 }} name='arrow-circle-right' size={35} color={colors.lightcolor1} /></TouchableOpacity>
                     </View>
                     : null}
                 <StatusBar barStyle="light-content" hidden={false} translucent={true} />
