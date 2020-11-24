@@ -1,13 +1,13 @@
 import colors from "../../../shared_styles/colors";
 import {
-   
+
     StyleSheet,
-   
+
 } from 'react-native';
-const HEADER_MAX_HEIGHT = 300;
+const HEADER_MAX_HEIGHT = 200;
 const HEADER_MIN_HEIGHT = 0;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
-export default  styles = StyleSheet.create({
+export default styles = StyleSheet.create({
     fill: {
         flex: 1,
         backgroundColor: colors.darkcolor2
@@ -25,14 +25,15 @@ export default  styles = StyleSheet.create({
         height: HEADER_MAX_HEIGHT
     },
     backgroundImage: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        width: null,
+        //  position: 'absolute',
+        // top: 0,
+        // left: 0,
+        // right: 0,
+        borderRadius: 100,
+        width: HEADER_MAX_HEIGHT,
         height: HEADER_MAX_HEIGHT,
         resizeMode: 'cover',
-       
+
     },
     bar: {
         backgroundColor: 'transparent',
@@ -45,16 +46,16 @@ export default  styles = StyleSheet.create({
         color: 'white',
         fontWeight: '500'
     },
-    statusMessage:{
+    statusMessage: {
         fontSize: 14,
         color: 'white',
         fontWeight: '400'
     },
-    ContactNumber:{
+    ContactNumber: {
         fontSize: 12,
         color: 'lightgray',
     },
-    number:{
+    number: {
         fontSize: 14,
         color: 'lightgray',
     },
@@ -69,7 +70,7 @@ export default  styles = StyleSheet.create({
     },
     scrollViewContent: {
         paddingTop: Platform.OS !== 'ios' ? HEADER_MAX_HEIGHT : 0,
-       backgroundColor: colors.darkcolor1
+        backgroundColor: colors.darkcolor1
     },
     row: {
         height: 40,
@@ -78,15 +79,15 @@ export default  styles = StyleSheet.create({
         // alignItems: 'center',
         // justifyContent: 'center',
     },
-    contact:{ 
+    contact: {
         paddingHorizontal: 15,
         paddingVertical: 10,
-        flexDirection: 'row', 
-        justifyContent: 'space-between' 
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     },
-    rowText:{
+    rowText: {
         fontSize: 14,
         fontWeight: '400',
-        color:'white'
+        color: 'white'
     }
 });

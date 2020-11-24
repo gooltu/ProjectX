@@ -6,6 +6,7 @@ import {
     StyleSheet,
     Text,
     View,
+    Image,
     TouchableOpacity,
     RefreshControl,
     SafeAreaView
@@ -55,7 +56,7 @@ class FriendProfile extends Component {
     getContactInfo = () => {
         let data = {
             phone: (this.props.activeChat.CHAT_ROOM_JID).split('@')[0]
-            // phone: '918756463536'
+          //   phone: '918756463536'
         }
         NetworkManager.callAPI(rest.downloadContact_Phone, 'POST', data).then(result => {
             if (result.contact != null) {
@@ -106,8 +107,8 @@ class FriendProfile extends Component {
         return (
             <View style={styles.contact}>
                 <View style={{ flexDirection: 'column' }}>
+                    <Text style={styles.ContactNumber}>STATUS</Text>
                     <Text style={styles.statusMessage}>{this.state.userDetail.status}</Text>
-                    <Text style={styles.ContactNumber}>last modified 11:58 PM</Text>
                 </View>
             </View>
         )
@@ -146,7 +147,7 @@ class FriendProfile extends Component {
                 <ListItem icon>
                     <Left>
                         <Button style={{ backgroundColor: "#007AFF" }}>
-                        <Icon color={"white"} name="perm-contact-calendar" size={18}/>
+                            <Icon color={"white"} name="perm-contact-calendar" size={18} />
                         </Button>
                     </Left>
                     <Body style={{ borderBottomWidth: null }} noBorder>
@@ -164,67 +165,41 @@ class FriendProfile extends Component {
     render() {
         // Because of content inset the scroll value will be negative on iOS so bring
         // it back to 0.
-        const scrollY = Animated.add(
-            this.state.scrollY,
-            Platform.OS === 'ios' ? HEADER_MAX_HEIGHT : 0,
-        );
-        const headerTranslate = scrollY.interpolate({
-            inputRange: [-HEADER_SCROLL_DISTANCE, 0, HEADER_SCROLL_DISTANCE],
-            outputRange: [HEADER_SCROLL_DISTANCE, 0, -HEADER_SCROLL_DISTANCE],
-            extrapolate: 'clamp',
-        });
+        // const scrollY = Animated.add(
+        //     this.state.scrollY,
+        //     Platform.OS === 'ios' ? HEADER_MAX_HEIGHT : 0,
+        // );
+        // const headerTranslate = scrollY.interpolate({
+        //     inputRange: [-HEADER_SCROLL_DISTANCE, 0, HEADER_SCROLL_DISTANCE],
+        //     outputRange: [HEADER_SCROLL_DISTANCE, 0, -HEADER_SCROLL_DISTANCE],
+        //     extrapolate: 'clamp',
+        // });
 
 
-        const imageOpacity = scrollY.interpolate({
-            inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
-            outputRange: [1, 1, 0],
-            extrapolate: 'clamp',
-        });
-        const imageTranslate = scrollY.interpolate({
-            inputRange: [0, HEADER_SCROLL_DISTANCE],
-            outputRange: [0, 100],
-            extrapolate: 'clamp',
-        });
+        // const imageOpacity = scrollY.interpolate({
+        //     inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
+        //     outputRange: [1, 1, 0],
+        //     extrapolate: 'clamp',
+        // });
+        // const imageTranslate = scrollY.interpolate({
+        //     inputRange: [0, HEADER_SCROLL_DISTANCE],
+        //     outputRange: [0, 100],
+        //     extrapolate: 'clamp',
+        // });
 
         return (
             <SafeAreaView style={styles.fill}>
                 <ScrollView>
-                    <Animated.ScrollView
-                        style={styles.fill}
-                        scrollEventThrottle={1}
-                        onScroll={Animated.event(
-                            [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
-                            { useNativeDriver: true },
-                        )}
-                        contentInset={{
-                            top: HEADER_MAX_HEIGHT,
-                        }}
-                        contentOffset={{
-                            y: -HEADER_MAX_HEIGHT,
-                        }}
-                    >
-                        {this._renderScrollViewContent()}
-                    </Animated.ScrollView>
-                    <Animated.View
-                        pointerEvents="none"
-                        style={[
-                            styles.header,
-                            { transform: [{ translateY: headerTranslate }] },
-                        ]}
-                    >
-                        <Animated.Image
-                            style={[
-                                styles.backgroundImage,
-                                {
-                                    opacity: imageOpacity,
-                                    transform: [{ translateY: imageTranslate }],
-                                },
-                            ]}
-                            source={(this.state.userDetail.large_pic != "") ? { uri: this.state.userDetail.large_pic } : require('../../../../assets/placeholder_img.png')}
+                    <View style={{ alignItems: 'center', marginVertical: 30 }}>
+                        <Image
+                            style={styles.backgroundImage}
+                            key={this.state.userDetail.phone} 
+                            source={{ uri: rest.imageBaseURL + this.state.userDetail.phone + '.jpeg' }}
                         />
-
-                    </Animated.View>
+                    </View>
+                    {this._renderScrollViewContent()}
                 </ScrollView>
+
                 <Snackbar
                     duration={1000}
                     style={{ backgroundColor: colors.lightcolor1, alignItems: 'center' }}

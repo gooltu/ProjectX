@@ -211,7 +211,8 @@ function mapStateToProps(state) {
   return {
     userachievements: state.userachievements.userachivements,
     achievements: state.achievements.achievements,
-    game: state.game
+    game: state.game,
+    mytoken: state.mytoken
   };
 }
 

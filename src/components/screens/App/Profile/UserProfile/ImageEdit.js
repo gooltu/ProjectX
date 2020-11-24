@@ -79,27 +79,13 @@ class ImageEdit extends React.Component {
             });
             upload.send((err, data) => {
                 console.log(err, data);
-                this.updateInServer(data.Location, pic)
+                //  this.updateInServer(data.Location, pic)
                 this.setState({
-                    imagepath: data.Location
+                    imagepath: data.Location,
+                    isLoading: false
                 })
             });
         });
-    }
-
-    updateInServer = (largePic, pic) => {
-        let data = {
-            "picbase64": pic,
-            "pic_url": largePic
-        }
-        NetworkManager.callAPI(rest.updateProfilepic, 'POST', data).then((responseJson) => {
-            console.log(responseJson)
-            this.setState({
-                isLoading: false
-            })
-        }).catch((error) => {
-            console.log(error)
-        })
     }
     openImagePicker() {
         ImagePicker.openPicker({
@@ -109,10 +95,6 @@ class ImageEdit extends React.Component {
             includeBase64: true,
             compressImageQuality: 0.5
         }).then(image => {
-            console.log(image);
-            // this.setState({
-            //     imagepath: image.path
-            // })
             this.crop(image.path, image)
         })
     }
@@ -140,7 +122,7 @@ class ImageEdit extends React.Component {
             <SafeAreaView style={{ flex: 1, backgroundColor: colors.darkcolor1 }}>
                 <CustomLoader loading={this.state.isLoading} />
                 <ScrollView contentContainerStyle={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                    <Image style={{ width: 400, height: 400, alignItems: 'center', justifyContent: 'center' }} key={this.state.imagepath} source={this.state.imagepath != null && this.state.imagepath != '' ? { uri: this.state.imagepath } : JCImages.placeholderImage} />
+                    <Image style={{ width: 400, height: 400, alignItems: 'center', justifyContent: 'center' }} key={this.state.imagepath} source={{ uri: rest.imageBaseURL + this.props.mytoken.myphone + '.jpeg' }} />
                 </ScrollView>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, paddingBottom: 20 }}>
                     <Button style={{ width: '45%', alignItems: 'center', justifyContent: 'center', backgroundColor: colors.lightcolor2 }} primary><Text style={{ color: 'white' }}>CLEAR</Text></Button>

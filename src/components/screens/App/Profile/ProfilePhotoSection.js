@@ -82,7 +82,7 @@ class ProfilePhotoSection extends React.Component {
                             </View>
                         </View>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate('UserProfile')}>
-                            <Image style={styles.ProfilePicture} key={this.state.imagepath} resizeMode="contain" source={this.state.imagepath ? { uri: this.state.imagepath } : JCImages.placeholderImage} />
+                            <Image style={styles.ProfilePicture} key={this.state.imagepath} resizeMode="contain" source={{ uri: rest.imageBaseURL + this.props.mytoken.myphone + '.jpeg' }}/>
                         </TouchableOpacity>
                         <View style={styles.SecondDiamond}>
                             <View style={styles.mainRightLayout}>
