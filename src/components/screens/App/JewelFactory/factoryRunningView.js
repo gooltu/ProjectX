@@ -102,7 +102,7 @@ class factoryRunningview extends React.Component {
                     </Animated.View>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                    <Icon name='clock-o' color='white' size={25} /><Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold', paddingLeft: 7 }}>{this.msToTime(this.state.curTime)}</Text>
+                    <Icon name='clock-o' color='white' size={25} /><Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold', paddingLeft: 7 }}>{this.state.curTime!=''?this.msToTime(this.state.curTime):''}</Text>
                 </View>
                 <TouchableOpacity
                     disabled={this.state.isLoading || this.props.factory[this.props.index].diamond > this.props.game.jewels[0].count}

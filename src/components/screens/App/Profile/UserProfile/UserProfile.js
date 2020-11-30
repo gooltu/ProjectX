@@ -119,7 +119,7 @@ class UserProfile extends React.Component {
             <SafeAreaView style={styles.mainContainer}>
                 <ScrollView>
                     <TouchableOpacity style={{ paddingTop: 30, alignItems: 'center', justifyContent: 'center' }} onPress={() => this.props.navigation.navigate('ImageEdit')}>
-                        <Image style={{ width: 150, height: 150, borderRadius: 75, alignItems: 'center', justifyContent: 'center' }} key={this.state.imagepath} source={{ uri: rest.imageBaseURL + this.props.mytoken.myphone + '.jpeg' }} />
+                        <Image style={{ width: 150, height: 150, borderRadius: 75, alignItems: 'center', justifyContent: 'center' }} key={this.state.imagepath} source={{ uri: rest.imageBaseURL + this.props.mytoken.myphone + '.jpeg?time=' + new Date() }} />
                         <TouchableOpacity style={{ marginLeft: 100, top: -30, width: 40, height: 40, backgroundColor: colors.darkcolor1, alignItems: 'center', justifyContent: 'center', borderRadius: 20 }} onPress={() => this.props.navigation.navigate('ImageEdit')}>
                             <Icon name='edit' size={22} color='white' />
                         </TouchableOpacity>

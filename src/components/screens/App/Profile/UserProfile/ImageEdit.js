@@ -122,7 +122,7 @@ class ImageEdit extends React.Component {
             <SafeAreaView style={{ flex: 1, backgroundColor: colors.darkcolor1 }}>
                 <CustomLoader loading={this.state.isLoading} />
                 <ScrollView contentContainerStyle={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                    <Image style={{ width: 400, height: 400, alignItems: 'center', justifyContent: 'center' }} key={this.state.imagepath} source={{ uri: rest.imageBaseURL + this.props.mytoken.myphone + '.jpeg' }} />
+                    <Image style={{ width: 400, height: 400, alignItems: 'center', justifyContent: 'center' }} key={this.state.imagepath} source={{ uri: rest.imageBaseURL + this.props.mytoken.myphone +'.jpeg?time=' + new Date() }} />
                 </ScrollView>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, paddingBottom: 20 }}>
                     <Button style={{ width: '45%', alignItems: 'center', justifyContent: 'center', backgroundColor: colors.lightcolor2 }} primary><Text style={{ color: 'white' }}>CLEAR</Text></Button>

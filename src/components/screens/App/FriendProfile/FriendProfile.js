@@ -8,9 +8,9 @@ import {
     View,
     Image,
     TouchableOpacity,
-    RefreshControl,
-    SafeAreaView
+    RefreshControl
 } from 'react-native';
+import { SafeAreaView } from 'react-navigation'
 import { connect } from 'react-redux';
 import BackButton from '../../../svg_components/BackButton';
 import colors from "../../../shared_styles/colors";
@@ -56,7 +56,7 @@ class FriendProfile extends Component {
     getContactInfo = () => {
         let data = {
             phone: (this.props.activeChat.CHAT_ROOM_JID).split('@')[0]
-          //   phone: '918756463536'
+            //   phone: '918756463536'
         }
         NetworkManager.callAPI(rest.downloadContact_Phone, 'POST', data).then(result => {
             if (result.contact != null) {
@@ -95,10 +95,7 @@ class FriendProfile extends Component {
                     <Text style={styles.ContactNumber}>+{(this.props.activeChat.CHAT_ROOM_JID).split('@')[0]}</Text>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-
-                    <TouchableOpacity style={{ width: 30, height: 30, borderRadius: 20, backgroundColor: 'gray', alignItems: 'center', justifyContent: 'center' }}>
-                        <Icon onPress={() => this.props.navigation.goBack()} size={20} color={'white'} name="textsms" />
-                    </TouchableOpacity>
+                    <Icon onPress={() => this.props.navigation.goBack()} size={25} color={'white'} name="textsms" />
                 </View>
             </View>
         )
@@ -193,8 +190,8 @@ class FriendProfile extends Component {
                     <View style={{ alignItems: 'center', marginVertical: 30 }}>
                         <Image
                             style={styles.backgroundImage}
-                            key={this.state.userDetail.phone} 
-                            source={{ uri: rest.imageBaseURL + this.state.userDetail.phone + '.jpeg' }}
+                            key={this.state.userDetail.phone}
+                            source={{ uri: rest.imageBaseURL + this.state.userDetail.phone + '.jpeg?time=' + new Date() }}
                         />
                     </View>
                     {this._renderScrollViewContent()}

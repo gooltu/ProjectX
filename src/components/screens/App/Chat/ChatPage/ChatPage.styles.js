@@ -51,7 +51,7 @@ export default styles = StyleSheet.create({
     thirdItem: {
         height: 24,
         width: 24,
-        backgroundColor: 'red',
+     //   backgroundColor: 'red',
         marginLeft: 4,
         marginRight: 8
     },

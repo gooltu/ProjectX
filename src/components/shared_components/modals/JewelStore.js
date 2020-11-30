@@ -20,10 +20,10 @@ import JCImages from '../../../assets/JCImages';
 import actions from '../../../actions';
 import { InterstitialAd, RewardedAd, RewardedAdEventType, BannerAdSize, BannerAd, TestIds } from '@react-native-firebase/admob';
 
-// const rewarded = RewardedAd.createForAdRequest(TestIds.REWARDED, {
-//     requestNonPersonalizedAdsOnly: true,
-//     keywords: ['fashion', 'clothing'],
-// });
+const rewarded = RewardedAd.createForAdRequest(TestIds.REWARDED, {
+    requestNonPersonalizedAdsOnly: true,
+    keywords: ['fashion', 'clothing'],
+});
 
 class JewelStore extends React.Component {
     constructor(props) {
@@ -31,16 +31,16 @@ class JewelStore extends React.Component {
     }
 
     componentDidMount() {
-        // rewarded.load();
-        // let eventListener = rewarded.onAdEvent((type, error, reward) => {
-        //     if (type === RewardedAdEventType.LOADED) {
-        //        console.log('loaded')
-        //     }
+        rewarded.load();
+        let eventListener = rewarded.onAdEvent((type, error, reward) => {
+            if (type === RewardedAdEventType.LOADED) {
+               console.log('loaded')
+            }
 
-        //     if (type === RewardedAdEventType.EARNED_REWARD) {
-        //         console.log('User earned reward of ', reward);
-        //     }
-        // });
+            if (type === RewardedAdEventType.EARNED_REWARD) {
+                console.log('User earned reward of ', reward);
+            }
+        });
         console.log('test mount')
       //  if (!(Object.keys(this.props.game.scores).length > 0))
             this.props.loadGameState()

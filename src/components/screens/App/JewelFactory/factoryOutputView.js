@@ -34,9 +34,11 @@ class factoryOutputview extends React.Component {
         let factoryID = { factory_id: factory.factory_id }
         NetworkManager.callAPI(rest.startFactory, 'POST', factoryID).then(result => {
             this.props.getUserFactory()
-            this.setState({
-                isLoading: false
-            })
+            setTimeout(() => {
+                this.setState({
+                    isLoading: false
+                })
+            }, 500);
         }).catch(error => {
 
         })

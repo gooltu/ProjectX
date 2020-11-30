@@ -31,13 +31,18 @@ export default styles = StyleSheet.create({
         height: PixelRatio.roundToNearestPixel(25 * global.scaleFactor),
         width: PixelRatio.roundToNearestPixel(20 * global.scaleFactor)
     },
-    ProfilePicture: {
+    profilePictureBorder: {
         borderWidth:2,
         borderColor: 'white',
-        borderRadius: PixelRatio.roundToNearestPixel(100 * global.scaleFactor),
-        width: PixelRatio.roundToNearestPixel(100 * global.scaleFactor),
-        height: PixelRatio.roundToNearestPixel(100 * global.scaleFactor),
+        borderRadius: PixelRatio.roundToNearestPixel(102 * global.scaleFactor),
+        width: PixelRatio.roundToNearestPixel(102 * global.scaleFactor),
+        height: PixelRatio.roundToNearestPixel(102 * global.scaleFactor),
         top:-15
+    },
+    ProfilePicture: {
+        width: PixelRatio.roundToNearestPixel(99 * global.scaleFactor),
+        height: PixelRatio.roundToNearestPixel(99 * global.scaleFactor),
+        borderRadius: PixelRatio.roundToNearestPixel(99 * global.scaleFactor),
     },
     SecondDiamond: {
         justifyContent: "center",
