@@ -72,7 +72,7 @@ export default class RegisterPhone extends React.Component {
 
       axios({
         method: 'post', 
-        url:'http://serverprojectx-env.eba-phwjizve.ap-south-1.elasticbeanstalk.com/registerPhoneNumber', 
+        url:'https://game.jewelchat.net/registerPhoneNumber', 
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
@@ -138,7 +138,7 @@ export default class RegisterPhone extends React.Component {
               <Text style={{fontSize:12, color: '#777777', width: '100%', textAlign: "center"}}>By clicking continue you agree to JewelChat</Text>
           </View>
           <View> 
-              <Text style={{fontSize:12, color: colors.lightcolor1, width: '100%', textAlign: "center"}} onPress={() => Linking.openURL('http://google.com')} >
+              <Text style={{fontSize:12, color: colors.lightcolor1, width: '100%', textAlign: "center"}} onPress={() => Linking.openURL('http://jewelchat.net/termsandconditions.pdf')} >
               Terms &amp; Conditions
               </Text>
           </View>         

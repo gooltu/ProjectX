@@ -65,7 +65,7 @@ class EnterOTP extends React.Component {
       this.setState({ networkloading: true })
       axios({
         method: 'post',
-        url: 'http://serverprojectx-env.eba-phwjizve.ap-south-1.elasticbeanstalk.com/resendVcode',
+        url: 'https://game.jewelchat.net/resendVcode',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
@@ -116,7 +116,7 @@ class EnterOTP extends React.Component {
       this.setState({ networkloading: true })
       axios({
         method: 'post',
-        url: 'http://serverprojectx-env.eba-phwjizve.ap-south-1.elasticbeanstalk.com/verifyCode',
+        url: 'https://game.jewelchat.net/verifyCode',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',

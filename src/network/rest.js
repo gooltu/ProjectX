@@ -1,5 +1,5 @@
 export default {
-    baseURL: 'http://serverprojectx-env.eba-phwjizve.ap-south-1.elasticbeanstalk.com',
+    baseURL: 'https://game.jewelchat.net',
     imageBaseURL: 'https://profileprojectx.s3.ap-south-1.amazonaws.com/',
     TIMEOUT_DURATION: 120000,
     enterOTP: '/resendVcode',

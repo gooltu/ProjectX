@@ -7,7 +7,8 @@ import {
   ImageBackground,
   BackHandler,
   ActivityIndicator,
-  Keyboard
+  Keyboard,
+  KeyboardAvoidingView
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -68,8 +69,8 @@ class EnterDetails extends React.Component {
 
   state = {
     networkloading: false,
-    refphone: null,
-    name: null,
+    refphone: '',
+    name: '',
     snackbar: {
       visible: false,
       text: ''
@@ -119,48 +120,54 @@ class EnterDetails extends React.Component {
     this.setState({ buttonDisabled: true });
     Keyboard.dismiss();
 
-    this.state.refphone = '91' + this.state.refphone;
-
-    if (this.state.name && this.state.name.length == 0)
-      this.state.name = null;
-
-    if (this.state.refphone && this.state.refphone.length == 0)
-      this.state.refphone = null;
-
-    if (this.state.refphone === this.props.mytoken.myphone)
-      this.state.refphone = null;
-
-    if (this.state.refphone && this.state.refphone.length < 12)
-      this.state.refphone = null;
-
-    if (!this.state.refphone && !this.state.name)
-      this.props.navigation.navigate('App')
-    else {
-
-      console.log(this.props.mytoken.cookie);
-      console.log('Name:' + this.state.name);
-      console.log('RefPhone:' + this.state.refphone);
-      this.setState({ networkloading: true });
-      let data =  {
-        name: this.state.name,
-        reference: this.state.refphone
-      }
-      NetworkManager.callAPI(rest.initialDetails, 'POST', data).then((responseJson) => {
-        this.setState({ networkloading: false })
-        console.log(responseJson);
-        if (!responseJson.error) {
-          this.props.navigation.navigate('App')
-        } else
-          throw (new Error(responseJson.message))
-      })
-      .catch((error) => {
-        console.log(error)
-        this.setState({ networkloading: false })
-        let s = { visible: true, text: error.message }
-        this.setState({ snackbar: s });
-        this.setState({ buttonDisabled: false });
-      });
+    if(this.state.refphone.length !== 10 || !(/^\d+$/.test(this.state.refphone)) ){
+      let s = {visible: true, text: 'Enter valid 10 digit phone number of the referrer.'} 
+      this.setState( { snackbar: s } );  
+      this.setState(  { buttonDisabled: false } );
+      return
     }
+
+    
+
+    if (this.state.name.length == 0){
+      let s = {visible: true, text: 'Please enter name.'} 
+      this.setState( { snackbar: s } );  
+      this.setState(  { buttonDisabled: false } );
+      return
+    }   
+      
+    let fullrefphone = '91' + this.state.refphone;
+    if (fullrefphone === this.props.mytoken.myphone){
+      let s = {visible: true, text: 'Referrer phone number should be different from users phone number.'} 
+      this.setState( { snackbar: s } );  
+      this.setState(  { buttonDisabled: false } );
+      return
+    }
+         
+
+         
+    
+
+    console.log(this.props.mytoken.cookie);
+    console.log('Name:' + this.state.name);
+    console.log('RefPhone:' + this.state.refphone);
+    this.setState({ networkloading: true });
+    let data =  {
+      name: this.state.name,
+      reference: fullrefphone
+    }
+    NetworkManager.callAPI(rest.initialDetails, 'POST', data).then((responseJson) => {
+      this.setState({ networkloading: false })
+      console.log(responseJson);      
+      this.props.navigation.navigate('App')      
+    })
+    .catch((error) => {
+      console.log(error)
+      this.setState({ networkloading: false })
+      let s = { visible: true, text: error.message }
+      this.setState({ snackbar: s });
+      this.setState({ buttonDisabled: false });
+    });  
 
 
   }
@@ -168,8 +175,13 @@ class EnterDetails extends React.Component {
   render() {
     return (
 
+      
+
       <View style={{ backgroundColor: colors.darkcolor1, width: '100%', height: '100%', paddingLeft: 40, paddingRight: 40, alignItems: 'center' }} >
         <CustomLoader loading={this.state.networkloading} />
+        <TouchableOpacity onPress={() => this.props.navigation.navigate('App')}>
+          <Text style={{ marginTop: 50, fontSize: 16, color: colors.lightcolor1, width: '100%', textAlign: "center" }}>SKIP</Text>
+        </TouchableOpacity>
         <View style={styles.headingview}>
           <Text style={styles.heading}>Enter Details</Text>
         </View>
@@ -205,23 +217,27 @@ class EnterDetails extends React.Component {
           </Item>
         </Form>
 
-
+        <View style = {{marginTop:20, alignItems: 'center'}}> 
+              <Text style={{fontSize:12, color: '#777777', width: '100%', textAlign: "center"}}>Enter a valid 10 digit referrer number and win a DIAMOND.</Text>
+              <Text style={{fontSize:12, color: '#777777', width: '100%', textAlign: "center"}}>The referrer number should be a registered and active</Text>
+              <Text style={{fontSize:12, color: '#777777', width: '100%', textAlign: "center"}}>JewelChat user. To report any issues chat with</Text>
+              <Text style={{fontSize:12, color: '#777777', width: '100%', textAlign: "center"}}>Team JewelChat.</Text>
+        </View>
 
         <TouchableOpacity style={styles.button} onPress={() => this.onContinue()} >
           <ImageBackground source={require('../../../assets/ColorGrad.jpg')} style={{
             width: '100%', height: '100%', justifyContent: 'center',
             alignItems: 'center', overflow: 'hidden'
           }}>
-            <Text style={styles.buttontext}> Continue </Text>
+            <Text style={styles.buttontext}> Save </Text>
           </ImageBackground>
-        </TouchableOpacity>
+        </TouchableOpacity>        
 
-        <TouchableOpacity onPress={() => this.props.navigation.navigate('App')}>
-          <Text style={{ marginTop: 15, fontSize: 16, color: colors.lightcolor1, width: '100%', textAlign: "center" }}>SKIP</Text>
-        </TouchableOpacity>
+        <Snackbar visible={this.state.snackbar.visible} onDismiss={() => this.setState( { snackbar: { visible: false, text: '' }} )}>
+            {this.state.snackbar.text}
+        </Snackbar>
 
-      </View>
-
+      </View>       
 
     );
   }
@@ -258,7 +274,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.darkcolor1
   },
   headingview: {
-    marginTop: 100,
+    marginTop: 20,
     marginBottom: 35,
     width: '100%',
     alignItems: "center"
