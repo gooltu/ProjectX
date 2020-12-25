@@ -39,10 +39,10 @@ class CustomHeader extends React.Component {
 
 
     componentDidUpdate(prevProps, prevState){
-        console.log('CUSTOM HEADER STATE UPDATE')
+        //console.log('CUSTOM HEADER STATE UPDATE')
         //console.log(this.props.navigation.state.params);
         if (this.props.mytoken.token && this.props.appstate.state === 'active' && this.props.network.xmppState === 'XMPP_DISCONNECTED') {
-            console.log('CALL Connect strophe xmpp')
+            console.log('CALL Connect strophe xmpp Component Update')
             this.props.openRealtimeConnection()
         }
     }

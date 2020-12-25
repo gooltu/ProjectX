@@ -204,7 +204,7 @@ function getFormattedMessages(msg, createdDateTime, IS_GROUP_MSG ) {
 
 
 	// In the case of group chat sender message id is kept deliberately null when groupchat received from self
-	var fromjid 
+	var fromjid;
 	if(IS_GROUP_MSG ==1)
 		fromjid = msg.getAttribute('from').split('/')[1];
 	var tojid = msg.getAttribute('to');

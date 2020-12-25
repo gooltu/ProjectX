@@ -15,6 +15,8 @@ import Logo from '../svg_components/Logo';
 import * as realtime from '../../network/realtime'
 import * as jcdb from '../../db/localdatabase'
 import * as game from '../../db/localdatabase'
+import axios from 'axios';
+import Constants from '../../network/rest';
 
 class JewelChatSplashScreen extends React.Component {
   constructor() {
@@ -44,9 +46,9 @@ class JewelChatSplashScreen extends React.Component {
 
   _bootstrapAsync = () => {
 
-    AsyncStorage.multiGet(['myid', 'myphone', 'token', 'cookie'])
-      //AsyncStorage.getItem('userToken')
+      AsyncStorage.multiGet(['myid', 'myphone', 'token', 'cookie'])      
       .then(results => {
+        
         myTokens = results.reduce((acc, curr) => {
           console.log('>>', curr[1])
           if (curr[0] === 'myid') acc.myid = curr[1]
@@ -56,14 +58,23 @@ class JewelChatSplashScreen extends React.Component {
 
           return acc
 
-        }, {})
+        }, {});    
+        
+        
+        axios.post(Constants.baseURL + Constants.getAccessToken,
+          { "refreshToken": myTokens.token }
+        ).then(response => { 
+            console.log('JEWELCHAT access token load successful')   
+            let temptokens = myTokens;
+            temptokens.cookie = response.data.accessToken; 
+            temptokens.isLoading = false    
+            this.props.tokenLoad(temptokens);    
+        }).catch(error => {
+              myTokens.isLoading = false;
+              this.props.tokenLoad(myTokens)
+        });     
 
-        // myTokens.isLoading = false;
-        // myTokens.myphone = 1
-        // myTokens.token = 'token';
-         myTokens.isLoading = false
-
-        this.props.tokenLoad(myTokens)
+        
 
       })
 

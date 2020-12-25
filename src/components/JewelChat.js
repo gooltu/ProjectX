@@ -2,6 +2,8 @@ import React from "react";
 
 import { AppState, Text, Platform, PermissionsAndroid } from 'react-native';
 import NetInfo from "@react-native-community/netinfo";
+import axios from 'axios';
+import Constants from '../network/rest';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -333,7 +335,7 @@ class JewelChat extends React.Component {
     componentDidMount() {
         console.log('MOUNT APP');
         AppState.addEventListener('change', this._handleAppStateChange);
-        this.unsubscribe = NetInfo.addEventListener(this._handleNetworkChange);
+        this.unsubscribe = NetInfo.addEventListener(this._handleNetworkChange);       
 
 
         db.getChatList().then(chatList => {
@@ -341,10 +343,10 @@ class JewelChat extends React.Component {
             console.log(chatList);
             this.props.setChatListData(chatList);
         })
-            .catch(err => {
-                console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
-                console.log(err)
-            })
+        .catch(err => {
+            console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
+            console.log(err)
+        })
 
         //  if (!this.props.mytoken.isLoading && this.props.mytoken.token !== null && this.props.network.networkIsConnected){
         //     console.log('Came to real time connect')
@@ -360,6 +362,7 @@ class JewelChat extends React.Component {
     _handleAppStateChange = (nextAppState) => {
 
         console.log('APP STATE CHANGE', nextAppState);
+        this.props.appstateChange(nextAppState);
         if (nextAppState == 'inactive' || nextAppState == 'background') {
 
             if (global.TimeDelta) {
@@ -375,11 +378,23 @@ class JewelChat extends React.Component {
 
             }
 
-            this.props.realtimeDisconnect();
+            this.props.closeRealtimeDisconnect();
 
-        }
+        }else if(nextAppState == 'active')  {
 
-        this.props.appstateChange(nextAppState);
+            axios.post(Constants.baseURL + Constants.getAccessToken,
+                { "refreshToken": this.props.mytoken.token }
+            ).then(response => { 
+                console.log('JEWELCHAT access token load successful return from background/inactive')   
+                let temptokens = this.props.mytoken;
+                temptokens.cookie = response.data.accessToken;     
+                this.props.tokenLoad(temptokens);    
+            }).catch(error => {
+                //handle logout flow
+                console.log(error)
+            });
+
+        }  
 
     };
 
@@ -389,7 +404,7 @@ class JewelChat extends React.Component {
         this.props.networkstateChange(state);
 
         if (!this.props.mytoken.isLoading && this.props.mytoken.token !== null && this.props.network.networkIsConnected)
-            this.props.realtimeConnect();
+            this.props.openRealtimeConnect();
     }
 
 
@@ -418,8 +433,8 @@ function mapDispatchToProps(dispatch) {
         tokenLoad: (myTokens) => dispatch({ type: 'USER_TOKEN_LOADED', myTokens }),
         appstateChange: (appstate) => dispatch({ type: 'APP_STATE_CHANGE', payload: appstate }),
         networkstateChange: (network) => dispatch({ type: 'NETWORK_STATE_CHANGE', payload: network }),
-        realtimeConnect: () => dispatch(realtimeConnect()),
-        realtimeDisconnect: () => dispatch(realtimeDisconnect()),
+        openRealtimeConnect: () => dispatch(realtimeConnect()),
+        closeRealtimeDisconnect: () => dispatch(realtimeDisconnect()),
         setChatListData: (chatList) => dispatch(actions.setChatListData(chatList)),
         setChatData: (chatData) => dispatch(actions.setChatData(chatData))
     }

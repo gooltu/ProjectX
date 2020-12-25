@@ -12,7 +12,7 @@ let _jcdb
 
 export default {
 	getChats, getAllChatsGreaterThanEqual_ID, getChatList, updatePhoneContact, insertStropheChatData, insertAffiliations, updateDeliveryAndReadReceipt, getContactList, updatePickedJewel,
-	updateLastMessageAndText, selectUnreadMessages, selectUnsendMessages, updateContact, insertContactData, checkIfRowExist, insertTeamJC
+	updateLastMessageAndText, selectUnreadMessages, selectUnsendMessages, updateContact, insertContactData, checkIfRowExist, insertTeamJC, deleteAllData
 };
 
 SQLite.openDatabase({
@@ -559,27 +559,81 @@ function _handleString(value) {
 		return "'" + value + "'"
 }
 
+// function insertTeamJC(data) {
+// 	return new Promise((resolve, reject) => {
+// 		_initDb().then(instance => {
+// 			jcdb = instance;
+// 			jcdb.transaction((txn) => {
+// 				let sql = "INSERT INTO Contact " +
+// 					" (JEWELCHAT_ID, JID, CONTACT_NUMBER, ,IS_PHONEBOOK_CONTACT , PHONEBOOK_CONTACT_NAME, IS_REGIS, LAST_MSG_CREATED_TIME,MSG_TEXT,UNREAD_COUNT) " +
+// 					" VALUES ( " + _handleString(data.JEWELCHAT_ID)+ "," + _handleString(data.JID) + "," + _handleString(data.CONTACT_NUMBER) + ", " + data.IS_PHONEBOOK_CONTACT + "," + _handleString(data.PHONEBOOK_CONTACT_NAME) + "," + data.IS_REGIS + "," + data.LAST_MSG_CREATED_TIME + "," + _handleString(data.MSG_TEXT) + "," + data.UNREAD_COUNT + ") "
+// 				txn.executeSql(sql).then(val => {
+// 					resolve('Success')
+// 				}).catch(err => {
+// 					console.log('reject')
+// 					reject(err)
+// 				})
+// 			}).catch(err => {
+// 				console.log('reject1')
+// 				reject(err)
+// 			})
+// 		})
+// 	})
+// }
+
+
 function insertTeamJC(data) {
+	//select last_insert_rowid()
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
-				let sql = "INSERT INTO Contact " +
-					" (JID, CONTACT_NUMBER, IS_PHONEBOOK_CONTACT , PHONEBOOK_CONTACT_NAME, IS_REGIS, LAST_MSG_CREATED_TIME,MSG_TEXT,UNREAD_COUNT) " +
-					" VALUES (" + _handleString(data.JID) + "," + _handleString(data.CONTACT_NUMBER) + ", " + data.IS_PHONEBOOK_CONTACT + "," + _handleString(data.PHONEBOOK_CONTACT_NAME) + "," + data.IS_REGIS + "," + data.LAST_MSG_CREATED_TIME + "," + _handleString(data.MSG_TEXT) + "," + data.UNREAD_COUNT + ") "
-				txn.executeSql(sql).then(val => {
-					resolve('Success')
-				}).catch(err => {
-					console.log('reject')
-					reject(err)
-				})
-			}).catch(err => {
+				let sql; let q = ',?'
+				sql = "INSERT INTO Contact "
+					+ "( " + Object.keys(data).join(', ') + " ) "
+					+ " VALUES (?" + q.repeat(Object.keys(data).length - 1) + ")";
+
+				txn.executeSql(sql, Object.values(data))
+					.then((results) => {
+						console.log('ChatMessage insert Query COMPLETED for');
+						console.log(results[1].insertId)
+						resolve(results[1].insertId)
+					}).catch(err => {
+						reject(err)
+					})
+			})
+		}).then(result => {
+		}).catch(error => {
+			reject(error)
+		})
+	})
+}
+
+
+function deleteAllData(){
+	return new Promise((resolve, reject) => {
+		_initDb().then(instance => {
+			jcdb = instance;
+			jcdb.transaction((txn) => {
+				let sql1 = "Delete from Contact";
+				let sql2 = "Delete from ChatMessage";
+				txn.executeSql(sql1);				
+				txn.executeSql(sql2);				
+			})
+			.then( val => {
+				console.log('Delete all data successful')
+				console.log(val)
+				resolve('Success')
+			})
+			.catch(err => {
 				console.log('reject1')
 				reject(err)
 			})
 		})
 	})
 }
+
+
 
 const contactData = [
 	{

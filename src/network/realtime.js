@@ -11,7 +11,7 @@ import {getServerTime, detectMessagetype } from './realtime-utils/utilities';
 import {insertIncomingMessageViaHistoryDownload, insertIncomingMessage, updateChatPageRedux, updateChatlistRedux } from './realtime-utils/messages';
 import {handleReadAndDeliveryMessages, handleReadAndDeliveryMessagesViaHistoryDownload} from './realtime-utils/read-delivery-messages'
 
-const URL = 'ws://192.168.1.5:5280/ws-xmpp';
+const URL = 'wss://chat.jewelchat.net/ws-xmpp';
 //const URL = 'ws://localhost:5280/ws-xmpp';
 let connection = new XMPP.Strophe.Connection(URL);
 connection.registerSASLMechanism = XMPP.Strophe.SASLXOAuth2;
@@ -41,7 +41,7 @@ export const realtimeConnect = () => {
 		// console.log(getState().mytoken.myphone + '@jewelchat')
 		// console.log(getState().mytoken.token)
 		//		connection.connect(getState().mytoken.myphone + '@jewelchat.net', getState().mytoken.token, (status, err) => {
-		connection.connect(getState().mytoken.myphone + '@jewelchat.net', 'pass', (status, err) => {
+		connection.connect(getState().mytoken.myphone + '@jewelchat.net', getState().mytoken.token, (status, err) => {
 			if (err) {
 				console.log(' XMPP Error:' + err);
 				//dispatch({ type: 'XMPP_ERROR' });

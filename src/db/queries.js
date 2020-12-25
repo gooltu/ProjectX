@@ -14,10 +14,11 @@ const Create_Contact = "CREATE TABLE if not exists Contact (" +
     "IS_PHONEBOOK_CONTACT" + "  INTEGER , " +//12					
     "UNREAD_COUNT" + "  INTEGER DEFAULT 0  , " +//13
     "LAST_MSG_CREATED_TIME  INTEGER, " +
-    "MSG_TYPE   INTEGER ," +
-    "MSG_TEXT   TEXT ," +
-    "SMALL_IMAGE" + " TEXT ," +
-    "IMAGE_PATH" + "  TEXT , unique ( " + "JID" + " ), unique ( " + "CONTACT_NUMBER" + " ) )";
+    "MSG_TYPE   INTEGER , " +
+    "MSG_TEXT   TEXT , " +
+    "SMALL_IMAGE" + " TEXT , " +
+    "IMAGE_PATH" + "  TEXT , " + 
+    "unique ( " + "JID" + " ), unique ( " + "CONTACT_NUMBER" + " ) )";
 
 
 const Create_ChatMessage = "CREATE TABLE if not exists ChatMessage (" +

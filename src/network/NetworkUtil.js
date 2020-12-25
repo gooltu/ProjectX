@@ -1,7 +1,8 @@
 import axios from 'axios';
 import Constants from './rest';
-import { store } from '../store'
-import AsyncStorage from '@react-native-community/async-storage'
+import { store } from '../store';
+import AsyncStorage from '@react-native-community/async-storage';
+import RNRestart from 'react-native-restart';
 /**
  * Create an Axios Client with defaults
  */
@@ -31,9 +32,9 @@ const NetworkUtil = async function (options, requireAuth) {
         }
 
         const onError = function (error) {
-            console.log(error.message, error.status)
-            console.log('Request Failed: ', JSON.stringify(error));
-            if (error.message == 'Request failed with status code 401') {
+            console.log(error.message, error.response.status)
+            //console.log('Request Failed: ', JSON.stringify(error));
+            if (error.response.status == 401) {
                 console.log(Constants.baseURL + Constants.getAccessToken)
                 axios.post(Constants.baseURL + Constants.getAccessToken,
                     { "refreshToken": store.getState().mytoken.token }

@@ -23,47 +23,10 @@ import actions from '../../../actions';
 import db from '../../../db/localdatabase'
 import NetworkManager from '../../../network/NetworkManager';
 import rest from '../../../network/rest';
+import { dateToYMD } from '../../../network/realtime-utils/utilities';
+import {insertIncomingMessage } from '../../../network/realtime-utils/messages'
 
-const teamJC = {
-  _ID: 1,
-  JEWELCHAT_ID: 1,
-  JID: '1@jewelchat.net',
-  CONTACT_NUMBER: 910000000000,
-  CONTACT_NAME: 'Team JewelChat',
-  PHONEBOOK_CONTACT_NAME: 'Team JewelChat',
-  IS_GROUP: 0,
-  STATUS_MSG: 'Keep Collecting',
-  IS_REGIS: 1,
-  IS_GROUP_ADMIN: 0,
-  IS_INVITED: null,
-  IS_BLOCKED: 0,
-  IS_PHONEBOOK_CONTACT: 0,
-  UNREAD_COUNT: 1,
-  SMALL_IMAGE: null,
-  IMAGE_PATH: 'https://parthaprofiles.s3.ap-south-1.amazonaws.com/9005835708_pic.png',
-  LAST_MSG_CREATED_TIME: new Date().getTime(),
-  MSG_TYPE: 1,
-  MSG_TEXT: 'Welcome to JewelChat.'
-}
 
-const incomingMessage = {
-  	CHAT_ROOM_JID: '1@jewelchat.net',
-  	IS_GROUP_MSG: 0,
-  	MSG_TEXT: 'Welcome to JewelChat.',
-  	CREATOR_JID: '1@jewelchat.net',
-  	GROUP_MEMBER_JID: 0,
-  	JEWEL_TYPE: 0,
-  	CREATED_DATE: new Date(),
-  	CREATED_TIME: (new Date()).getTime(),
-  	TIME_CREATED: (new Date()).getTime(),
-  	SENDER_MSG_ID: 1,
-  	MSG_TYPE:  0,
-  	MEDIA_CLOUD: null,
-  	SEQUENCE: -1,
-  	IS_REPLY: 0,
-  	IS_FORWARD: 0,
-  	REPLY_PARENT: null
-  }
 
 class EnterDetails extends React.Component {
 
@@ -79,26 +42,47 @@ class EnterDetails extends React.Component {
   }
 
   componentDidMount() {
-     this.props.loadGameData()
-    // db.insertTeamJC(teamJC).then(result => {
-    //   db.getChatList().then(results => {
-    //     console.log('FROM JEWELCHAT COMPONENT GETCHAT LIST SUCCESS')
-    //     console.log(results.rows.length)
+    
+    db.deleteAllData().then(result => {
+      let createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
 
-    //     let chatList = []
-    //     for (let i = 0; i < results.rows.length; i++) {
-    //       chatList.push(results.rows.item(i))
-    //     }
-    //     this.props.setChatListData(chatList)
-    //   })
-    //     .catch(err => {
-    //       console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
-    //       console.log(err)
-    //     })
-    // }).catch(err => {
-    //   console.log('FROM JEWELCHAT COMPONENT GETCHAT ERROR')
-    //   console.log(err)
-    // })
+      let teamjc = {
+        JEWELCHAT_ID: 1,
+      	JID: '910000000000@jewelchat.net',
+      	CONTACT_NUMBER: 910000000000,
+      	CONTACT_NAME: 'Team JewelChat',
+      	IS_PHONEBOOK_CONTACT: 0,
+      	PHONEBOOK_CONTACT_NAME: null,
+      	IS_REGIS: 1,
+        IS_GROUP: 0,
+        STATUS_MSG: 'Keep Collecting...'
+      };
+
+      let msg = {
+        CHAT_ROOM_JID: '910000000000@jewelchat.net',
+        IS_GROUP_MSG: 0,
+        MSG_TEXT: 'Welcome to JewelChat',
+        CREATOR_JID: '910000000000@jewelchat.net',		
+        JEWEL_TYPE: 3,
+        CREATED_DATE: createdDateTime.date,
+        CREATED_TIME: createdDateTime.time,
+        TIME_CREATED: createdDateTime.fulltime,
+        SENDER_MSG_ID: 1,
+        MSG_TYPE: 0,
+        MEDIA_CLOUD: null,
+        MEDIA_CLOUD_THUMBNAIL: null,
+        SEQUENCE: -1,
+        IS_DELIVERED: 1,
+        TIME_DELIVERED: createdDateTime.fulltime
+      };
+
+      db.insertTeamJC(teamjc).then(val => {
+        console.log('Team JC inserted')
+      })
+      this.props.insertmsg(msg);
+
+    }).catch(err => {})
+    
     this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
     // console.log('Token', this.props.mytoken)
   }
@@ -142,10 +126,7 @@ class EnterDetails extends React.Component {
       this.setState( { snackbar: s } );  
       this.setState(  { buttonDisabled: false } );
       return
-    }
-         
-
-         
+    }        
     
 
     console.log(this.props.mytoken.cookie);
@@ -159,6 +140,7 @@ class EnterDetails extends React.Component {
     NetworkManager.callAPI(rest.initialDetails, 'POST', data).then((responseJson) => {
       this.setState({ networkloading: false })
       console.log(responseJson);      
+      this.props.loadGameData(); 
       this.props.navigation.navigate('App')      
     })
     .catch((error) => {
@@ -179,7 +161,7 @@ class EnterDetails extends React.Component {
 
       <View style={{ backgroundColor: colors.darkcolor1, width: '100%', height: '100%', paddingLeft: 40, paddingRight: 40, alignItems: 'center' }} >
         <CustomLoader loading={this.state.networkloading} />
-        <TouchableOpacity onPress={() => this.props.navigation.navigate('App')}>
+        <TouchableOpacity onPress={() => { this.props.loadGameData(); this.props.navigation.navigate('App')}}>
           <Text style={{ marginTop: 50, fontSize: 16, color: colors.lightcolor1, width: '100%', textAlign: "center" }}>SKIP</Text>
         </TouchableOpacity>
         <View style={styles.headingview}>
@@ -258,6 +240,7 @@ function mapDispatchToProps(dispatch) {
     tokenLoad: (myTokens) => dispatch({ type: 'USER_TOKEN_LOADED', myTokens }),
     loadGameData: () => dispatch(actions.loadGameState()),
     setChatListData: (chatList) => dispatch(actions.setChatListData(chatList)),
+    insertmsg: (msg) => dispatch(insertIncomingMessage(msg))
   }
 }
 
