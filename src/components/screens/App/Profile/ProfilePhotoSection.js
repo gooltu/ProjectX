@@ -15,9 +15,11 @@ import Diamond from '../../../svg_components/Diamond'
 import Coin from '../../../svg_components/Coin'
 import rest from "../../../../network/rest";
 import NetworkManager from "../../../../network/NetworkManager";
-import Icon from 'react-native-vector-icons/MaterialIcons'
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import Iconfa from 'react-native-vector-icons/FontAwesome5';
 import { InterstitialAd, RewardedAd, RewardedAdEventType, BannerAdSize, BannerAd, TestIds } from '@react-native-firebase/admob';
 import { ActivityIndicator } from "react-native";
+import colors from '../../../shared_styles/colors'
 
 const rewardDiamond = RewardedAd.createForAdRequest(TestIds.REWARDED, {
     requestNonPersonalizedAdsOnly: true,
@@ -34,10 +36,9 @@ class ProfilePhotoSection extends React.Component {
         this.state = {
             imagepath: '',
             diamondLoading: false,
-            coinLoading: false,
-            userProfile: {
-                name: 'test'
-            }
+            coinLoading: false,            
+            name: 'defaultJCUname',            
+            profileimageerror: false
         }
     }
     componentDidMount() {
@@ -67,42 +68,47 @@ class ProfilePhotoSection extends React.Component {
                 console.log('User earned reward of coin', reward);
             }
         });
-        this.focusListener = this.props.navigation.addListener('didFocus', () => {
-            this.loadProfilePicture()
+
+        AsyncStorage.getItem('name').then(val => {            
+            this.setState({'name': val})
         })
+
+        // this.focusListener = this.props.navigation.addListener('didFocus', () => {
+        //     this.loadProfilePicture()
+        // })
     }
 
-    loadProfilePicture = () => {
-        AsyncStorage.multiGet(["UserProfileImage", "UserProfile"]).then(profileData => {
-            if (profileData[0][1] && profileData[1][1]) {
-                this.setState({
-                    imagepath: profileData[0][1],
-                    userProfile: JSON.parse(profileData[1][1]),
-                })
-            }
-            else {
-                var data = {
-                    'phone': this.props.mytoken.myphone
-                }
-                NetworkManager.callAPI(rest.downloadContact_Phone, 'post', data).then((responseJson) => {
-                    console.log(responseJson)
-                    if (responseJson.error == false) {
-                        this.setState({
-                            userProfile: responseJson.contact
-                        })
-                        AsyncStorage.setItem('UserProfileImage', responseJson.contact.large_pic)
-                        AsyncStorage.setItem('UserProfile', JSON.stringify(responseJson.contact))
-                    }
-                }).catch((error) => {
-                    console.log(error)
-                })
-            }
-        })
-    }
+    // loadProfile = () => {
+    //     AsyncStorage.multiGet(["UserProfileImage", "UserProfile"]).then(profileData => {
+    //         if (profileData[0][1] && profileData[1][1]) {
+    //             this.setState({
+    //                 imagepath: profileData[0][1],
+    //                 userProfile: JSON.parse(profileData[1][1]),
+    //             })
+    //         }
+    //         else {
+    //             var data = {
+    //                 'phone': this.props.mytoken.myphone
+    //             }
+    //             NetworkManager.callAPI(rest.downloadContact_Phone, 'post', data).then((responseJson) => {
+    //                 console.log(responseJson)
+    //                 if (responseJson.error == false) {
+    //                     this.setState({
+    //                         userProfile: responseJson.contact
+    //                     })
+    //                     AsyncStorage.setItem('UserProfileImage', responseJson.contact.large_pic)
+    //                     AsyncStorage.setItem('UserProfile', JSON.stringify(responseJson.contact))
+    //                 }
+    //             }).catch((error) => {
+    //                 console.log(error)
+    //             })
+    //         }
+    //     })
+    // }
 
 
     componentWillUnmount() {
-        this.focusListener.remove()
+        //this.focusListener.remove()
     }
 
 
@@ -140,7 +146,24 @@ class ProfilePhotoSection extends React.Component {
                             </View>
                         </View>
                         <TouchableOpacity style={styles.profilePictureBorder} onPress={() => this.props.navigation.navigate('UserProfile')}>
-                            <Image style={styles.ProfilePicture} key={this.state.imagepath} resizeMode="contain" source={{ uri: rest.imageBaseURL + this.props.mytoken.myphone + '.jpeg?time=' + new Date() }} />
+                            { !this.state.profileimageerror &&
+                                <Image
+                                    source={{ headers: { Pragma: 'no-cache' }, uri: 'https://profileprojectx.s3.ap-south-1.amazonaws.com/918756463536.jpeg?time=' + new Date().getTime()}}
+                                    style={{ position:'absolute', top:0, left:0, width: '100%',height: '100%', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}
+                                    onLoad={()=>{
+                                        //this.setState( { profileimageerror: false } ) 
+                                        //rest.imageBaseURL + this.props.mytoken.myphone + '.jpeg?time=' + new Date().getTime()
+                                    }}
+                                    onError={(error) => {
+                                        this.setState( { profileimageerror: true } ) 
+                                    } 
+                                    }
+                                    ></Image>
+                            }
+                            {
+                                this.state.profileimageerror && <Iconfa  name='user' color={colors.jcgray} size={48} solid />
+                            }
+                            { false && <Image style={styles.ProfilePicture} key={this.state.imagepath} resizeMode="contain" source={{ uri: rest.imageBaseURL + this.props.mytoken.myphone + '.jpeg?time=' + new Date() }} /> }
                         </TouchableOpacity>
                         <View style={styles.SecondDiamond}>
                             <View style={styles.mainRightLayout}>
@@ -158,7 +181,7 @@ class ProfilePhotoSection extends React.Component {
                     </View>
                 </View>
                 <View style={{ alignItems: 'center', paddingTop: 20 }}>
-                    <Text style={{ color: 'white' }}>{this.state.userProfile.name}</Text>
+                    <Text style={{ color: 'white' }}>{this.state.name}</Text>
                 </View>
             </SafeAreaView >
         );

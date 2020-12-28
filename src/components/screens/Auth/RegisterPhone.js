@@ -1,7 +1,6 @@
 import React from 'react';
 import {
-    ActivityIndicator,
-    AsyncStorage,
+    ActivityIndicator,    
     Button,
     StatusBar,
     StyleSheet,
@@ -16,6 +15,7 @@ import {
     Linking
   } from 'react-native';
 
+  import AsyncStorage from "@react-native-community/async-storage";
   import { Snackbar } from 'react-native-paper';
   import { Container, Content, Form, Item, Input, Label, Icon } from 'native-base';
   import colors from "../../shared_styles/colors";
@@ -85,6 +85,7 @@ export default class RegisterPhone extends React.Component {
         console.log(responseJson)    
         this.setState({ networkloading: false })
         if(!responseJson.data.error){
+          AsyncStorage.setItem('name', responseJson.data.name );
           responseJson.data.phone = '91'+ this.state.phone;
           this.props.navigation.navigate('EnterOTP', responseJson.data);
         }else

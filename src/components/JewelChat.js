@@ -102,6 +102,7 @@ const MainTabs = createBottomTabNavigator({
 }, {
     initialRouteName: 'Chats',
     backBehavior: 'none',
+    lazy: false,
     tabBarOptions: {
         activeTintColor: colors.lightcolor1,
         activeBackgroundColor: colors.darkcolor3,

@@ -1,6 +1,7 @@
 import { StyleSheet, PixelRatio } from 'react-native'
 
 import color from '../../../shared_styles/colors'
+import colors from '../../../shared_styles/colors'
 export default styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
@@ -37,7 +38,11 @@ export default styles = StyleSheet.create({
         borderRadius: PixelRatio.roundToNearestPixel(102 * global.scaleFactor),
         width: PixelRatio.roundToNearestPixel(102 * global.scaleFactor),
         height: PixelRatio.roundToNearestPixel(102 * global.scaleFactor),
-        top:-15
+        top:-15,
+        backgroundColor: color.darkcolor1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden'
     },
     ProfilePicture: {
         width: PixelRatio.roundToNearestPixel(99 * global.scaleFactor),

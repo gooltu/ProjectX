@@ -42,6 +42,9 @@ class EnterDetails extends React.Component {
   }
 
   componentDidMount() {
+
+    
+
     
     db.deleteAllData().then(result => {
       let createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
@@ -140,7 +143,8 @@ class EnterDetails extends React.Component {
     NetworkManager.callAPI(rest.initialDetails, 'POST', data).then((responseJson) => {
       this.setState({ networkloading: false })
       console.log(responseJson);      
-      this.props.loadGameData(); 
+      this.props.loadGameData();
+      AsyncStorage.setItem('name', this.state.name );
       this.props.navigation.navigate('App')      
     })
     .catch((error) => {

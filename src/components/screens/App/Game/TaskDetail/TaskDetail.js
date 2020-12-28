@@ -55,7 +55,7 @@ class TaskDetail extends React.Component {
 
         })
     }
-    jewelView(jewel) {
+    jewelView(jewel,key) {
         console.log('jewel value')
         console.log(jewel)
         let jewelView = []
@@ -126,10 +126,10 @@ class TaskDetail extends React.Component {
                 {this.props.taskdetails.hasOwnProperty(this.task.task_id) ?
                     <View style={{ paddingBottom: 20, flexDirection: 'column' }}>
                         {
-                            this.props.taskdetails[this.task.task_id].map((jewel) =>
+                            this.props.taskdetails[this.task.task_id].map((jewel, key) =>
                                 <View style={{ flexDirection: 'row', padding: 5 }}>
                                     <View style={{ flexDirection: 'row', width: '85%', paddingLeft: '15%', alignItems: 'center', justifyContent: 'center' }}>
-                                        {this.jewelView(jewel)}
+                                        {this.jewelView(jewel, key)}
                                     </View>
                                     <View style={{ width: '15%' }}>
                                         {

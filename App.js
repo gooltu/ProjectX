@@ -25,21 +25,7 @@ export default class App extends React.Component {
   }
   componentDidMount() {
   
-    admob()
-      .setRequestConfiguration({
-        // Update all future requests suitable for parental guidance
-        maxAdContentRating: MaxAdContentRating.PG,
-
-        // Indicates that you want your content treated as child-directed for purposes of COPPA.
-        tagForChildDirectedTreatment: true,
-
-        // Indicates that you want the ad request to be handled in a
-        // manner suitable for users under the age of consent.
-        tagForUnderAgeOfConsent: true,
-      })
-      .then(() => {
-        // Request config successfully set!
-      });
+    
     this.handleBackgroundState = messaging().onNotificationOpenedApp(remoteMessage => {
       console.log(
         'Notification caused app to open from background state:',
@@ -63,10 +49,8 @@ export default class App extends React.Component {
           );
           // setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
         }
-      });
-   
-    // return unsubscribe;
-    this.getStoragePermission()
+      });   
+    
     console.log(this.getFCMToken())
     this.messageListener = messaging().onMessage(async remoteMessage => {
       console.log('testy')
@@ -106,57 +90,7 @@ export default class App extends React.Component {
     } catch (error) {
       console.log(error);
     }
-  };
-
-  getStoragePermission() {
-    if (Platform.OS == 'android') {
-      try {
-        const granted = PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          {
-            title: 'JewelChat Camera Permission',
-            message:
-              'JewelChat needs access to your camera ' +
-              'so you can take awesome pictures.',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
-        const granted1 = PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-          {
-            title: 'JewelChat Storage Permission',
-            message:
-              'JewelChat needs access to your Storage ' +
-              'so you can take awesome pictures.',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
-        const grantedStorage = PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-          {
-            title: 'JewelChat Permission',
-            message:
-              'JewelChat needs access to your Storage ' +
-              'so you can use Awesome pictures.',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
-        if (grantedStorage === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log('You can use the camera');
-        } else {
-          console.log('Camera permission denied');
-        }
-      } catch (err) {
-        console.warn(err);
-      }
-    }
-  }
+  };  
 
   render() {
     return (

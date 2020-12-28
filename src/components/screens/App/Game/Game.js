@@ -30,26 +30,29 @@ class Game extends React.Component {
     }
   }
   componentDidMount() {
-    console.log(this.props.gifttasks)
+    //console.log(this.props.gifttasks)
     this.getTaskDetails()
     this.getGiftTask()
   }
 
   getTaskDetails() {
-    if (this.props.tasks.length == 0) {
-      this.setState({
-        isLoading: true
-      })
-      NetworkManager.callAPI(rest.getTasks, 'POST', null).then(result => {
-        console.log(result)
-        this.setState({
-          isLoading: false
-        })
-        this.props.setTaskData(result.tasks)
-      }).catch(error => {
-      })
-    }
+      console.log('GET TASKS')
+      if (this.props.tasks.length == 0) {
+
+          this.setState({ isLoading: true });
+          NetworkManager.callAPI(rest.getTasks, 'POST', null).then(result => {
+            console.log('Tasks')
+            console.log(result.tasks)
+            this.setState({
+              isLoading: false
+            })
+            this.props.setTaskData(result.tasks)
+          }).catch(error => {
+          })
+
+      }
   }
+
   getGiftTask() {
     this.setState({
       giftTaskLoading: true
@@ -69,6 +72,7 @@ class Game extends React.Component {
 
     })
   }
+
   LoadMoreRandomData = () => {
     if (!this.state.giftTaskLoading) {
       this.setState({
@@ -94,7 +98,9 @@ class Game extends React.Component {
       />
     )
   }
+
   _renderSectionHeader = () => {
+    console.log('HEADER')
     return (
       //  item.title == 'section0' ? 
       <View>
@@ -103,8 +109,8 @@ class Game extends React.Component {
         </View>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{ paddingHorizontal: 10 }}>
           {
-            this.props.tasks.map((task) => (
-              <TaskView navigation={this.props.navigation} task={task} />
+            this.props.tasks.map((task, key ) => (
+              <TaskView navigation={this.props.navigation} task={task} key={task.task_id}/>
             ))
           }
         </ScrollView>
@@ -112,6 +118,7 @@ class Game extends React.Component {
       //: null
     )
   }
+
   _renderSectionFooter = () => {
     return (
       // <BannerAd
