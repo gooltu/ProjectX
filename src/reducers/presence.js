@@ -1,25 +1,19 @@
+import {SET_PRESENCE} from '../actions/ActionTypes'
 
-
-let initialState = {
-    
-    910000000000 : {
-        presence: 'online'
-    },
-
-    919005835709: {
-        presence: 'offline'
-    }
-}
+let initialState = {}
     
 
         
-const mytoken = (state = initialState, action) => {
+const presence = (state = initialState, action) => {
     //console.log('REDUCER');
     //console.log(action);
     switch (action.type) {           
 
-        default:
-            return state
+        case SET_PRESENCE: 
+        return Object.assign({}, state, action.presenceData)  
+
+        default:            
+            return state  
         
     }
 }

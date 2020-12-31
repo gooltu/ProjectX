@@ -20,7 +20,8 @@ connection.registerSASLMechanism = XMPP.Strophe.SASLXOAuth2;
 export default {
 	getConnectionObj,
 	realtimeConnect,
-	realtimeDisconnect
+	realtimeDisconnect,
+	sendOutgoingMessage
 	//sendReply,
 	//sendReadReceipt,
 	//sendSubscriptionRequest
@@ -36,11 +37,14 @@ export const getConnectionObj = () => {
 export const realtimeConnect = () => {
 
 	return (dispatch, getState) => {
-		console.log('REALTIME CONNECT1');
-		console.log(getState())
+		console.log('REALTIME CONNECT1', connection);
+		
 		// console.log(getState().mytoken.myphone + '@jewelchat')
 		// console.log(getState().mytoken.token)
 		//		connection.connect(getState().mytoken.myphone + '@jewelchat.net', getState().mytoken.token, (status, err) => {
+
+		
+
 		connection.connect(getState().mytoken.myphone + '@jewelchat.net', getState().mytoken.token, (status, err) => {
 			if (err) {
 				console.log(' XMPP Error:' + err);
@@ -48,18 +52,18 @@ export const realtimeConnect = () => {
 			}
 			if (status == Strophe.Status.CONNECTING) {
 				console.log('Strophe is connecting.');
-				dispatch({ type: 'XMPP_CONNECTING' });
+				//dispatch({ type: 'XMPP_CONNECTING' });
 			} else if (status == Strophe.Status.CONNFAIL) {
 				console.log('Strophe failed to connect.');
-				dispatch({ type: 'XMPP_CONNECTION_FAIL' });
+				//dispatch({ type: 'XMPP_CONNECTION_FAIL' });
 			} else if (status == Strophe.Status.AUTHENTICATING) {
 				console.log('Strophe is authenticating.');
-				dispatch({ type: 'XMPP_AUTHENTICATING' });
+				//dispatch({ type: 'XMPP_AUTHENTICATING' });
 			} else if (status == Strophe.Status.AUTHFAIL) {
-				dispatch({ type: 'XMPP_AUTH_FAILURE' });
+				//dispatch({ type: 'XMPP_AUTH_FAILURE' });
 				console.log('Strophe is auth failure.');
 			} else if (status == Strophe.Status.DISCONNECTING) {
-				dispatch({ type: 'XMPP_DISCONNECTING' });
+				//dispatch({ type: 'XMPP_DISCONNECTING' });
 				console.log('Strophe is disconnecting.');
 			} else if (status == Strophe.Status.DISCONNECTED) {
 				dispatch({ type: 'XMPP_DISCONNECTED' });
@@ -120,7 +124,7 @@ export const realtimeConnect = () => {
 				connection.send($pres().tree(), () => {});
 
 
-				getServerTime(getState().mytoken.myphone)
+				getServerTime(getState().mytoken.myphone, connection)
 				.then(delta => {
 
 					// download history since your last logout	after getting server time
@@ -140,6 +144,8 @@ export const realtimeConnect = () => {
 				
 			}
 		});
+
+		console.log('REALTIME CONNECT2', connection);
 	}
 }
 
@@ -149,6 +155,111 @@ export const realtimeDisconnect = () => {
 		console.log('REALTIME DISCONNECT');
 		connection.disconnect();
 	}
+}
+
+
+export const sendOutgoingMessage = (outgoingMessage) => {
+
+	return new Promise((resolve, reject) => {
+
+        let reply;
+
+        if(outgoingMessage.IS_GROUP_MSG == 0 || outgoingMessage.IS_GROUP_MSG == null){
+            if(outgoingMessage.MSG_TYPE == 0){
+
+                reply = $msg({to: outgoingMessage.CHAT_ROOM_JID , from: outgoingMessage.CREATOR_JID, type: 'chat', id:outgoingMessage.SENDER_MSG_ID })
+                        .cnode(Strophe.xmlElement('body', outgoingMessage.MSG_TEXT))
+                        .up()
+                        .c('active', {xmlns: "http://jabber.org/protocol/chatstates"});
+                
+                
+            }else if(outgoingMessage.MSG_TYPE == 1){
+
+                reply = $msg({to: outgoingMessage.CHAT_ROOM_JID, from: outgoingMessage.CREATOR_JID, type: 'chat', id:outgoingMessage.SENDER_MSG_ID })
+                        .cnode(Strophe.xmlElement('body', 'Image'))              
+                        .up()
+                        .c('media', {number:outgoingMessage.MSG_TYPE, link:outgoingMessage.MEDIA_CLOUD})
+                        .up()
+                        .c('active', {xmlns: "http://jabber.org/protocol/chatstates"});
+                
+            }else if(outgoingMessage.MSG_TYPE == 2){
+
+                reply = $msg({to: outgoingMessage.CHAT_ROOM_JID, from: outgoingMessage.CREATOR_JID, type: 'chat', id:outgoingMessage.SENDER_MSG_ID })
+                        .cnode(Strophe.xmlElement('body', 'Video'))              
+                        .up()
+                        .c('media', {number:outgoingMessage.MSG_TYPE, link:outgoingMessage.MEDIA_CLOUD , thumbnail: outgoingMessage.MEDIA_CLOUD_THUMBNAIL})
+                        .up()
+                        .c('active', {xmlns: "http://jabber.org/protocol/chatstates"});
+                
+            }else if(outgoingMessage.MSG_TYPE == 3){
+
+                reply = $msg({to: outgoingMessage.CHAT_ROOM_JID, from: outgoingMessage.CREATOR_JID, type: 'chat', id:outgoingMessage.SENDER_MSG_ID })
+                        .cnode(Strophe.xmlElement('body', 'GIF'))              
+                        .up()
+                        .c('media', {number:outgoingMessage.MSG_TYPE, link:outgoingMessage.MEDIA_CLOUD })
+                        .up()
+                        .c('active', {xmlns: "http://jabber.org/protocol/chatstates"});
+
+                
+            }else if(outgoingMessage.MSG_TYPE == 4){
+
+                reply = $msg({to: outgoingMessage.CHAT_ROOM_JID, from: outgoingMessage.CREATOR_JID, type: 'chat', id:outgoingMessage.SENDER_MSG_ID })
+                        .cnode(Strophe.xmlElement('body', 'Sticker'))              
+                        .up()
+                        .c('media', {number:outgoingMessage.MSG_TYPE, link:outgoingMessage.MEDIA_CLOUD})
+                        .up()
+                        .c('active', {xmlns: "http://jabber.org/protocol/chatstates"});
+                
+            }
+
+        }
+        else if(outgoingMessage.IS_GROUP_MSG == 1){
+
+            if(outgoingMessage.MSG_TYPE == 0){
+
+                reply = $msg({to: outgoingMessage.CHAT_ROOM_JID , from: outgoingMessage.CREATOR_JID, type: 'groupchat', id:outgoingMessage.SENDER_MSG_ID })
+                        .cnode(Strophe.xmlElement('body', outgoingMessage.MSG_TEXT));
+                
+            }else if(outgoingMessage.MSG_TYPE == 1){
+                reply = $msg({to: outgoingMessage.CHAT_ROOM_JID, from: outgoingMessage.CREATOR_JID, type: 'groupchat', id:outgoingMessage.SENDER_MSG_ID })
+                        .cnode(Strophe.xmlElement('body', 'Image'))              
+                        .up()
+                        .c('media', {number:outgoingMessage.MSG_TYPE, link:outgoingMessage.MEDIA_CLOUD})
+                
+            }else if(outgoingMessage.MSG_TYPE == 2){
+                reply = $msg({to: outgoingMessage.CHAT_ROOM_JID, from: outgoingMessage.CREATOR_JID, type: 'groupchat', id:outgoingMessage.SENDER_MSG_ID })
+                        .cnode(Strophe.xmlElement('body', 'Video'))              
+                        .up()
+                        .c('media', {number:outgoingMessage.MSG_TYPE, link:outgoingMessage.MEDIA_CLOUD , thumbnail: outgoingMessage.MEDIA_CLOUD_THUMBNAIL})
+                
+            }else if(outgoingMessage.MSG_TYPE == 3){
+                reply = $msg({to: outgoingMessage.CHAT_ROOM_JID, from: outgoingMessage.CREATOR_JID, type: 'groupchat', id:outgoingMessage.SENDER_MSG_ID })
+                        .cnode(Strophe.xmlElement('body', 'GIF'))              
+                        .up()
+                        .c('media', {number:outgoingMessage.MSG_TYPE, link:outgoingMessage.MEDIA_CLOUD })
+                
+            }else if(outgoingMessage.MSG_TYPE == 4){
+                reply = $msg({to: outgoingMessage.CHAT_ROOM_JID, from: outgoingMessage.CREATOR_JID, type: 'groupchat', id:outgoingMessage.SENDER_MSG_ID })
+                        .cnode(Strophe.xmlElement('body', 'Sticker'))              
+                        .up()
+                        .c('media', {number:outgoingMessage.MSG_TYPE, link:outgoingMessage.MEDIA_CLOUD})
+            }
+
+        }
+
+
+        try{
+
+            connection.send(reply.tree(), () => {
+                resolve('Success')
+            })
+
+        }catch(err){
+            reject(err)
+        }            
+
+
+    })
 }
 
 export const sendReply = (messageText, chatroom, type, parent) => {

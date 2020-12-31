@@ -11,7 +11,7 @@ import {
   ImageBackground,
   SafeAreaView
 } from "react-native";
-import J6 from '../../../svg_components/J6';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import styles from './Contacts.styles'
 import { connect } from 'react-redux';
 import colors from "../../../shared_styles/colors";
@@ -48,16 +48,16 @@ class Contacts extends React.Component {
     this.getContactsCallback()
     getContacts(this.getContactsCallback)
   }
+
   getContactsCallback = () => {
     console.log('came to callback')
-    db.getContactList('Contact').then(results => {
-      let chatList = []
-      for (let i = 0; i < results.rows.length; i++) {
-        chatList.push(results.rows.item(i))
-      }
+    this.setState({
+      isLoading: true
+    })
+    db.getContactList('Contact', this.state.searchQuery).then(results => {   
+      console.log('JC CONTACTS', results);       
       this.setState({
-        contactData: chatList,
-        displayContactData: chatList,
+        contactData: results,        
         isLoading: false
       })
     }).catch(err => {
@@ -65,22 +65,104 @@ class Contacts extends React.Component {
     })
   }
 
-  _onChangeSearch = (query) => {
-    this.setState({ searchQuery: query })
-    if (query.length > 0) {
-      var filteredContacts = this.state.contactData.filter(item => {
-        return item.PHONEBOOK_CONTACT_NAME.toLowerCase().includes(query.toLowerCase())
-      })
-      this.setState({
-        displayContactData: filteredContacts
-      })
-    }
-    else {
-      this.setState({
-        displayContactData: this.state.contactData
-      })
-    }
+  _onChangeSearch = (query) => {    
+    // if (query.length > 0) {
+    //   var filteredContacts = this.state.contactData.filter(item => {
+    //     return item.PHONEBOOK_CONTACT_NAME.toLowerCase().includes(query.toLowerCase())
+    //   })
+    //   this.setState({
+    //     displayContactData: filteredContacts
+    //   })
+    // }
+    // else {
+    //   this.setState({
+    //     displayContactData: this.state.contactData
+    //   })
+    // }
+
+    this.setState({
+      searchQuery: query
+    })
+
+    this.getContactsCallback()
+
   }
+
+
+  inviteUser(item) {
+    console.log('INVITE USER',item)
+    if(item.IS_REGIS == 0 && item.IS_INVITED == 0){
+  
+        let data = {
+          phone: item.CONTACT_NUMBER
+        }
+        NetworkManager.callAPI(rest.inviteUser, 'post', data).then(result => {
+            console.log(result)       
+            if(result.is_regis){
+              let contact = {
+                JEWELCHAT_ID: result.contact.id,
+                IS_REGIS: 1,
+                IS_INVITED: 1,
+                STATUS_MSG: result.contact.status
+              }
+              db.updateContact(contact, item.CONTACT_NUMBER).then(result => {
+                this.getContactsCallback()
+              }) 
+            }else{
+              db.updateContact({IS_INVITED:1}, item.CONTACT_NUMBER).then(result => {
+                this.getContactsCallback()
+              })     
+            }     
+            
+        
+        }).catch(error => {
+          console.log(error)
+        })
+    
+   
+  
+    }else{   
+         
+        let activechatobj = Object.assign({}, item, { CHAT_ROOM_JID : item.JID });
+        this.props.setActiveChat(activechatobj)
+        this.props.navigation.navigate('ChatPage', activechatobj)
+    }
+  
+  }
+
+
+  Item = ({item}) =>  (
+
+    <TouchableOpacity onPress={() => this.inviteUser(item)}  style={styles.mainConatiner} >
+      <View style={styles.subContainer}>
+        <View style={styles.marginstyle} />
+        <View style={styles.chatBox}>
+          {/* {item.IS_REGIS == 1 &&
+            <ImageBackground
+              source={{ uri: item.SMALL_IMAGE }}
+              style={styles.imgBackground}></ImageBackground> */
+          }                  
+          {
+            item.IS_REGIS == 0 && <Icon  name='user' color={colors.jcgray} size={24} solid />
+          }
+        </View>      
+        <View style={styles.chatboxLeftContainer} >
+          <Text style={styles.name}>{item.PHONEBOOK_CONTACT_NAME ? item.PHONEBOOK_CONTACT_NAME : 'NA'}</Text>
+          <Text style={styles.msgText}>{item.CONTACT_NUMBER}</Text>
+          <Text style={styles.msgText}>{item.STATUS_MSG != null ? item.STATUS_MSG.substring(0, 25) + (item.STATUS_MSG.length > 25 ? '...' : '') : ''}</Text>
+        </View>
+      </View>
+      <View style={styles.itemLeftConatiner} >
+        <View style={styles.itemLeftSubContainer}>
+          {item.IS_REGIS == 0 && item.IS_INVITED == 0 && <Text style={styles.inviteText}>INVITE</Text>}
+          {item.IS_REGIS == 0 && item.IS_INVITED == 1 && <Text style={styles.invitedText}>INVITED</Text>}
+        </View>
+        <View style={styles.marginStyleLeft} />
+      </View>
+    </TouchableOpacity>
+  );
+  
+
   render() {
     return (
       <SafeAreaView style={styles.rootContainer}>
@@ -88,7 +170,7 @@ class Contacts extends React.Component {
         <Searchbar
           placeholder="Search Contacts"
           onChangeText={this._onChangeSearch}
-          value={this.state.searchQuery}
+          //value={this.state.searchQuery}
           style={{ backgroundColor: colors.darkcolor3, color: 'white' }}
           inputStyle={{ color: 'white', fontSize: 14 }}
           placeholderTextColor='white'
@@ -96,14 +178,8 @@ class Contacts extends React.Component {
           theme='dark'
         />
         <FlatList
-          data={this.state.displayContactData}
-          renderItem={({ item }) => (
-            <Item item={item}
-              onpressitem={(item) => {
-                inviteUser(item, this.props)
-              }}
-            />
-          )}
+          data={this.state.contactData}
+          renderItem={(item) => this.Item(item)}           
           keyExtractor={item => item._ID + ''}
         />
         <StatusBar barStyle="light-content" hidden={false} translucent={true} />
@@ -112,92 +188,12 @@ class Contacts extends React.Component {
   }
 }
 
-function Item({ item, onpressitem }) {
 
 
-  return (
-    <TouchableOpacity
-      onPress={() => onpressitem(item)}
-      style={styles.mainConatiner}
-    >
-      <View style={styles.subContainer}>
-        <View style={styles.marginstyle} />
-        <View style={styles.chatBox}>
-          {item.SMALL_IMAGE && item.JEWELCHAT_ID != 1 &&
-            <ImageBackground
-              source={{ uri: item.SMALL_IMAGE }}
-              style={styles.imgBackground}></ImageBackground>
-          }
-          {
-            item.JEWELCHAT_ID == 1 && <Logo height="75%" width="75%" style={styles.jewelStyle} />
-          }
-          {
-            !item.SMALL_IMAGE && item.JEWELCHAT_ID != 1 && <J6 height="75%" width="75%" style={styles.jewelStyle} />
-          }
-        </View>
-        <View style={styles.chatboxLeftContainer} >
-          <Text style={styles.name}>{item.PHONEBOOK_CONTACT_NAME ? item.PHONEBOOK_CONTACT_NAME : (item.JEWELCHAT_ID == 1 ? 'Team JewelChat' : '+' + item.CONTACT_NUMBER)}</Text>
-          <Text style={styles.msgText}>{item.STATUS_MSG != null ? item.STATUS_MSG.substring(0, 25) + (item.STATUS_MSG.length > 25 ? '...' : '') : ''}</Text>
-        </View>
-      </View>
-      <View style={styles.itemLeftConatiner} >
-        <TouchableOpacity style={styles.itemLeftSubContainer}
-          disabled={item.IS_INVITED == 1 ? true : false}
-          onPress={() => onpressitem(item)}
-        >
-          <Text style={styles.inviteText}>{item.IS_REGIS == 0 ? 'INVITE' : ''}</Text>
-        </TouchableOpacity>
-        <View style={styles.marginStyleLeft} />
-      </View>
-    </TouchableOpacity>
-  );
-}
 
-function inviteUser(item, props) {
-  console.log(item)
-  let data = {
-    phone: item.CONTACT_NUMBER
-  }
-  NetworkManager.callAPI(rest.inviteUser, 'post', data).then(result => {
-    console.log(result)
-    if (result.is_regis) {
-      result.contact['invited'] = 1
-      result.contact['regis'] = 1
-      db.updateContact(result.contact).then(result => {
-        db.getChatList().then(results => {
-          let chatList = []
-          for (let i = 0; i < results.rows.length; i++) {
-            chatList.push(results.rows.item(i))
-          }
-          props.setChatListData(chatList)
-        })
-          .catch(err => {
-            console.log(err)
-          })
-      })
 
-      db.getChats(item.JID, 0)
-        .then(results => {
-          let chatroom = []
-          for (let i = 0; i < results.rows.length; i++) {
-            chatroom.push(results.rows.item(i))
-          }
-          props.setChatData(chatroom)
-        })
-        .catch(err => {
-          console.log(err)
-        })
-      props.setActiveChat(item)
-      props.navigation.navigate('ChatPage', item)
-    }
-  }).catch(error => {
-    console.log(error)
-  })
-}
 function mapStateToProps(state) {
-  return {
-    chatslist: state.chatslist.chatList
-  }
+  return { }
 }
 
 

@@ -216,7 +216,7 @@ function mapStateToProps(state) {
         appstate: state.appstate,
         network: state.network,
         game: state.game,
-        activeChat: state.chatslist.activeChat
+        activeChat: state.activechat
     }
 }
 

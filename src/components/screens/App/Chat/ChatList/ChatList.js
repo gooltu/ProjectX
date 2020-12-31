@@ -51,7 +51,11 @@ class Item extends React.Component {
   randomstring = '?'+Math.ceil(Math.random()*1000000);
 
   //({ item, onpressitem, onlongpressitem })
+
+  
+
   render(){
+    console.log('CHATLIST ITEM', this.props.item.CHAT_ROOM_JID);
     return (
       <TouchableOpacity
         onPress={() => this.props.onpressitem(this.props.item)}
@@ -63,13 +67,13 @@ class Item extends React.Component {
           <View style={styles.chatBox}>
             { this.props.item.JEWELCHAT_ID != 1 &&
               <Image
-                source={{ headers: { Pragma: 'no-cache' }, uri: 'https://kuchbhi.com/'+this.props.item.CHAT_ROOM_JID.split('@')[0]+this.randomstring/*item.SMALL_IMAGE */}}
+                source={{ headers: { Pragma: 'no-cache' }, uri:'https://kuchbhi.com/'+this.props.item.CHAT_ROOM_JID.split('@')[0]+this.randomstring}}
                 style={[{ position:'absolute', top:0, left:0 },styles.imgBackground]}
                 onLoad={()=>{
                   this.setState( { profileimageerror: false } ) 
                 }}
                 onError={(error) => {                    
-                    console.log('https://kuchbhi.com/'+this.props.item.CHAT_ROOM_JID.split('@')[0]+'?'+Math.ceil(Math.random()*1000000));
+                    //console.log('https://kuchbhi.com/'+this.props.item.CHAT_ROOM_JID.split('@')[0]+'?'+Math.ceil(Math.random()*1000000));
                     this.setState( { profileimageerror: true } ) 
                   } 
                 }
@@ -237,7 +241,7 @@ function relativeDateSting(last_msg_time) {
 
 function mapStateToProps(state) {
   return {
-    chatslist: state.chatslist.chatList
+    chatslist: state.chatslist
   }
 }
 

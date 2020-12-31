@@ -30,7 +30,7 @@ export default class phoneContactModal {
 }
 
 function _formatNumber(number) {
-    var formattedNumber = ''
+    //var formattedNumber = ''
     // if (number.includes('(')) {
     // 	formattedNumber = '91' + number.split('-')[0].split(') ')[0].split('(')[1] + number.split('-')[0].split(') ')[1] + number.split('-')[1]
     // 	console.log(formattedNumber)
@@ -44,13 +44,19 @@ function _formatNumber(number) {
     // }
     // else
     // 	formattedNumber = number
-    for (let i = 0; i < number.length; i++) {
-        if (!isNaN(number[i]) && number[i]!=' ')
-            formattedNumber = formattedNumber + number[i]
-    }
-    if(formattedNumber.length==10){
-        formattedNumber ='91'+ formattedNumber
-    }
 
-    return formattedNumber
+
+    // for (let i = 0; i < number.length; i++) {
+    //     if (!isNaN(number[i]) && number[i]!=' ')
+    //         formattedNumber = formattedNumber + number[i]
+    // }
+    // if(formattedNumber.length==10){
+    //     formattedNumber ='91'+ formattedNumber
+    // }
+
+    const regex1 = /\D/g;
+    const regex2 = /^0+/g;
+
+    return '91' + number.replaceAll(regex1,'').replace(regex2,'');
+    
 }

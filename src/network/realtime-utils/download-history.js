@@ -1,7 +1,7 @@
-import db from '../../db/localdatabase';
-import actions from '../../actions';
+//import db from '../../db/localdatabase';
+//import actions from '../../actions';
 import {updateChatPageRedux, updateChatlistRedux} from './messages';
-import {getConnectionObj} from '../realtime';
+//import {getConnectionObj} from '../realtime';
 
 
 export const downloadMessages = (connection, lastlogouttime, last=null ) => {
@@ -26,14 +26,14 @@ export const downloadMessages = (connection, lastlogouttime, last=null ) => {
                     if(last)
                         download = download.up().c('after').t(last).up();
 
-                        getConnectionObj().sendIQ(download.tree(), (stanza) => {
+                        connection.sendIQ(download.tree(), (stanza) => {
                         console.log('CALLBACK SEND IQ')
                         console.log(stanza.toString())
 
                         //update redux active chat and chat list.....don't know if this is a good idea
 
-                        dispatch(updateChatPageRedux);
-                        dispatch(updateChatlistRedux);
+                        dispatch(updateChatPageRedux());
+                        dispatch(updateChatlistRedux());
 
                         var lastElement = stanza.getElementsByTagName('last')
                         if (lastElement.toString()) {

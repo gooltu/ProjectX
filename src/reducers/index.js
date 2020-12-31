@@ -18,8 +18,11 @@ import leaderboard from './leaderboard'
 import factory from './factory'
 import userfactory from './userfactory'
 import walletjewels from './walletjewels'
+import activechat from './activechat'
+import presence from './presence'
+
 export default combineReducers({
-    mytoken, appstate, network, game, chatslist, chatroom,
+    mytoken, appstate, network, game, activechat, presence, chatslist, chatroom,
     contactlist, achievements, userachievements, tasks, taskdetails,
     gifttasks, usergifttasks, gifttaskdetails, referralAchievement,
     leaderboard, factory, userfactory, walletjewels

@@ -73,13 +73,13 @@ export default styles = StyleSheet.create({
         color: 'white',
         fontSize: 12,
         fontWeight: '600',
-        padding: 4
+        paddingTop: 2
     },
     msgText: {
         color: colors.jcgray,
         fontSize: 10,
         fontWeight: 'normal',
-        padding: 4
+        paddingTop: 2
     },
     chatboxLeftContainer:{
         height: 64,
@@ -88,7 +88,14 @@ export default styles = StyleSheet.create({
       },
     inviteText:{
         color: 'white',
-        fontSize: 16,
+        fontSize: 14,
+        fontWeight: '600'
+    },
+
+    invitedText:{
+        color: colors.jcgray,
+        opacity: 0.3,
+        fontSize: 14,
         fontWeight: '600'
     }
 })

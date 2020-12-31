@@ -53,8 +53,8 @@ const ProfileOptionsList = (props) => {
         <View style={{ paddingBottom: 20, alignItems: 'center' }}>
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
                 {
-                    scrollBarData.map((object) => (
-                        <View style={styles.scrollBar}>
+                    scrollBarData.map((object, index) => (
+                        <View style={styles.scrollBar} key={index}>
                             <TouchableOpacity style={styles.scrollBarItem} onPress={() => scrollBarNaviagtion(object.text, props.navigation, props.children)}>
                                 {object.image}
                                 <Text style={styles.itemText}>{object.text}</Text>

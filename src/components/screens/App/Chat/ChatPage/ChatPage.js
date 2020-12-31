@@ -54,6 +54,7 @@ class ChatPage extends React.Component {
 
   componentDidMount() {
     console.log('ChatPage did mount');
+    console.log(this.props) 
     this.props.setChatData([]);    
     this.props.updateChatPageRedux();
     
@@ -62,7 +63,7 @@ class ChatPage extends React.Component {
     //Send Read receipts
 
     //handle Subscription Request
-    
+     
   } 
 
   state = {    
@@ -137,7 +138,7 @@ class ChatPage extends React.Component {
   }
 
   onListEndReached() {
-    console.log('end');
+    console.log('end'+this.props.activeChat.CHAT_ROOM_JID);
       db.getChats(this.props.activeChat.CHAT_ROOM_JID, this.props.chatroom.length, this.props.activeChat.IS_GROUP_MSG)
       .then(chats => {    
           console.log('CONCAT '+ chats.length)     
@@ -158,7 +159,7 @@ class ChatPage extends React.Component {
 
   render() {
 
-    console.log(this.props);
+    console.log('CHATPAGE RENDER: '+this.props);
     return (
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : null}
@@ -209,7 +210,7 @@ class ChatPage extends React.Component {
 function mapStateToProps(state) {
   return {
     chatroom: state.chatroom.chatroom,
-    activeChat: state.chatslist.activeChat,
+    activeChat: state.activechat,
     game: state.game
   }
 }

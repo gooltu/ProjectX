@@ -91,18 +91,23 @@ class JewelStore extends React.Component {
                         width: 80,
                         backgroundColor: colors.darkcolor1,
                         borderColor: 'white',
-                        borderWidth: 4,
+                        borderWidth: 2,
                         borderRadius: 40,
                         overflow: 'hidden',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        padding: 10
+                        padding: 15
                     }}
                     >
                         <ImageBackground source={require('../../../assets/jewelbox.png')} style={{ width: '100%', height: '100%' }} resizeMode='center' />
                     </View>
-                    <View style={{ marginTop: 60, marginBottom: 10, width: '100%', alignItems: 'center' }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={{ marginTop: 35, marginBottom: 10, width: '100%', alignItems: 'center' }}>
+                        <View style={{ height: 50, paddingTop: 15, paddingBottom: 15 }}>
+                            {this.jewelCount() >= 25 
+                                ? <Text style={{ fontSize: 24, fontWeight: '500', color: 'white' }}>Jewel Store is FULL.</Text> 
+                                : <Text style={{ fontSize: 24, fontWeight: '500', color: 'white' }}>Jewel Store</Text> }
+                        </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop:10, marginBottom:20 }}>
                             <Text style={{ fontSize: 14, fontWeight: '400', color: 'white', paddingRight: 10 }}>0</Text>
                             <View style={{ width: '75%', height: 8, zIndex: 1, backgroundColor: colors.darkcolor3, borderColor: colors.darkcolor3, borderRadius: 3, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
                                 <View style={{ width: "" + this.jewelCount() * 100 / 25 + "%", height: '100%' }}>
@@ -114,23 +119,26 @@ class JewelStore extends React.Component {
                             </View>
                             <Text style={{ fontSize: 14, fontWeight: '400', color: 'white', paddingLeft: 10 }}>25</Text>
                         </View>
-                        <View style={{ height: 50, paddingTop: 20 }}>
-                            {this.jewelCount() == 25 ?
-                                <Text style={{ fontSize: 16, fontWeight: '400', color: 'white' }}>Jewel Store is FULL.</Text> : null}
-                        </View>
-                        <FlatList style={{ margin: 5, width: '100%' }}
+                        
+                        <FlatList style={{ margin: 5, width: '100%'}}
                             numColumns={3}
                             scrollEnabled={false}               // set number of columns 
                             columnWrapperStyle={{ flex: 1 }}  // space them out evenly
-                            data={this.props.game.jewels.length > 0 ? this.props.game.jewels.slice(3) : this.props.game.jewels}
+                            data={this.props.game.jewels.slice(3).filter( j => j.count>0 )}
                             keyExtractor={(item, index) => item.id}
-                            renderItem={({ item }) =>
-                                <View style={{ paddingTop: 20, flexDirection: 'row', width: '33%', justifyContent: 'center', alignItems: 'center' }}>
-                                    <View>
-                                        {renderJewel(item.jeweltype_id, 35, 35, styles.jewelStyle)}
-                                    </View>
-                                    <Text style={{ fontSize: 16, fontWeight: '400', color: 'white' }}>{item.count < 10 ? '0' + item.count : item.count}</Text>
-                                </View>
+                            renderItem={({ item }) => {
+
+                                if(item.count <=0 )
+                                    return null
+
+                                return (
+                                    <View style={{ paddingTop: 20, flexDirection: 'row', width: '33%', justifyContent: 'center', alignItems: 'center' }}>
+                                        <View>
+                                            {renderJewel(item.jeweltype_id, 35, 35, styles.jewelStyle)}
+                                        </View>
+                                        <Text style={{ fontSize: 16, fontWeight: '400', color: 'white' }}>{item.count < 10 ? '0' + item.count : item.count}</Text>
+                                    </View>)
+                                }
                             }
                         />
                     </View>

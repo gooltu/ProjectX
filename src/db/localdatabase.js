@@ -162,15 +162,33 @@ function getChatList() {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
-				txn.executeSql('select a._ID, a.MSG_TEXT, a.MSG_TYPE, b.UNREAD_COUNT, b.LAST_MSG_CREATED_TIME, a.CHAT_ROOM_JID, a.IS_GROUP_MSG, c.JID, c.SMALL_IMAGE, c.PHONEBOOK_CONTACT_NAME, c.CONTACT_NAME, c.JEWELCHAT_ID, c.IS_PHONEBOOK_CONTACT'
-					+ ' from ChatMessage a '
-					+ 'INNER JOIN ( '
-					+ 'select _ID, max(_ID) as MAX_ID, count(_ID) as UNREAD_COUNT, max(TIME_CREATED) as LAST_MSG_CREATED_TIME'
-					+ ' from ChatMessage'
-					+ ' where IS_READ = 0 AND SENDER_MSG_ID IS NOT NULL'
+				// txn.executeSql('select a._ID, a.MSG_TEXT, a.MSG_TYPE, b.UNREAD_COUNT, b.LAST_MSG_CREATED_TIME, a.CHAT_ROOM_JID, a.IS_GROUP_MSG, c.JID, c.SMALL_IMAGE, c.PHONEBOOK_CONTACT_NAME, c.CONTACT_NAME, c.JEWELCHAT_ID, c.IS_PHONEBOOK_CONTACT'
+				// 	+ ' from ChatMessage a '
+				// 	+ 'INNER JOIN ( '
+				// 	+ 'select _ID, max(_ID) as MAX_ID, count(_ID) as UNREAD_COUNT, max(TIME_CREATED) as LAST_MSG_CREATED_TIME'
+				// 	+ ' from ChatMessage'
+				// 	+ ' where IS_READ = 0 AND SENDER_MSG_ID IS NOT NULL'
+				// 	+ ' group by CHAT_ROOM_JID'
+				// 	+ ' ) b ON a._ID = b.MAX_ID'
+				// 	+ ' LEFT OUTER JOIN Contact c ON c.JID = a.CHAT_ROOM_JID '
+				// 	+ ' order by b.LAST_MSG_CREATED_TIME DESC')
+
+				//'select a._ID, a.MSG_TEXT , a.MSG_TYPE, a.UNREAD_COUNT, a.LAST_MSG_CREATED_TIME, a.CHAT_ROOM_JID, a.IS_GROUP_MSG, c.JID, c.SMALL_IMAGE, c.PHONEBOOK_CONTACT_NAME, c.CONTACT_NAME, c.JEWELCHAT_ID, c.IS_PHONEBOOK_CONTACT '
+
+					txn.executeSql('select b._ID, b.MSG_TEXT , b.MSG_TYPE, d.UNREAD_COUNT, b.LAST_MSG_CREATED_TIME, b.CHAT_ROOM_JID, b.IS_GROUP_MSG, c.JID, c.SMALL_IMAGE, c.PHONEBOOK_CONTACT_NAME, c.CONTACT_NAME, c.JEWELCHAT_ID, c.IS_PHONEBOOK_CONTACT '
+					+ ' from ('					
+					+ '( select _ID, MSG_TEXT, MSG_TYPE, CHAT_ROOM_JID, IS_GROUP_MSG, max(TIME_CREATED) as LAST_MSG_CREATED_TIME '
+					+ ' from ChatMessage '					
+					+ ' group by CHAT_ROOM_JID '
+					+ ' ) b '
+					+ 'LEFT OUTER JOIN '
+					+ '( select CHAT_ROOM_JID, count(_ID) as UNREAD_COUNT '
+					+ ' from ChatMessage '
+					+ ' where IS_READ = 0 AND SENDER_MSG_ID IS NOT NULL '
 					+ ' group by CHAT_ROOM_JID'
-					+ ' ) b ON a._ID = b.MAX_ID'
-					+ ' LEFT OUTER JOIN Contact c ON c.JID = a.CHAT_ROOM_JID '
+					+ ' ) d '
+					+ ' ON b.CHAT_ROOM_JID = d.CHAT_ROOM_JID ) '
+					+ ' LEFT OUTER JOIN Contact c ON c.JID = b.CHAT_ROOM_JID '
 					+ ' order by b.LAST_MSG_CREATED_TIME DESC')
 					.then((results) => {
 						console.log('Contact query COMPLETED for');
@@ -192,12 +210,14 @@ function getChatList() {
 	});
 }
 
-function getContactList(type) {
+function getContactList( type, query ) {
 	let Query
 	if (type === 'Forward')
-		Query = 'Select * from Contact where IS_REGIS=1'
+		Query = 'Select * from Contact where IS_REGIS=1';
+	else if(type === 'Contact' && query )
+		Query = "Select * from Contact where IS_PHONEBOOK_CONTACT=1 AND IS_GROUP=0 AND PHONEBOOK_CONTACT_NAME LIKE '%" +query+"%' ORDER BY IS_REGIS DESC, PHONEBOOK_CONTACT_NAME ASC"; 
 	else
-		Query = 'Select * from Contact where IS_PHONEBOOK_CONTACT=1'
+		Query = 'Select * from Contact where IS_PHONEBOOK_CONTACT=1 AND IS_GROUP=0 ORDER BY IS_REGIS DESC, PHONEBOOK_CONTACT_NAME ASC';
 
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
@@ -206,8 +226,8 @@ function getContactList(type) {
 				txn.executeSql(Query)
 					.then((results) => {
 						console.log('Contact query COMPLETED for');
-						console.log(results[1])
-						resolve(results[1])
+						console.log(results[1].rows.raw())
+						resolve(results[1].rows.raw())
 					})
 					.catch(err => {
 						reject(err)
@@ -529,14 +549,19 @@ function updatePhoneContact(contactData) {
 	})
 }
 
-function updateContact(contactData) {
+function updateContact(contactData, CONTACT_NUMBER) {
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
 			jcdb = instance;
-			jcdb.transaction((txn) => {
-				let sql = "UPDATE Contact SET JEWELCHAT_ID = " + contactData.id + ", SMALL_IMAGE=" + _handleString(contactData.pic) + ", IMAGE_PATH=" + _handleString(contactData.large_pic) + "," +
-					"CONTACT_NAME=" + _handleString(contactData.name) + ",STATUS_MSG=" + _handleString(contactData.status) + ", IS_INVITED=" + contactData.invited + ", IS_REGIS=" + contactData.regis + " WHERE CONTACT_NUMBER=" + contactData.phone;
-				txn.executeSql(sql).then(result => {
+			jcdb.transaction((txn) => {				
+
+				let sql = "UPDATE Contact SET " + Object.keys(contactData).join(' = ?, ') + ' = ? ' + ' WHERE CONTACT_NUMBER=' + CONTACT_NUMBER;				
+
+				console.log('UPDATE CONTACT SQL', sql);
+
+				// let sql = "UPDATE Contact SET JEWELCHAT_ID = " + contactData.id + ", SMALL_IMAGE=" + _handleString(contactData.pic) + ", IMAGE_PATH=" + _handleString(contactData.large_pic) + "," +
+				// 	"CONTACT_NAME=" + _handleString(contactData.name) + ",STATUS_MSG=" + _handleString(contactData.status) + ", IS_INVITED=" + contactData.invited + ", IS_REGIS=" + contactData.regis + " WHERE CONTACT_NUMBER=" + contactData.phone;
+				txn.executeSql(sql, Object.values(contactData)).then(result => {
 					resolve('success')
 					console.log('success Contact update')
 				}).catch(err => {

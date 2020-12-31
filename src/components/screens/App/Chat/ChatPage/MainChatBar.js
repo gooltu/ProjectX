@@ -1,25 +1,8 @@
 import React from 'react';
-import {
-  ActivityIndicator,
-  AsyncStorage,
-  Button,
-  StatusBar,
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  ScrollView,
-  TextInput,
-  InputAccessoryView,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
-  Keyboard,
-  FlatList,
-  Animated,
-  Alert,
-  PanResponder,
+import {  
+  View,  
+  TextInput,  
+  Platform,  
   TouchableOpacity
 } from 'react-native';
 
@@ -30,10 +13,10 @@ import colors from "../../../../shared_styles/colors";
 import Icon1 from 'react-native-vector-icons/MaterialIcons'
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons'
 import ImagePicker from 'react-native-image-crop-picker';
-import { getConnectionObj } from '../../../../../network/realtime';
+import { sendOutgoingMessage } from '../../../../../network/realtime';
 import { sendReply, sendSubscriptionRequest } from '../../../../../network/realtime'
 import { dateToYMD } from '../../../../../network/realtime-utils/utilities'
-import { sendOutgoingMessage, updateChatPageRedux, updateChatlistRedux } from '../../../../../network/realtime-utils/messages';
+import { updateChatPageRedux, updateChatlistRedux } from '../../../../../network/realtime-utils/messages';
 import db from '../../../../../db/localdatabase';
 
 class MainChatBar extends React.Component {
@@ -42,6 +25,9 @@ class MainChatBar extends React.Component {
     super(props);
   }
 
+  componentDidMount() {    
+    console.log('MAINBAR', this.props);    
+  }
 
   state = {
     chatboxtext: '',
@@ -122,6 +108,8 @@ class MainChatBar extends React.Component {
       MSG_TYPE: msgtype,
       MEDIA_CLOUD: media_cloud
     }
+
+    console.log('NEW MESSAGE', outgoingMessage);
 
     db.insertStropheChatData(outgoingMessage).then((_id) => {
       this.props.updateChatPageRedux();
@@ -217,7 +205,7 @@ class MainChatBar extends React.Component {
 function mapStateToProps(state) {
   return {
     chatroom: state.chatroom.chatroom,
-    activeChat: state.chatslist.activeChat,
+    activeChat: state.activechat,
     game: state.game,
     mytoken: state.mytoken
   }

@@ -33,24 +33,20 @@ import { List, ListItem, Left, Body, Right } from 'native-base';
 
 
 class UserProfile extends React.Component {
-    /*static navigationOptions = ({ navigation }) => {
-      
-      console.log('HERE');
-      return {
-        header: <CustomHeader levelbar="show" />
-      };
-  };*/
+    
     constructor(props) {
         super(props)
         this.state = {
+            profileimageerror: false,
             imagepath: '',
             imageUri: '',
             userProfile: { name: '' }
         }
         this.getProfileData()
     }
-    componentDidMount() {
-    }
+
+    componentDidMount() { }
+
     getProfileData() {
         var data = {
             'phone': this.props.mytoken.myphone
@@ -116,17 +112,30 @@ class UserProfile extends React.Component {
     }
     render() {
         return (
-            <SafeAreaView style={styles.mainContainer}>
+            <SafeAreaView style={styles.mainContainer}>                
                 <ScrollView>
                     <TouchableOpacity style={{ paddingTop: 30, alignItems: 'center', justifyContent: 'center' }} onPress={() => this.props.navigation.navigate('ImageEdit')}>
-                        <Image style={{ width: 150, height: 150, borderRadius: 75, alignItems: 'center', justifyContent: 'center' }} key={this.state.imagepath} source={{ uri: rest.imageBaseURL + this.props.mytoken.myphone + '.jpeg?time=' + new Date() }} />
-                        <TouchableOpacity style={{ marginLeft: 100, top: -30, width: 40, height: 40, backgroundColor: colors.darkcolor1, alignItems: 'center', justifyContent: 'center', borderRadius: 20 }} onPress={() => this.props.navigation.navigate('ImageEdit')}>
-                            <Icon name='edit' size={22} color='white' />
-                        </TouchableOpacity>
-                        {/* <Text style={{ color: 'white', fontSize: 16, top: -30 }} onPress={() => this.props.navigation.navigate('MyModal', { modal_name: 'UpdateStatus', value: this.state.userProfile.name, UpdateStatus: this.updateName })}>{this.state.userProfile.name}</Text> */}
-                        <Text style={{ color: 'white', fontSize: 16, top: -30 }}>+{this.state.userProfile.phone}</Text>
+                        { !this.state.profileimageerror &&
+                            <Image 
+                            style={{ width: 300, height:300, alignItems: 'center', justifyContent: 'center' }} 
+                            key={this.state.imagepath} 
+                            source={{ headers: { Pragma: 'no-cache' }, uri: 'https://profileprojectx.s3.ap-south-1.amazonaws.com/918756463536.jpeg?time=' + new Date().getTime()}}                        
+                            onError={(error) => {
+                                this.setState( { profileimageerror: true } ) 
+                            }}></Image>     
+                            
+                        }  
+                        {
+                            this.state.profileimageerror && <Iconfa  name='user' color={colors.jcgray} size={48} solid />
+                        }  
                     </TouchableOpacity>
                     <List>
+                        <ListItem>
+                            <Body>
+                                <Text style={{ color: colors.lightcolor1, fontWeight: 'bold' }}>PHONE</Text>
+                                <Text style={{ color: 'white' }}>+{this.state.userProfile.phone}</Text>
+                            </Body>                            
+                        </ListItem>
                         <ListItem>
                             <Body>
                                 <Text style={{ color: colors.lightcolor1, fontWeight: 'bold' }}>NAME</Text>

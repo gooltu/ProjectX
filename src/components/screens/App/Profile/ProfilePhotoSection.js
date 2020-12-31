@@ -156,9 +156,7 @@ class ProfilePhotoSection extends React.Component {
                                     }}
                                     onError={(error) => {
                                         this.setState( { profileimageerror: true } ) 
-                                    } 
-                                    }
-                                    ></Image>
+                                    }}></Image>
                             }
                             {
                                 this.state.profileimageerror && <Iconfa  name='user' color={colors.jcgray} size={48} solid />

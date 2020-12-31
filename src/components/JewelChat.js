@@ -45,6 +45,9 @@ import NewGroup from "./screens/App/NewGroup";
 import JewelFactory from "./screens/App/JewelFactory/jewelFactory";
 
 import CustomHeader from "./shared_components/customHeader/CustomHeader";
+import HeaderLevelZero from "./shared_components/customHeader/HeaderLevelZero";
+import HeaderLevelOnePlus from "./shared_components/customHeader/HeaderLevelOnePlus";
+import HeaderChatPage from "./shared_components/customHeader/HeaderChatPage";
 import JCModal from "./shared_components/JCModal";
 
 import colors from "./shared_styles/colors";
@@ -102,7 +105,7 @@ const MainTabs = createBottomTabNavigator({
 }, {
     initialRouteName: 'Chats',
     backBehavior: 'none',
-    lazy: false,
+    lazy: true,
     tabBarOptions: {
         activeTintColor: colors.lightcolor1,
         activeBackgroundColor: colors.darkcolor3,
@@ -121,7 +124,7 @@ const AppMainStack = createStackNavigator({
         screen: MainTabs,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} title='JewelChat' />
+                header: <HeaderLevelZero navigation={navigation} title='JewelChat' />
             };
         }
     },
@@ -129,7 +132,7 @@ const AppMainStack = createStackNavigator({
         screen: ChatPage,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} title='Chat Page' />
+                header: <HeaderChatPage navigation={navigation} title='Chat Page' />
             };
         }
     },
@@ -137,7 +140,7 @@ const AppMainStack = createStackNavigator({
         screen: ChatMediaViewer,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} title='Media' />
+                header: <HeaderLevelOnePlus navigation={navigation} title='Media' />
             };
         }
     },
@@ -145,7 +148,7 @@ const AppMainStack = createStackNavigator({
         screen: NewGroup,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} title='Create New Group' />
+                header: <HeaderLevelOnePlus navigation={navigation} title='Create New Group' />
             };
         }
     },
@@ -153,7 +156,7 @@ const AppMainStack = createStackNavigator({
         screen: JewelFactory,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} title='Jewel Factory' />
+                header: <HeaderLevelOnePlus navigation={navigation} title='Jewel Factory' />
             };
         }
     },
@@ -161,7 +164,7 @@ const AppMainStack = createStackNavigator({
         screen: LeaderBoard,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} title='Leaderboard' />
+                header: <HeaderLevelOnePlus navigation={navigation} title='Leaderboard' />
             };
         }
     },
@@ -169,7 +172,7 @@ const AppMainStack = createStackNavigator({
         screen: Wallet,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} title='Wallet' />
+                header: <HeaderLevelOnePlus navigation={navigation} title='Wallet' />
             };
         }
     },
@@ -177,7 +180,7 @@ const AppMainStack = createStackNavigator({
         screen: TaskDetail,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} title='Task Detail' />
+                header: <HeaderLevelOnePlus navigation={navigation} title='Task Detail' />
             };
         }
     },
@@ -185,7 +188,7 @@ const AppMainStack = createStackNavigator({
         screen: GiftTaskDetail,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} title='Gift Task Detail' />
+                header: <HeaderLevelOnePlus navigation={navigation} title='Gift Task Detail' />
             };
         }
     },
@@ -201,7 +204,7 @@ const AppMainStack = createStackNavigator({
         screen: FriendProfile,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} title='' />
+                header: <HeaderLevelOnePlus navigation={navigation} title='' />
             };
         }
     },
@@ -209,7 +212,7 @@ const AppMainStack = createStackNavigator({
         screen: ContactsScreen,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} title='Contacts' />
+                header: <HeaderLevelOnePlus navigation={navigation} title='Contacts' />
             };
         }
     },
@@ -217,7 +220,7 @@ const AppMainStack = createStackNavigator({
         screen: UserProfile,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} title='Profile' />
+                header: <HeaderLevelOnePlus navigation={navigation} title='Profile' />
             };
         }
     },
@@ -225,7 +228,7 @@ const AppMainStack = createStackNavigator({
         screen: ForwardMessage,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} title='Forward..' />
+                header: <HeaderLevelOnePlus navigation={navigation} title='Forward..' />
             };
         }
     },
@@ -233,7 +236,7 @@ const AppMainStack = createStackNavigator({
         screen: ImageEdit,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} title='Change Picture' />
+                header: <HeaderLevelOnePlus navigation={navigation} title='Change Picture' />
             };
         }
     },
@@ -241,7 +244,7 @@ const AppMainStack = createStackNavigator({
         screen: GiftsWon,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} title='Gifts Won' />
+                header: <HeaderLevelOnePlus navigation={navigation} title='Gifts Won' />
             };
         }
     },
@@ -249,7 +252,7 @@ const AppMainStack = createStackNavigator({
         screen: ShareScreen,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} title='Referrals' />
+                header: <HeaderLevelOnePlus navigation={navigation} title='Referrals' />
             };
         }
     },
@@ -257,7 +260,7 @@ const AppMainStack = createStackNavigator({
         screen: CreateGroupScreen,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} title='New Group' />
+                header: <HeaderLevelOnePlus navigation={navigation} title='New Group' />
             };
         }
     },
@@ -265,7 +268,7 @@ const AppMainStack = createStackNavigator({
         screen: NewGroupScreen,
         navigationOptions: ({ navigation }) => {
             return {
-                header: <CustomHeader navigation={navigation} title='New Group' />
+                header: <HeaderLevelOnePlus navigation={navigation} title='New Group' />
             };
         }
     },
@@ -353,6 +356,8 @@ class JewelChat extends React.Component {
         //     console.log('Came to real time connect')
         //     this.props.realtimeConnect();
         //     }
+
+        global.customheaderrender = 0;
     }
     componentWillUnmount() {
         console.log('UNMOUNT APP')
@@ -424,7 +429,9 @@ function mapStateToProps(state) {
     return {
         mytoken: state.mytoken,
         appstate: state.appstate,
-        network: state.network
+        network: state.network,
+        activeChat: state.activechat,
+        chatslist: state.chatslist
     }
 }
 

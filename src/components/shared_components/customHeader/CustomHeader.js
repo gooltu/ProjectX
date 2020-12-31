@@ -17,6 +17,7 @@ import BackButton from "../../svg_components/BackButton";
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { realtimeConnect, realtimeDisconnect } from "../../../network/realtime"
 import actions from "../../../actions";
+import LevelPointsBar from "./LevelPointsBar";
 
 class CustomHeader extends React.Component {
 
@@ -198,7 +199,8 @@ class CustomHeader extends React.Component {
 
 
     render() {
-        console.log('Active Page ', this.props.navigation.dangerouslyGetParent());
+        global.customheaderrender++;
+        console.log('rendercount', global.customheaderrender);
 
         return (
 
@@ -217,32 +219,8 @@ class CustomHeader extends React.Component {
                     </View>
                 </View>
 
-                <View style={styles.levelProgressContainer}>
-                    <View style={styles.levelCount}>
-                        <ImageBackground source={require('../../../assets/ColorGrad.jpg')} style={styles.imageBackground}>
-                            <Text style={styles.count}>{this.props.scores.level < 9 ? '00' + this.props.scores.level : this.props.scores.level}</Text>
-                        </ImageBackground>
-                    </View>
-                    <View style={styles.barContainer}>
-                        <View style={styles.xpStyle}>
-                            <XP height="100%" />
-                        </View>
-                        <View style={styles.progressBarOuterContainer}>
-                            <View style={styles.progressBarInnerContainer}>
-                                <View style={{ width: (this.props.scores.points * 100) / this.props.scores.max_level_points + '%', height: '100%' }}>
-                                    <ImageBackground source={require('../../../assets/ColorGrad.jpg')} style={styles.progressBackground}></ImageBackground>
-                                </View>
-                            </View>
-                            <View style={styles.levelData}>
-                                <Text style={styles.levelDataText}>{this.props.scores.points < 9 ? '00' + this.props.scores.points : this.props.scores.points}/{this.props.scores.max_level_points}</Text>
-                            </View>
-
-                        </View>
-                        <View style={styles.xpStyle}>
-                            <XP height="100%" />
-                        </View>
-                    </View>
-                </View>
+                <LevelPointsBar />
+                
             </View>
         );
 
@@ -256,12 +234,9 @@ function mapStateToProps(state) {
     return {
         mytoken: state.mytoken,
         appstate: state.appstate,
-        network: state.network,
-        game: state.game,
+        network: state.network,        
         presence: state.chatslist.presence,
-        activeChat: state.chatslist.activeChat,
-        scores: state.game.scores,
-        jewels: state.game.jewels,
+        activeChat: state.chatslist.activeChat,     
         chatslist: state.chatslist.chatList
     }
 }
