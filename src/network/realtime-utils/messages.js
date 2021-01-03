@@ -4,6 +4,7 @@ import actions from '../../actions'
 
 // function to handlle incoming messages (insertion to DB , sending delivery and read receipt)
 export const insertIncomingMessageViaHistoryDownload = (incomingMessage) => {
+    console.log('HISTORY MESSAGE', incomingMessage )
 	return (dispatch, getState) => {
         if(incomingMessage.CREATOR_JID.split('@')[0] !== getState().mytoken.myphone){
             db.insertStropheChatData(incomingMessage).then((_id) => {
@@ -215,7 +216,6 @@ function _sendReceiptsOnReceivingMessages(incomingMessage, getState){
             }).catch(err => {
                 console.log('Delivery Error')
             });
-
         }); 
         
         

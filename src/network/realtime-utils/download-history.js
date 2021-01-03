@@ -5,7 +5,8 @@ import {getConnectionObj} from './realtimeobj';
 
 
 export const downloadMessages = (lastlogouttime, last=null ) => {
-
+    console.log('DOWNLOAD MESSAGES', lastlogouttime)
+    console.log('LAST MESSAGE', last)
     return (dispatch, getState) => {                
 
                 var download = $iq({ type: 'set' })
@@ -23,12 +24,12 @@ export const downloadMessages = (lastlogouttime, last=null ) => {
                     .c('set', { xmlns: 'http://jabber.org/protocol/rsm' })
                         .c('max').t('10');
 
-                    if(last)
-                        download = download.up().c('after').t(last).up();
-
+                        if(last)
+                            download = download.up().c('after').t(last).up();
+                        console.log('DOWNLOAD QUERY',download.toString())
                         getConnectionObj().sendIQ(download.tree(), (stanza) => {
-                        console.log('CALLBACK SEND IQ')
-                        console.log(stanza.toString())
+                        //console.log('CALLBACK SEND IQ')
+                        //console.log(stanza.toString())
 
                         //update redux active chat and chat list.....don't know if this is a good idea
 

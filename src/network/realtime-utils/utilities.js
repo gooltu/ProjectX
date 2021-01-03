@@ -60,7 +60,7 @@ export const detectMessagetype = (incomingStanza) => {
 	var read = incomingStanza.getElementsByTagName('read')
 	var date = dateToYMD((new Date()).getTime() + global.TimeDelta)
 
-	console.log('>>>>>>>>>'+incomingStanza.getAttribute('type').toString());
+	
 
 	if (fwd.toString()) {
 		type = 'DownLoad'
@@ -69,6 +69,7 @@ export const detectMessagetype = (incomingStanza) => {
 		var delayDate = dateToYMD(new Date(stamp).getTime())
 		if (incomingStanza.getElementsByTagName('message').toString()) {
 			var msg = incomingStanza.getElementsByTagName('message')[0]
+			console.log('MSG', msg);
 			//Downloaded Delivery
 			if (msg.getElementsByTagName('received').toString()) {
 				subtype = 'Delivery'
@@ -80,11 +81,11 @@ export const detectMessagetype = (incomingStanza) => {
 				data = getFromattedReceipt(msg, subtype, new Date(stamp).getTime())
 			}
 			//Downloaded Incoming message
-			else if (msg.getAttribute('chat').toString()) {
+			else if (msg.getAttribute('type').toString()==='chat') {
 				subtype = 'Message'
 				data = getFormattedMessages(msg, delayDate, IS_GROUP_MSG=0)
 			}
-			else if(msg.getAttribute('groupchat').toString()){
+			else if(msg.getAttribute('type').toString()==='groupchat'){
 				if(msg.getElementsByTagName('x').toString()){
 					subtype = 'Affiliations'
 					data = getFormattedAffiliations(msg, delayDate)
@@ -187,16 +188,16 @@ function getFromattedReceipt(msg, type, time = (new Date()).getTime() + global.T
 }
 
 function getFormattedMessages(msg, createdDateTime, IS_GROUP_MSG ) {
-	console.log(msg.toString())
-	var jewel = msg.getElementsByTagName('jewel')
-	var jewelType = jewel[0].getAttribute('number')
-	var subtype = msg.getAttribute('subtype')
-	console.log(subtype)
-	var reply = ( subtype === 'reply' ) ? 1 : 0
-	var forward = ( subtype === 'forward' ) ? 1 : 0
-	var parent = msg.getAttribute('parent')
-	var body = msg.getElementsByTagName('body')
-	var message = Strophe.getText(body[0]);
+	//console.log(msg.toString())
+	var jewel = msg.getElementsByTagName('jewel');
+	var jewelType = (jewel[0] ? jewel[0].getAttribute('number') : null);
+	var subtype = msg.getAttribute('subtype');
+	//console.log(subtype)
+	var reply = ( subtype === 'reply' ) ? 1 : 0;
+	var forward = ( subtype === 'forward' ) ? 1 : 0;
+	var parent = msg.getAttribute('parent');
+	var body = msg.getElementsByTagName('body');
+	var message = (body[0] ? Strophe.getText(body[0]): null);
 	var media = msg.getElementsByTagName('media');
 	var msgtype = ( media[0] ? ( parseInt(media[0].getAttribute('number')) ) : 0 );
 	var media_cloud = ( media[0] ? ( media[0].getAttribute('link') ) : null );

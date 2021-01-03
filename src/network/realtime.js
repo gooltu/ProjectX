@@ -74,8 +74,9 @@ export const realtimeConnect = () => {
 				// onMessage Handler
 				getConnectionObj().addHandler((msg) => {
 
-					console.log(msg.toString());
+					console.log('XML MSG', msg);
 					var processedMessage = detectMessagetype(msg)
+					console.log('PROCESSED MSG', processedMessage);
 					if (processedMessage.type === 'DownLoad') {
 						if (processedMessage.subtype === 'Delivery' || processedMessage.subtype === 'Read') {
 							dispatch(handleReadAndDeliveryMessagesViaHistoryDownload(processedMessage))
@@ -120,14 +121,17 @@ export const realtimeConnect = () => {
 				getServerTime(getState().mytoken.myphone)
 				.then(delta => {
 
-					// download history since your last logout	after getting server time
-					// AsyncStorage.getItem('logOutTime')
-					// .then( lastlogouttime => {			
-					// 	console.log('LOGOUT TIME', lastlogouttime);		
-					// 	let current_servertime = new Date().getTime() + global.TimeDelta
-					// 	lastlogouttime = current_servertime - parseInt(lastlogouttime) > 604800000 ? (current_servertime - 604800000) : parseInt(lastlogouttime);
-					// 	dispatch(downloadMessages(connection, lastlogouttime));
-					// });
+					//download history since your last logout	after getting server time
+					AsyncStorage.getItem('logOutTime')
+					.then( (lastlogouttime) => {	
+						console.log('LOGOUT TIME', lastlogouttime);	
+						if( lastlogouttime ){		
+								
+							let current_servertime = new Date().getTime() + global.TimeDelta
+							lastlogouttime = current_servertime - parseInt(lastlogouttime) > 604800000 ? (current_servertime - 604800000) : parseInt(lastlogouttime);
+							dispatch(downloadMessages(lastlogouttime));
+						}
+					});
 
 				})
 				.catch(err => {
