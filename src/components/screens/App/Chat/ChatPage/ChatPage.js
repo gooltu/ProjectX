@@ -159,7 +159,7 @@ class ChatPage extends React.Component {
 
   render() {
 
-    console.log('CHATPAGE RENDER: '+this.props);
+    console.log('CHATPAGE RENDER: ', this.props);
     return (
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : null}
@@ -178,7 +178,7 @@ class ChatPage extends React.Component {
               onEndReachedThreshold={0.7}
               data={this.props.chatroom}
               renderItem={({ item, index }) => (
-                <ChatItem item={item} index={index}                
+                <ChatItem item={item} index={index} userJID={this.props.mytoken}         
                   allchats={this.props.chatroom}
                   onjewelpress={() => { this.onJewelPress(item) }}
                   onmediapress={() => { this.onMediaPress(item) }}
@@ -211,7 +211,8 @@ function mapStateToProps(state) {
   return {
     chatroom: state.chatroom.chatroom,
     activeChat: state.activechat,
-    game: state.game
+    game: state.game,
+    mytoken: state.mytoken
   }
 }
 

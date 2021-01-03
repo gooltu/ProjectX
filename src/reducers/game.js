@@ -6,8 +6,7 @@ let initialState = {
 }
 
 
-const game = (state = initialState, action) => {
-    console.log(action)
+const game = (state = initialState, action) => {    
     switch (action.type) {
         case LOAD_GAME_STATE:
             return {

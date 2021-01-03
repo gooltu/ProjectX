@@ -4,8 +4,10 @@ import phoneContactModal from './phoneContactModal';
 //import {populateTestData} from './TestData';
 
 
+if(__DEV__){
+   // SQLite.DEBUG(true);
+}
 
-SQLite.DEBUG(true);
 SQLite.enablePromise(true);
 
 let _jcdb

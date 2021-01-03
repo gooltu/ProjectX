@@ -9,8 +9,12 @@ let initialState = {
         
 const activechat = (state = initialState, action) => {    
     switch (action.type) {
-        case SET_ACTIVE_CHAT:
-            return Object.assign({}, state, action.activeChat)  
+        case SET_ACTIVE_CHAT:{
+            if(Object.keys(action.activeChat).length === 0 && action.activeChat.constructor === Object)
+                return {};
+            else    
+                return Object.assign({}, state, action.activeChat) 
+        }     
         default:            
             return state      
 

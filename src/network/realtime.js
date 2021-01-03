@@ -1,4 +1,4 @@
-import XMPP from "../utilities/xmpp/strophe";
+//import XMPP from "../utilities/xmpp/strophe";
 import { store } from '../store'
 import actions from '../actions'
 import AsyncStorage from '@react-native-community/async-storage';
@@ -11,33 +11,26 @@ import {getServerTime, detectMessagetype } from './realtime-utils/utilities';
 import {insertIncomingMessageViaHistoryDownload, insertIncomingMessage, updateChatPageRedux, updateChatlistRedux } from './realtime-utils/messages';
 import {handleReadAndDeliveryMessages, handleReadAndDeliveryMessagesViaHistoryDownload} from './realtime-utils/read-delivery-messages'
 
-const URL = 'wss://chat.jewelchat.net/ws-xmpp';
-//const URL = 'ws://localhost:5280/ws-xmpp';
-let connection = new XMPP.Strophe.Connection(URL);
-connection.registerSASLMechanism = XMPP.Strophe.SASLXOAuth2;
+import {getConnectionObj} from './realtime-utils/realtimeobj'
 
 
-export default {
-	getConnectionObj,
+export default {	
 	realtimeConnect,
-	realtimeDisconnect,
-	sendOutgoingMessage
+	realtimeDisconnect
 	//sendReply,
 	//sendReadReceipt,
 	//sendSubscriptionRequest
 }
 
 
-export const getConnectionObj = () => {
-	return connection;
-}
+
 
 
 
 export const realtimeConnect = () => {
 
 	return (dispatch, getState) => {
-		console.log('REALTIME CONNECT1', connection);
+		
 		
 		// console.log(getState().mytoken.myphone + '@jewelchat')
 		// console.log(getState().mytoken.token)
@@ -45,7 +38,7 @@ export const realtimeConnect = () => {
 
 		
 
-		connection.connect(getState().mytoken.myphone + '@jewelchat.net', getState().mytoken.token, (status, err) => {
+			getConnectionObj().connect(getState().mytoken.myphone + '@jewelchat.net', getState().mytoken.token, (status, err) => {
 			if (err) {
 				console.log(' XMPP Error:' + err);
 				//dispatch({ type: 'XMPP_ERROR' });
@@ -79,7 +72,7 @@ export const realtimeConnect = () => {
 
 
 				// onMessage Handler
-				connection.addHandler((msg) => {
+				getConnectionObj().addHandler((msg) => {
 
 					console.log(msg.toString());
 					var processedMessage = detectMessagetype(msg)
@@ -107,24 +100,24 @@ export const realtimeConnect = () => {
 				}, null, 'message', null, null, null);
 
 				// onPresence handler
-				connection.addHandler((msg)=>{
+				getConnectionObj().addHandler((msg)=>{
 
 					console.log(msg.toString());
-					connection.roster.get((result) => {
+					getConnectionObj().roster.get((result) => {
 						console.log('roster')
 						console.log(result);
 					});
 
-					dispatch(handlePresence(msg, connection));					
+					dispatch(handlePresence(msg));					
 					return true;
 
 				}, null, 'presence', null, null, null);
 
 				//send presence 
-				connection.send($pres().tree(), () => {});
+				getConnectionObj().send($pres().tree(), () => {});
 
 
-				getServerTime(getState().mytoken.myphone, connection)
+				getServerTime(getState().mytoken.myphone)
 				.then(delta => {
 
 					// download history since your last logout	after getting server time
@@ -145,7 +138,7 @@ export const realtimeConnect = () => {
 			}
 		});
 
-		console.log('REALTIME CONNECT2', connection);
+		
 	}
 }
 
@@ -153,114 +146,12 @@ export const realtimeConnect = () => {
 export const realtimeDisconnect = () => {
 	return (dispatch, getState) => {
 		console.log('REALTIME DISCONNECT');
-		connection.disconnect();
+		getConnectionObj().disconnect();
 	}
 }
 
 
-export const sendOutgoingMessage = (outgoingMessage) => {
 
-	return new Promise((resolve, reject) => {
-
-        let reply;
-
-        if(outgoingMessage.IS_GROUP_MSG == 0 || outgoingMessage.IS_GROUP_MSG == null){
-            if(outgoingMessage.MSG_TYPE == 0){
-
-                reply = $msg({to: outgoingMessage.CHAT_ROOM_JID , from: outgoingMessage.CREATOR_JID, type: 'chat', id:outgoingMessage.SENDER_MSG_ID })
-                        .cnode(Strophe.xmlElement('body', outgoingMessage.MSG_TEXT))
-                        .up()
-                        .c('active', {xmlns: "http://jabber.org/protocol/chatstates"});
-                
-                
-            }else if(outgoingMessage.MSG_TYPE == 1){
-
-                reply = $msg({to: outgoingMessage.CHAT_ROOM_JID, from: outgoingMessage.CREATOR_JID, type: 'chat', id:outgoingMessage.SENDER_MSG_ID })
-                        .cnode(Strophe.xmlElement('body', 'Image'))              
-                        .up()
-                        .c('media', {number:outgoingMessage.MSG_TYPE, link:outgoingMessage.MEDIA_CLOUD})
-                        .up()
-                        .c('active', {xmlns: "http://jabber.org/protocol/chatstates"});
-                
-            }else if(outgoingMessage.MSG_TYPE == 2){
-
-                reply = $msg({to: outgoingMessage.CHAT_ROOM_JID, from: outgoingMessage.CREATOR_JID, type: 'chat', id:outgoingMessage.SENDER_MSG_ID })
-                        .cnode(Strophe.xmlElement('body', 'Video'))              
-                        .up()
-                        .c('media', {number:outgoingMessage.MSG_TYPE, link:outgoingMessage.MEDIA_CLOUD , thumbnail: outgoingMessage.MEDIA_CLOUD_THUMBNAIL})
-                        .up()
-                        .c('active', {xmlns: "http://jabber.org/protocol/chatstates"});
-                
-            }else if(outgoingMessage.MSG_TYPE == 3){
-
-                reply = $msg({to: outgoingMessage.CHAT_ROOM_JID, from: outgoingMessage.CREATOR_JID, type: 'chat', id:outgoingMessage.SENDER_MSG_ID })
-                        .cnode(Strophe.xmlElement('body', 'GIF'))              
-                        .up()
-                        .c('media', {number:outgoingMessage.MSG_TYPE, link:outgoingMessage.MEDIA_CLOUD })
-                        .up()
-                        .c('active', {xmlns: "http://jabber.org/protocol/chatstates"});
-
-                
-            }else if(outgoingMessage.MSG_TYPE == 4){
-
-                reply = $msg({to: outgoingMessage.CHAT_ROOM_JID, from: outgoingMessage.CREATOR_JID, type: 'chat', id:outgoingMessage.SENDER_MSG_ID })
-                        .cnode(Strophe.xmlElement('body', 'Sticker'))              
-                        .up()
-                        .c('media', {number:outgoingMessage.MSG_TYPE, link:outgoingMessage.MEDIA_CLOUD})
-                        .up()
-                        .c('active', {xmlns: "http://jabber.org/protocol/chatstates"});
-                
-            }
-
-        }
-        else if(outgoingMessage.IS_GROUP_MSG == 1){
-
-            if(outgoingMessage.MSG_TYPE == 0){
-
-                reply = $msg({to: outgoingMessage.CHAT_ROOM_JID , from: outgoingMessage.CREATOR_JID, type: 'groupchat', id:outgoingMessage.SENDER_MSG_ID })
-                        .cnode(Strophe.xmlElement('body', outgoingMessage.MSG_TEXT));
-                
-            }else if(outgoingMessage.MSG_TYPE == 1){
-                reply = $msg({to: outgoingMessage.CHAT_ROOM_JID, from: outgoingMessage.CREATOR_JID, type: 'groupchat', id:outgoingMessage.SENDER_MSG_ID })
-                        .cnode(Strophe.xmlElement('body', 'Image'))              
-                        .up()
-                        .c('media', {number:outgoingMessage.MSG_TYPE, link:outgoingMessage.MEDIA_CLOUD})
-                
-            }else if(outgoingMessage.MSG_TYPE == 2){
-                reply = $msg({to: outgoingMessage.CHAT_ROOM_JID, from: outgoingMessage.CREATOR_JID, type: 'groupchat', id:outgoingMessage.SENDER_MSG_ID })
-                        .cnode(Strophe.xmlElement('body', 'Video'))              
-                        .up()
-                        .c('media', {number:outgoingMessage.MSG_TYPE, link:outgoingMessage.MEDIA_CLOUD , thumbnail: outgoingMessage.MEDIA_CLOUD_THUMBNAIL})
-                
-            }else if(outgoingMessage.MSG_TYPE == 3){
-                reply = $msg({to: outgoingMessage.CHAT_ROOM_JID, from: outgoingMessage.CREATOR_JID, type: 'groupchat', id:outgoingMessage.SENDER_MSG_ID })
-                        .cnode(Strophe.xmlElement('body', 'GIF'))              
-                        .up()
-                        .c('media', {number:outgoingMessage.MSG_TYPE, link:outgoingMessage.MEDIA_CLOUD })
-                
-            }else if(outgoingMessage.MSG_TYPE == 4){
-                reply = $msg({to: outgoingMessage.CHAT_ROOM_JID, from: outgoingMessage.CREATOR_JID, type: 'groupchat', id:outgoingMessage.SENDER_MSG_ID })
-                        .cnode(Strophe.xmlElement('body', 'Sticker'))              
-                        .up()
-                        .c('media', {number:outgoingMessage.MSG_TYPE, link:outgoingMessage.MEDIA_CLOUD})
-            }
-
-        }
-
-
-        try{
-
-            connection.send(reply.tree(), () => {
-                resolve('Success')
-            })
-
-        }catch(err){
-            reject(err)
-        }            
-
-
-    })
-}
 
 export const sendReply = (messageText, chatroom, type, parent) => {
 
@@ -293,7 +184,8 @@ export const sendReply = (messageText, chatroom, type, parent) => {
 				.cnode(Strophe.xmlElement('body', message.MSG_TEXT))
 				.up()
 				.c('active', { xmlns: "http://jabber.org/protocol/chatstates" });
-			connection.send(reply.tree(), () => {
+
+			getConnectionObj().send(reply.tree(), () => {
 				console.log('reply triggered')
 				db.updateDeliveryAndReadRecipt('Submit', result, createdDateTime).then(status => {
 					dispatch(updateChatData('Submitted', result, createdDateTime))

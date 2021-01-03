@@ -6,7 +6,7 @@ let initialState = [];
 
         
 const chatslist = (state = initialState, action) => {
-    console.log(action)
+    
     switch (action.type) {        
         case SET_CHAT_LIST_DATA:
             return Object.assign([], state, action.chatList)             

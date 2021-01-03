@@ -1,10 +1,10 @@
 //import db from '../../db/localdatabase';
 //import actions from '../../actions';
 import {updateChatPageRedux, updateChatlistRedux} from './messages';
-//import {getConnectionObj} from '../realtime';
+import {getConnectionObj} from './realtimeobj';
 
 
-export const downloadMessages = (connection, lastlogouttime, last=null ) => {
+export const downloadMessages = (lastlogouttime, last=null ) => {
 
     return (dispatch, getState) => {                
 
@@ -26,7 +26,7 @@ export const downloadMessages = (connection, lastlogouttime, last=null ) => {
                     if(last)
                         download = download.up().c('after').t(last).up();
 
-                        connection.sendIQ(download.tree(), (stanza) => {
+                        getConnectionObj().sendIQ(download.tree(), (stanza) => {
                         console.log('CALLBACK SEND IQ')
                         console.log(stanza.toString())
 
@@ -38,7 +38,7 @@ export const downloadMessages = (connection, lastlogouttime, last=null ) => {
                         var lastElement = stanza.getElementsByTagName('last')
                         if (lastElement.toString()) {
                             var last = Strophe.getText(lastElement[0])
-                            dispatch(downloadMessages(connection, lastlogouttime, last));
+                            dispatch(downloadMessages(lastlogouttime, last));
                         }
                         
                     });       

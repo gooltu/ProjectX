@@ -1,13 +1,13 @@
-//import {getConnectionObj} from '../realtime';
+import {getConnectionObj} from './realtimeobj';
 
-export const getServerTime = (myphone, connection) => {
+export const getServerTime = (myphone) => {
 
 	return new Promise((resolve, reject) => {
 		let serverTime = $iq({ type: 'get', from: myphone + '@jewelchat.net', to: 'jewelchat.net', id: 'time_1' })
 						.c('time', { xmlns: 'urn:xmpp:time' });
 
 		console.log('GET SERVER TIME');				
-		connection.sendIQ(serverTime.tree(), (stanza) => {
+		getConnectionObj().sendIQ(serverTime.tree(), (stanza) => {
 			console.log('CALLBACK serverTime SEND IQ')
 			console.log(stanza.toString())
 			var body = stanza.getElementsByTagName('utc')

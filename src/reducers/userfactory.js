@@ -6,8 +6,7 @@ let initialState = {
 }
 
 
-const userfactory = (state = initialState, action) => {
-    console.log(action)
+const userfactory = (state = initialState, action) => {    
     switch (action.type) {
         case SET_USER_FACTORY:
             return {

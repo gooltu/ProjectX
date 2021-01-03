@@ -1,18 +1,13 @@
 import React from "react";
-import {
-  ActivityIndicator,
-  AsyncStorage,
-  StatusBar,
-  StyleSheet,
+import {  
   View,
   Image,
-  TouchableOpacity,
-  ImageBackground,
+  TouchableOpacity,  
   FlatList,
   Text
 } from "react-native";
 import { connect } from 'react-redux';
-import { FAB, Portal, Provider } from 'react-native-paper';
+import { FABGroup, FAB, Portal, Provider, StyleSheet } from 'react-native-paper';
 import styles from './ChatList.styles'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import Logo from '../../../../svg_components/Logo';

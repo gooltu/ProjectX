@@ -13,7 +13,7 @@ import colors from "../../../../shared_styles/colors";
 import Icon1 from 'react-native-vector-icons/MaterialIcons'
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons'
 import ImagePicker from 'react-native-image-crop-picker';
-import { sendOutgoingMessage } from '../../../../../network/realtime';
+import { sendOutgoingMessage } from '../../../../../network/realtime-utils/messages';
 import { sendReply, sendSubscriptionRequest } from '../../../../../network/realtime'
 import { dateToYMD } from '../../../../../network/realtime-utils/utilities'
 import { updateChatPageRedux, updateChatlistRedux } from '../../../../../network/realtime-utils/messages';
@@ -109,7 +109,7 @@ class MainChatBar extends React.Component {
       MEDIA_CLOUD: media_cloud
     }
 
-    console.log('NEW MESSAGE', outgoingMessage);
+    console.log('NEW MESSAGE', outgoingMessage.SENDER_MSG_ID);
 
     db.insertStropheChatData(outgoingMessage).then((_id) => {
       this.props.updateChatPageRedux();
@@ -151,8 +151,7 @@ class MainChatBar extends React.Component {
 
     return (
       <View style={this.state.chatbarstyle}>
-        <View style={styles.mainBarConatiner}>
-          <TouchableOpacity style={styles.firstItemMainBar}><Icon2 name="plus" color={'white'} size={26} /></TouchableOpacity>
+        <View style={styles.mainBarConatiner}>          
           {Platform.OS === 'ios' && <TextInput
             placeholder="Type here"
             placeholderTextColor="white"
@@ -187,9 +186,9 @@ class MainChatBar extends React.Component {
             //value={value}                    
             onContentSizeChange={(e) => this.updateChatTextboxHeight(e.nativeEvent.contentSize.height)}
           />}
-          {this.state.chatboxempty && <TouchableOpacity style={styles.secondItem} onPress={()=>this.openImagePicker()}><Icon1 name="photo-camera" color={'white'} size={26} /></TouchableOpacity>}
-          {this.state.chatboxempty && <TouchableOpacity style={styles.thirdItem}><Icon2 name="sticker-emoji" color={'white'} size={26} /></TouchableOpacity>}
-          {!this.state.chatboxempty && <TouchableOpacity onPress={() => {
+          {/* {this.state.chatboxempty && <TouchableOpacity style={styles.secondItem} onPress={()=>this.openImagePicker()}><Icon1 name="photo-camera" color={'white'} size={26} /></TouchableOpacity>} */}
+          
+          { <TouchableOpacity onPress={() => {
             this.sendMessage();
             this.textInput.clear();
           }} style={styles.fourthItem}><Icon1 name='send' size={25} color='white' /></TouchableOpacity>}

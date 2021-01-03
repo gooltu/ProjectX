@@ -1,7 +1,7 @@
-//import {getConnectionObj} from '../realtime';
+import {getConnectionObj} from './realtimeobj';
 import actions from '../../actions';
 
-export const handlePresence = (msg, connection) => {
+export const handlePresence = (msg) => {
 
     return (dispatch, getState) => {
 
@@ -11,7 +11,7 @@ export const handlePresence = (msg, connection) => {
         console.log(type)
         console.log(from)
         console.log(to)
-        connection.roster.add('7@jewelchat.net', 'nickname', [], function () { })
+        getConnectionObj().roster.add('7@jewelchat.net', 'nickname', [], function () { })
         if ((type == '' || type == 'unavailable') && from != to) {
             let presenceData = JSON.parse(JSON.stringify(getState().chatslist.presence))
             if (type == 'unavailable')
@@ -25,16 +25,16 @@ export const handlePresence = (msg, connection) => {
                 if (result.rows.length > 0) {
                     var contact = result.rows.item(0)
                     if (contact.IS_PHONEBOOK_CONTACT == 1) {
-                        connection.roster.authorize(from)
+                        getConnectionObj().roster.authorize(from)
                     }
                 }
                 else {
-                    connection.roster.unauthorize(from)
+                    getConnectionObj().roster.unauthorize(from)
                 }
             })
         }
         else if (type == 'subscribed') {
-            connection.roster.authorize(from)
+            getConnectionObj().roster.authorize(from)
         }
 
     }    
