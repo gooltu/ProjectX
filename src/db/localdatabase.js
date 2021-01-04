@@ -13,7 +13,7 @@ SQLite.enablePromise(true);
 let _jcdb
 
 export default {
-	getChats, getAllChatsGreaterThanEqual_ID, getChatList, updatePhoneContact, insertStropheChatData, insertAffiliations, updateDeliveryAndReadReceipt, getContactList, updatePickedJewel,
+	getChats, getAllChatsGreaterThanEqual_ID, getChatList, updatePhoneContact, insertStropheChatData, insertAffiliations, updateDeliveryAndReadReceipt, updateBulkReadReceipt, getHighestNotReadMsgID, getContactList, updatePickedJewel,
 	updateLastMessageAndText, selectUnreadMessages, selectUnsendMessages, updateContact, insertContactData, checkIfRowExist, insertTeamJC, deleteAllData
 };
 
@@ -372,7 +372,7 @@ function updatePickedJewel(id, flag) {
 	})
 }
 
-function updateDeliveryAndReadReceipt(type, id, time) {
+function updateDeliveryAndReadReceipt(type, id, time, CHAT_ROOM_JID) {
 	console.log(type, id, time)
 	return new Promise((resolve, reject) => {
 		_initDb().then(instance => {
@@ -382,7 +382,7 @@ function updateDeliveryAndReadReceipt(type, id, time) {
 				if (type === 'Delivery') {
 					sql = "UPDATE ChatMessage SET IS_DELIVERED = 1, TIME_DELIVERED = " + time + " WHERE _ID =  " + id
 					txn.executeSql(sql).then((results) => {
-						console.log('ChatMessage Delivered Query COMPLETED for id, ', id);
+						console.log('ChatMessage Delivered Query updated for id, ', id);
 						resolve('success')
 					}).catch(err => {
 						reject(err)
@@ -391,16 +391,16 @@ function updateDeliveryAndReadReceipt(type, id, time) {
 				else if (type === 'Both') {
 					sql = "UPDATE ChatMessage SET IS_READ = 1,TIME_READ=" + time + ", IS_DELIVERED = 1, TIME_DELIVERED = " + time + "  WHERE _ID =  " + id
 					txn.executeSql(sql).then((results) => {
-						console.log('ChatMessage Read Query COMPLETED for id, ', id);
+						console.log('ChatMessage Both Query COMPLETED for id, ', id);
 						resolve('success')
 					}).catch(err => {
 						reject(err)
 					})
 				}
 				else if (type === 'Read') {
-					sql = "UPDATE ChatMessage SET IS_READ = 1,TIME_READ=" + time + " WHERE _ID = " + id
-					txn.executeSql(sql).then((results) => {
-						console.log('ChatMessage Delivered Query COMPLETED for id, ', id);
+					sql = "UPDATE ChatMessage SET IS_READ = 1, TIME_READ = ? WHERE _ID <= ? AND CHAT_ROOM_JID LIKE ? AND IS_READ = 0" 
+					txn.executeSql(sql,[ time, id, CHAT_ROOM_JID ]).then((results) => {
+						console.log('ChatMessage READ Query updated for id, ', id);
 						resolve('success')
 					}).catch(err => {
 						reject(err)
@@ -409,7 +409,7 @@ function updateDeliveryAndReadReceipt(type, id, time) {
 				else if (type === 'Submit') {
 					sql = "UPDATE ChatMessage SET IS_SUBMITTED = 1,TIME_SUBMITTED=" + time + " WHERE _ID = " + id
 					txn.executeSql(sql).then((results) => {
-						console.log('ChatMessage Delivered Query COMPLETED for id, ', id);
+						console.log('ChatMessage Delivered Query updated for id, ', id);
 						resolve('success')
 					}).catch(err => {
 						reject(err)
@@ -423,6 +423,57 @@ function updateDeliveryAndReadReceipt(type, id, time) {
 		})
 	})
 }
+
+function updateBulkReadReceipt(CHAT_ROOM_JID, id, time) {
+	console.log('UPDATE BULK READ RECEIPT', CHAT_ROOM_JID, id, time)
+	return new Promise((resolve, reject) => {
+		_initDb().then(instance => {
+			jcdb = instance;
+			jcdb.transaction((txn) => {
+					let sql;		
+					sql = "UPDATE ChatMessage SET IS_READ = 1, TIME_READ= ? WHERE _ID <= ? AND CHAT_ROOM_JID LIKE ? AND IS_READ = 0"
+					txn.executeSql(sql, [time, id ,CHAT_ROOM_JID ]).then((results) => {
+						console.log('updateBulkReadReceipt....Row affected ', results[1].rows.length);
+						resolve('success')
+					}).catch(err => {
+						reject(err)
+					})				
+				
+			}).then(result => {
+
+			}).catch(error => {
+				reject(error)
+			})
+		})
+	})
+}
+
+
+function getHighestNotReadMsgID(CHAT_ROOM_JID, myjid) {
+	console.log('getHighestNotReadMsgID',CHAT_ROOM_JID, myjid);
+	return new Promise((resolve, reject) => {
+		_initDb().then(instance => {
+			jcdb = instance;
+			jcdb.transaction((txn) => {
+					let sql;		
+					sql = "select max(SENDER_MSG_ID) AS MAX_ID from ChatMessage WHERE CHAT_ROOM_JID LIKE ? AND CREATOR_JID NOT LIKE ? AND IS_READ=0 AND SENDER_MSG_ID IS NOT NULL"
+					txn.executeSql(sql, [ CHAT_ROOM_JID, myjid ]).then((results) => {
+						console.log('getHighestNotReadMsgID....', results[1].rows.raw())
+						resolve(results[1].rows.raw())
+					}).catch(err => {
+						reject(err)
+					})				
+				
+			}).then(result => {
+
+			}).catch(error => {
+				reject(error)
+			})
+		})
+	})
+}
+
+
 
 function selectUnreadMessages(JID) {
 	return new Promise((resolve, reject) => {

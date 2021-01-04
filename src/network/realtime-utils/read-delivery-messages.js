@@ -1,11 +1,12 @@
 import db from '../../db/localdatabase'
 import {updateChatPageRedux, updateChatlistRedux} from './messages';
+import {getConnectionObj} from './realtimeobj';
 
 export const handleReadAndDeliveryMessages = (processedMessage) => {
 	return (dispatch, getState) => {
 		var type = processedMessage.type;		
 		if (processedMessage.data.from != getState().mytoken.myphone + '@jewelchat.net') {
-			db.updateDeliveryAndReadReceipt(type, processedMessage.data.id, processedMessage.data.time).then(result => {
+			db.updateDeliveryAndReadReceipt(type, processedMessage.data.id, processedMessage.data.time, processedMessage.data.from).then(result => {
 				
 				if (getState().activechat.JID === processedMessage.data.from) 
 					dispatch(updateChatPageRedux());                    
@@ -22,7 +23,7 @@ export const handleReadAndDeliveryMessagesViaHistoryDownload = (processedMessage
 	return (dispatch, getState) => {
 		var type = processedMessage.subtype;
 		if (processedMessage.data.from != getState().mytoken.myphone + '@jewelchat.net') {
-            db.updateDeliveryAndReadReceipt(type, processedMessage.data.id, processedMessage.data.time)
+            db.updateDeliveryAndReadReceipt(type, processedMessage.data.id, processedMessage.data.time, processedMessage.data.from)
             .then(result => {}).catch(err => {})
 		}
 	}
@@ -30,34 +31,30 @@ export const handleReadAndDeliveryMessagesViaHistoryDownload = (processedMessage
 
 
 export const sendBulkReadReceipts = (CHAT_ROOM_JID, myjid) => {
-	
-		db.getAllNotReadMsgID(CHAT_ROOM_JID).then(ids => {
-			let p = [];
-			for(let i=0; i< ids.lenngth; i++){
-				p.push(new Promise((resolve, reject) => {
-					try{
 
-						let read = $msg({ to: CHAT_ROOM_JID, from: myjid })
-						.c('read', { xmlns: 'urn:xmpp:chat-markers:0', id: ids[i] });
-						
-						getConnectionObj().send(read.tree(), () => {
-							resolve('Success')
-						});
+	return (dispatch, getState) => {
+		console.log('SEND BULK RECEIPTS', CHAT_ROOM_JID, myjid);
+		let createdDateTime = new Date().getTime() + global.TimeDelta;
 
-					}catch(err){
-						reject('Error')
-					}
-				}))
+		db.getHighestNotReadMsgID(CHAT_ROOM_JID, myjid).then(results => {		
+			console.log('HIGHEST MSG ID', results);
+			if(results[0].MAX_ID){		
 
+				let read = $msg({ to: CHAT_ROOM_JID, from: myjid }).c('displayed', { xmlns: 'urn:xmpp:chat-markers:0', id: results[0].MAX_ID });
+				console.log(read);
+				getConnectionObj().send(read.tree(), () => {
+					console.log('Displayed Message sent');
+					db.updateBulkReadReceipt(CHAT_ROOM_JID, results[0].MAX_ID, createdDateTime).then(val=>{
+						dispatch(updateChatlistRedux());
+					}).catch(err=>{});
+				});	
+			
 			}
-			let createdDateTime = new Date().getTime() + global.TimeDelta
-			p.all().then(val => {
-				db.updateAllReadReceipts(ids, createdDateTime).then().catch();
-			}).catch(err => {
-				db.updateAllReadReceipts(ids, createdDateTime).then().catch();
-			});
+			
 
 		}).catch(err => {})
+
+	}		
 	
 }
 

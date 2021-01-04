@@ -46,6 +46,7 @@ import { Snackbar } from 'react-native-paper';
 import MainChatBar from './MainChatBar';
 import ChatItem from './ChatItem';
 import { updateChatPageRedux, updateChatlistRedux } from '../../../../../network/realtime-utils/messages';
+import {sendBulkReadReceipts} from '../../../../../network/realtime-utils/read-delivery-messages'
 
 class ChatPage extends React.Component {
   constructor(props) {
@@ -57,6 +58,7 @@ class ChatPage extends React.Component {
     console.log(this.props) 
     this.props.setChatData([]);    
     this.props.updateChatPageRedux();
+    this.props.sendBulkReadReceipts(this.props.activeChat.CHAT_ROOM_JID, this.props.mytoken.myphone+'@jewelchat.net');
     
     //TO DO
     //Update Contacts or Group details
@@ -227,7 +229,8 @@ function mapDispatchToProps(dispatch) {
     sendSubscriptionRequest: (JID) => dispatch(sendSubscriptionRequest(JID)),
     loadGameState: (gamestate) => dispatch(actions.loadGameState(gamestate)),
     updateChatPageRedux: () => dispatch(updateChatPageRedux()),
-    updateChatlistRedux: () => dispatch(updateChatlistRedux())
+    updateChatlistRedux: () => dispatch(updateChatlistRedux()),
+    sendBulkReadReceipts: (CHAT_ROOM_JID, myjid) => dispatch(sendBulkReadReceipts(CHAT_ROOM_JID, myjid))
   }
 }
 

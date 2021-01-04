@@ -57,7 +57,7 @@ export const detectMessagetype = (incomingStanza) => {
 	var type, subtype, data;	
 	var fwd = incomingStanza.getElementsByTagName('forwarded');
 	var recieved = incomingStanza.getElementsByTagName('received')
-	var read = incomingStanza.getElementsByTagName('read')
+	var read = incomingStanza.getElementsByTagName('displayed')
 	var date = dateToYMD((new Date()).getTime() + global.TimeDelta)
 
 	
@@ -76,7 +76,7 @@ export const detectMessagetype = (incomingStanza) => {
 				data = getFromattedReceipt(msg, subtype, new Date(stamp).getTime())
 			}
 			//Downloaded read
-			else if (msg.getElementsByTagName('read').toString()) {
+			else if (msg.getElementsByTagName('displayed').toString()) {
 				subtype = 'Read'
 				data = getFromattedReceipt(msg, subtype, new Date(stamp).getTime())
 			}
@@ -175,7 +175,7 @@ function getFromattedReceipt(msg, type, time = (new Date()).getTime() + global.T
 		message = msg.getElementsByTagName('received')
 	}
 	else {
-		message = msg.getElementsByTagName('read')
+		message = msg.getElementsByTagName('displayed')
 	}
 	let receipt = {
 		id: message[0].getAttribute('id'),
