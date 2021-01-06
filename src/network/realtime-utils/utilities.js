@@ -58,6 +58,9 @@ export const detectMessagetype = (incomingStanza) => {
 	var fwd = incomingStanza.getElementsByTagName('forwarded');
 	var recieved = incomingStanza.getElementsByTagName('received')
 	var read = incomingStanza.getElementsByTagName('displayed')
+
+	
+
 	var date = dateToYMD((new Date()).getTime() + global.TimeDelta)
 
 	

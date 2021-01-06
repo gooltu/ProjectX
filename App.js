@@ -51,7 +51,7 @@ export default class App extends React.Component {
         }
       });   
     
-    console.log(this.getFCMToken())
+    //console.log(this.getFCMToken())
     this.messageListener = messaging().onMessage(async remoteMessage => {
       console.log('testy')
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));

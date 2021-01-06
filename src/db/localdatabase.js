@@ -398,8 +398,8 @@ function updateDeliveryAndReadReceipt(type, id, time, CHAT_ROOM_JID) {
 					})
 				}
 				else if (type === 'Read') {
-					sql = "UPDATE ChatMessage SET IS_READ = 1, TIME_READ = ? WHERE _ID <= ? AND CHAT_ROOM_JID LIKE ? AND IS_READ = 0" 
-					txn.executeSql(sql,[ time, id, CHAT_ROOM_JID ]).then((results) => {
+					sql = "UPDATE ChatMessage SET IS_READ = 1, TIME_READ = ? WHERE _ID <= ? AND CHAT_ROOM_JID LIKE ? AND CREATOR_JID NOT LIKE ? AND IS_READ = 0 AND IS_DELIVERED = 1" 
+					txn.executeSql(sql,[ time, id, CHAT_ROOM_JID, CHAT_ROOM_JID ]).then((results) => {
 						console.log('ChatMessage READ Query updated for id, ', id);
 						resolve('success')
 					}).catch(err => {
@@ -431,8 +431,8 @@ function updateBulkReadReceipt(CHAT_ROOM_JID, id, time) {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 					let sql;		
-					sql = "UPDATE ChatMessage SET IS_READ = 1, TIME_READ= ? WHERE _ID <= ? AND CHAT_ROOM_JID LIKE ? AND IS_READ = 0"
-					txn.executeSql(sql, [time, id ,CHAT_ROOM_JID ]).then((results) => {
+					sql = "UPDATE ChatMessage SET IS_READ = 1, TIME_READ= ? WHERE _ID <= ? AND CHAT_ROOM_JID LIKE ? AND CREATOR_JID LIKE ? AND IS_READ = 0"
+					txn.executeSql(sql, [time, id ,CHAT_ROOM_JID, CHAT_ROOM_JID ]).then((results) => {
 						console.log('updateBulkReadReceipt....Row affected ', results[1].rows.length);
 						resolve('success')
 					}).catch(err => {

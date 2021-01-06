@@ -16,6 +16,7 @@ import BackButton from "../../svg_components/BackButton";
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { realtimeConnect} from "../../../network/realtime";
 import LevelPointsBar from "./LevelPointsBar";
+import {getConnectionObj} from '../../../network/realtime-utils/realtimeobj'
 
 class HeaderChatPage extends React.Component {
 
@@ -32,6 +33,17 @@ class HeaderChatPage extends React.Component {
         if (this.props.network === 'XMPP_DISCONNECTED') {
             console.log('CALL Connect strophe xmpp')
             this.props.openRealtimeConnection()
+        }
+
+        if(this.props.activeChat.IS_PHONEBOOK_CONTACT == 1){
+            console.log('PRESENCE ROSTER ADD SUBSCRIBE')   
+            getConnectionObj().roster.add(this.props.activeChat.CHAT_ROOM_JID, this.props.activeChat.CONTACT_NAME, [], ()=>{
+                getConnectionObj().roster.subscribe(this.props.activeChat.CHAT_ROOM_JID, 'Online' ,this.props.activeChat.CONTACT_NAME)
+                getConnectionObj().roster.authorize(this.props.activeChat.CHAT_ROOM_JID, 'Online' )
+            })
+            
+
+
         }
 
     }    
@@ -117,8 +129,8 @@ class HeaderChatPage extends React.Component {
                     : (this.props.activeChat.IS_GROUP_MSG == 0 || this.props.activeChat.IS_GROUP_MSG == null ? '+' + this.props.activeChat.CHAT_ROOM_JID.split('@')[0]
                     : (this.props.activeChat.CONTACT_NAME ? this.props.activeChat.CONTACT_NAME.substring(0, 35) : 'Group Chat') ) )}</Text>
                 { 
-                    this.props.activeChat.IS_GROUP_MSG == 0 && this.props.presence.hasOwnProperty(this.props.activeChat.JID) 
-                    && <Text style={{ fontSize: 11, color: 'white' }}>{ this.props.presence[this.props.activeChat.JID] ? this.props.presence[this.props.activeChat.JID] : 'offline' }</Text>
+                    this.props.activeChat.IS_GROUP_MSG == 0 && this.props.presence[this.props.activeChat.JID]
+                    && <Text style={{ fontSize: 11, color: 'white' }}>{ this.props.presence[this.props.activeChat.JID] }</Text>
                 } 
                 
             </TouchableOpacity>

@@ -26,7 +26,17 @@ class MainChatBar extends React.Component {
   }
 
   componentDidMount() {    
-    console.log('MAINBAR', this.props);    
+    console.log('MAINBAR', this.props);
+    this.lastTick_textlength = 0;
+    this.timerId = setInterval(()=>{
+      console.log(this.lastTick_textlength++)
+    }, 2000);
+
+  }
+
+  componentWillUnmount() {
+    console.log('UNMOUNT MAINCHATBAR')
+    clearInterval(this.timerId)
   }
 
   state = {
@@ -188,10 +198,16 @@ class MainChatBar extends React.Component {
           />}
           {/* {this.state.chatboxempty && <TouchableOpacity style={styles.secondItem} onPress={()=>this.openImagePicker()}><Icon1 name="photo-camera" color={'white'} size={26} /></TouchableOpacity>} */}
           
-          { <TouchableOpacity onPress={() => {
-            this.sendMessage();
-            this.textInput.clear();
-          }} style={styles.fourthItem}><Icon1 name='send' size={25} color='white' /></TouchableOpacity>}
+          <TouchableOpacity onPress={() => {
+            if(this.props.network.networkIsConnected && this.props.network.xmppState==='XMPP_CONNECTED'){
+              this.sendMessage();
+              this.textInput.clear();
+            }
+          }} style={styles.fourthItem}>
+          { this.props.network.networkIsConnected && this.props.network.xmppState==='XMPP_CONNECTED' 
+          ? <Icon1 name='send' size={25} color='white' /> 
+          : <Icon1 name='send' size={25} color={colors.jcgray} /> }
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -206,7 +222,8 @@ function mapStateToProps(state) {
     chatroom: state.chatroom.chatroom,
     activeChat: state.activechat,
     game: state.game,
-    mytoken: state.mytoken
+    mytoken: state.mytoken,
+    network: state.network
   }
 }
 

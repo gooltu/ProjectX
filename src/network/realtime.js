@@ -103,13 +103,8 @@ export const realtimeConnect = () => {
 				// onPresence handler
 				getConnectionObj().addHandler((msg)=>{
 
-					console.log(msg.toString());
-					getConnectionObj().roster.get((result) => {
-						console.log('roster')
-						console.log(result);
-					});
-
-					dispatch(handlePresence(msg));					
+					console.log('PRESENCE HANDLE',msg.toString());	
+					dispatch(handlePresence(msg));									
 					return true;
 
 				}, null, 'presence', null, null, null);
@@ -117,6 +112,7 @@ export const realtimeConnect = () => {
 				//send presence 
 				getConnectionObj().send($pres().tree(), () => {});
 
+				getConnectionObj().roster.init(getConnectionObj());
 
 				getServerTime(getState().mytoken.myphone)
 				.then(delta => {

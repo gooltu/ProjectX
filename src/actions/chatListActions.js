@@ -1,4 +1,4 @@
-import { SET_ACTIVE_CHAT, SET_CHAT_LIST_DATA, SET_PRESENCE } from './ActionTypes'
+import { SET_ACTIVE_CHAT, SET_CHAT_LIST_DATA, SET_PRESENCE , SET_ACTIVITY } from './ActionTypes'
 
 export const setActiveChat = (activeChat) => {
     return {
@@ -17,6 +17,13 @@ export const setChatListData = (chatListData) => {
 export const setPresence = (presenceData) =>{
     return {
         type : SET_PRESENCE,
+        presenceData: presenceData
+    }
+}
+
+export const setActivity = (presenceData) =>{
+    return {
+        type : SET_ACTIVITY,
         presenceData: presenceData
     }
 }
