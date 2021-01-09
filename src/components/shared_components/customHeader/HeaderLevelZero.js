@@ -18,11 +18,22 @@ class HeaderLevelZero extends React.PureComponent {
     componentDidMount() {
         console.log('CUSTOM HEADER MOUNT', this.props.navigation.state.routeName)    
 
-        if (this.props.network === 'XMPP_DISCONNECTED') {
-            console.log('CALL Connect strophe xmpp')
-            this.props.openRealtimeConnection()
-        }
+        
 
+        this.focusListener = this.props.navigation.addListener("didFocus", () => {
+            console.log('FOCUS CALL Connect strophe xmpp')
+            if (this.props.network === 'XMPP_DISCONNECTED') {
+                console.log('CALL Connect strophe xmpp')
+                this.props.openRealtimeConnection()
+            }
+        });
+
+    }
+
+
+    componentWillUnmount() {
+        console.log('UNMOUNT HEADER LEVEL ZERO')    
+        this.focusListener.remove();       
     }
     
 
@@ -36,7 +47,7 @@ class HeaderLevelZero extends React.PureComponent {
 
 
     connectingSpinner(){
-
+        console.log('SPINNER')
         if( this.props.network !== 'XMPP_CONNECTED'){
             let connectingspinner = <View style={{height:32, paddingLeft:8, justifyContent:'center'}}>
                                         <ActivityIndicator size="small" color="white" animating={true} />

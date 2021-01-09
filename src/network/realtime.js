@@ -4,7 +4,7 @@ import actions from '../actions'
 import AsyncStorage from '@react-native-community/async-storage';
 import db from '../db/localdatabase'
 
-import {handlePresence} from './realtime-utils/presence-roster';
+import {handlePresence, handleChatState} from './realtime-utils/presence-roster';
 import {downloadMessages} from './realtime-utils/download-history';
 import {getServerTime, detectMessagetype } from './realtime-utils/utilities';
 
@@ -74,8 +74,7 @@ export const realtimeConnect = () => {
 				// onMessage Handler
 				getConnectionObj().addHandler((msg) => {
 
-					console.log('XML MSG', msg);
-					var processedMessage = detectMessagetype(msg)
+					let processedMessage = detectMessagetype(msg)
 					console.log('PROCESSED MSG', processedMessage);
 					if (processedMessage.type === 'DownLoad') {
 						if (processedMessage.subtype === 'Delivery' || processedMessage.subtype === 'Read') {
@@ -90,8 +89,16 @@ export const realtimeConnect = () => {
 					else if (processedMessage.type === 'Read' || processedMessage.type === 'Delivery') {
 						dispatch(handleReadAndDeliveryMessages(processedMessage))
 					}
-					else if (processedMessage.type === 'Message' || processedMessage.type === 'GroupMessage' )
+					else if(processedMessage.type === 'ChatStates'){
+						dispatch(handleChatState(processedMessage.data))
+					}
+					else if (processedMessage.type === 'Message'){
 						dispatch(insertIncomingMessage(processedMessage.data))
+						let obj = {CHAT_ROOM_JID: processedMessage.data.CHAT_ROOM_JID, CHAT_STATE: 'active' }
+						dispatch(handleChatState(obj))
+					}	
+					else if (processedMessage.type === 'GroupMessage' )
+						dispatch(insertIncomingMessage(processedMessage.data))	
 
 					// else if (processedMessage.type === 'Affiliations' )
 					// 	dispatch(insertIncomingAffiliations(processedMessage.data))	

@@ -14,7 +14,7 @@ const chatroom = (state = initialState, action) => {
         case ADD_CHAT_MESSAGE:
             return {
                 ...state,
-                chatroom: [action.message,...state.chatroom]
+                chatroom: [...action.message,...state.chatroom]
             }
 
         default:

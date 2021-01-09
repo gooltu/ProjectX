@@ -59,10 +59,10 @@ export default styles = StyleSheet.create({
         alignItems: 'flex-end'
     },
     CollectText:{
-        fontSize: 12 * global.scaleFactor,
-        color: color.darkcolor3,
-        fontWeight: '600',
-        padding:8
+        fontSize: 11 * global.scaleFactor,
+        color: color.jcgray,
+        fontWeight: 'bold',
+        padding:8        
     },
     jewelStyle: {
         width: '100%',

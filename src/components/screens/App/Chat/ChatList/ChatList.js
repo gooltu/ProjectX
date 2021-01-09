@@ -126,12 +126,11 @@ class ChatList extends React.Component {
   componentDidMount() {
     this.focusListener = this.props.navigation.addListener("didFocus", () => {
       this.props.setActiveChat({})
-  });
-    //console.log(this.props.navigation.state.routes[this.props.navigation.state.index]);
-    //console.log(this.props);
-    //console.log(this.props.navigation.state.routeName);
-    console.log('ChatList Mount');
-    this.props.updateChatlistRedux();
+      console.log('ChatList Mount');
+      this.props.updateChatlistRedux();
+    });
+    
+    
   }
 
   componentWillUnmount() {

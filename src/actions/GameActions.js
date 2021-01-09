@@ -1,5 +1,5 @@
-import { LOAD_GAME_STATE, SET_TASK_DATA, SET_TASK_DETAILS,SET_LEADERBOARD,
-    SET_GIFT_TASK_DATA,SET_GIFT_TASK_DETAILS,SET_USER_GIFT_TASK } from './ActionTypes'
+import { LOAD_GAME_STATE, SET_TASK_DATA, SET_TASK_DETAILS, SET_LEADERBOARD,
+    SET_GIFT_TASK_DATA, EMPTY_GIFT_TASK_DATA, SET_GIFT_TASK_DETAILS, SET_USER_GIFT_TASK } from './ActionTypes'
 import NetworkManager from '../network/NetworkManager'
 import rest from '../network/rest'
 
@@ -39,12 +39,22 @@ export const setGiftTaskData = (payload) => {
     }
 }
 
+export const emptyGiftTaskData = () => {
+    return {
+        type: EMPTY_GIFT_TASK_DATA,
+        payload: []
+    }
+}
+
 export const setGiftTaskDetails = (payload) => {
     return {
         type: SET_GIFT_TASK_DETAILS,
         payload: payload
     }
 }
+
+
+
 export const setLeaderBoard = (payload) => {
     return {
         type: SET_LEADERBOARD,

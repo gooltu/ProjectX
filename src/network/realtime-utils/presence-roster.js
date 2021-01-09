@@ -11,15 +11,35 @@ export const handlePresence = (msg) => {
         console.log('PRESENCE',type, from, to)  
         
         let obj = {};
-        obj[from] = 'Offline'
+        obj[from] = 'offline'
 
         if(type === 'unavailable'){
-            obj[from] = 'Offline'
+            obj[from] = 'offline'
             dispatch(actions.setPresence(obj))
         }else {
-            obj[from] = 'Online'
+            obj[from] = 'online'
             dispatch(actions.setPresence(obj))
         }   
 
     }    
+}
+
+
+export const handleChatState = (processedmessage) => {
+
+    return (dispatch, getState) => {
+
+        let CHAT_STATE = processedmessage.CHAT_STATE
+        let CHAT_ROOM_JID = processedmessage.CHAT_ROOM_JID
+        
+        console.log('CHAT STATE', processedmessage);
+
+        let obj = {};
+        obj[CHAT_ROOM_JID] = CHAT_STATE === 'composing' ? 'typing...' : 'online';
+
+        if(getState().presence[CHAT_ROOM_JID] && (getState().presence[CHAT_ROOM_JID] === 'online' || getState().presence[CHAT_ROOM_JID] === 'typing...' ))
+            dispatch(actions.setActivity(obj))          
+
+    }
+
 }

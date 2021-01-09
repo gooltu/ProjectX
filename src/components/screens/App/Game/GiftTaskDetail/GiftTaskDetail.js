@@ -44,14 +44,14 @@ class TaskDetail extends React.Component {
     if (jewel.count <= 5) {
       for (let i = 0; i < jewel.count; i++) {
         jewelView.push(
-          renderJewel(jewel.jeweltype_id, 30, 30, styles.jewelStyle)
+          renderJewel(jewel.jeweltype_id, 30, 30, styles.jewelStyle, jewel.jeweltype_id+'_'+i )
         )
       }
     }
     else {
       for (let i = 0; i < 3; i++) {
         jewelView.push(
-          renderJewel(jewel.jeweltype_id, 30, 30, styles.jewelStyle)
+          renderJewel(jewel.jeweltype_id, 30, 30, styles.jewelStyle, jewel.jeweltype_id+'_'+i)
         )
       }
       jewelView.push(
@@ -204,7 +204,7 @@ class TaskDetail extends React.Component {
             {
               this.props.gifttaskdetails[this.giftTask.id].map((jewel) =>
 
-                <View style={{ flexDirection: 'row', padding: 5 }}>
+                <View style={{ flexDirection: 'row', padding: 5 }}  key={jewel.id} >
 
                   <View style={{ flexDirection: 'row', width: '85%', paddingLeft: '20%', justifyContent: 'center', alignItems: 'center' }}>
                     {this.jewelView(jewel)}

@@ -24,7 +24,7 @@ import XP from '../../../../svg_components/XP';
 import JCImages from '../../../../../assets/JCImages'
 import NetworkManager from '../../../../../network/NetworkManager';
 import rest from '../../../../../network/rest';
-import { renderJewel } from '../../../../JCUtils/CommonUtils'
+import { renderJewel, jewelInfo } from '../../../../JCUtils/CommonUtils'
 import actions from '../../../../../actions';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import CustomLoader from '../../../../shared_components/CustomLoader';
@@ -40,10 +40,15 @@ class TaskDetail extends React.Component {
     }
 
     componentDidMount() {
+        console.log('TASK DETAILS', this.props);
+        console.log('TASK', this.task.task_id);
+        console.log('TASK', this.props.taskdetails.hasOwnProperty(this.task.task_id));
         if (!this.props.taskdetails.hasOwnProperty(this.task.task_id))
             this.getTaskDetails()
     }
+
     getTaskDetails() {
+        console.log('TASK ID', this.props);
         let data = {
             'task_id': this.props.navigation.state.params.task.task_id
         }
@@ -51,25 +56,29 @@ class TaskDetail extends React.Component {
             let data = JSON.parse(JSON.stringify(this.props.taskdetails))
             data[this.task.task_id] = result.taskdetails
             this.props.setTaskDetails(data)
+            console.log('TASK DETAILS', this.props);
         }).catch(error => {
 
         })
     }
-    jewelView(jewel,key) {
-        console.log('jewel value')
-        console.log(jewel)
+
+    
+
+    jewelView(jewel) {
+        
+        
         let jewelView = []
         if(jewel.count<=5){
             for (let i = 0; i < jewel.count; i++) {
                 jewelView.push(
-                    renderJewel(jewel.jeweltype_id, 30, 30, styles.jewelStyle, key+'_'+i)
+                    renderJewel(jewel.jeweltype_id, 30, 30, styles.jewelStyle, jewel.jeweltype_id+'_'+i)
                 )
             }
         }
         else{
             for (let i = 0; i < 3; i++) {
                 jewelView.push(
-                    renderJewel(jewel.jeweltype_id, 30, 30, styles.jewelStyle, key+'_'+i)
+                    renderJewel(jewel.jeweltype_id, 30, 30, styles.jewelStyle, jewel.jeweltype_id+'_'+i)
                 )
             }
             jewelView.push(
@@ -78,9 +87,10 @@ class TaskDetail extends React.Component {
                 </View>
             )
         }
-       
+        console.log('JEWELVIEW', jewelView)
         return jewelView
     }
+    
     CheckAvailablity(RequiredJewel) {
 
         let jewel = this.props.game.jewels.filter((jewelType) => {
@@ -126,18 +136,20 @@ class TaskDetail extends React.Component {
                 {this.props.taskdetails.hasOwnProperty(this.task.task_id) ?
                     <View style={{ paddingBottom: 20, flexDirection: 'column' }}>
                         {
-                            this.props.taskdetails[this.task.task_id].map((jewel, key) => {
-                                <View style={{ flexDirection: 'row', padding: 5 }}>
+                            this.props.taskdetails[this.task.task_id].map((jewel) => 
+                                <View style={{ flexDirection: 'row', padding: 5 }} key={jewel.id}>
                                     <View style={{ flexDirection: 'row', width: '85%', paddingLeft: '15%', alignItems: 'center', justifyContent: 'center' }}>
-                                        {this.jewelView(jewel, key)}
+                                        {this.jewelView(jewel)}
                                     </View>
                                     <View style={{ width: '15%' }}>
                                         {
-                                            this.CheckAvailablity(jewel) ? <Icon name='close' color='red' size={20} /> : <Icon name='check' color='green' size={20} />
+                                            this.CheckAvailablity(jewel) 
+                                            ? <TouchableOpacity onPress={()=>jewelInfo(jewel)} style={{flexDirection:'row'}}><Icon name='close' color='red' size={20} /><Icon style={{marginLeft:3}} name='info-circle' color='white' size={20} /></TouchableOpacity>
+                                            : <Icon name='check' color='green' size={20} />
                                         }
                                     </View>
                                 </View>
-                            })
+                            )
                         }
 
                     </View> : null}

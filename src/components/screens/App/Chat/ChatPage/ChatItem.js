@@ -7,11 +7,10 @@ import {
 
 import FastImage from 'react-native-fast-image'
 import styles from './ChatPage.styles'
-import JCTextInput from "../../../../../utilities/JCTextInput/JCTextInput";
-import { connect } from 'react-redux';
 import colors from "../../../../shared_styles/colors";
-import { getContacts, renderJewel } from '../../../../JCUtils/CommonUtils'
+import { renderJewel } from '../../../../JCUtils/CommonUtils'
 import Icon from 'react-native-vector-icons/FontAwesome5'
+import Autolink from 'react-native-autolink';
 
 export default class ChatItem extends React.PureComponent {
     constructor(props) {
@@ -71,7 +70,15 @@ export default class ChatItem extends React.PureComponent {
       console.log('TEXT',this.props.item.MSG_TYPE)
       return(
         <View style={[ styles.chatbox, this.state.mychat ? styles.mychatbox : styles.friendschatbox ]}>                                  
-              <Text style={styles.friendMsgText}>{this.props.item.MSG_TEXT}</Text> 
+              <Text style={styles.friendMsgText}>
+                <Autolink
+                  text={this.props.item.MSG_TEXT}
+                  hashtag="instagram"
+                  mention="twitter"
+                  truncate={30}   
+                  linkStyle={{ color: 'blue' }}     
+                />             
+              </Text> 
               <View style={this.state.mychat ? styles.mychatboxBottomStrip : styles.friendschatboxBottomStrip}>                
                 <Text style={styles.msgTime}>{this.props.item.CREATED_TIME}</Text>
                 { marker == 0 && <Icon style={{paddingRight:5, paddingTop:2}} name='clock' size={9} color={colors.jcgray} /> }

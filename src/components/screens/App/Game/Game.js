@@ -4,7 +4,9 @@ import {
   View,
   Text,
   ScrollView,
-  FlatList
+  FlatList,
+  PixelRatio,
+  ActivityIndicator
 } from 'react-native';
 import styles from './Game.styles'
 import { connect } from 'react-redux';
@@ -14,9 +16,8 @@ import NetworkManager from '../../../../network/NetworkManager';
 import rest from '../../../../network/rest';
 import actions from '../../../../actions';
 import GiftTaskView from './GiftTaskView'
-import { InterstitialAd, RewardedAd, RewardedAdEventType, BannerAdSize, BannerAd, TestIds } from '@react-native-firebase/admob';
 import TaskView from './TaskView';
-import CustomLoader from '../../../shared_components/CustomLoader';
+import colors from '../../../shared_styles/colors';
 
 class Game extends React.Component {
 
@@ -28,16 +29,21 @@ class Game extends React.Component {
       isLoading: false,
       giftTaskLoading: false
     }
+    this.lastpagelength = 10;
   }
   componentDidMount() {
     //console.log(this.props.gifttasks)
     this.getTaskDetails()
+    
+    //this.props.setTaskData([])
+    //
+    
     this.getGiftTask()
   }
 
   getTaskDetails() {
       console.log('GET TASKS')
-      if (this.props.tasks.length == 0) {
+      //if (this.props.tasks.length == 0) {
 
           this.setState({ isLoading: true });
           NetworkManager.callAPI(rest.getTasks, 'POST', null).then(result => {
@@ -48,33 +54,34 @@ class Game extends React.Component {
             })
             this.props.setTaskData(result.tasks)
           }).catch(error => {
+            this.setState({
+              isLoading: false
+            })
           })
 
-      }
+      //}
   }
 
   getGiftTask() {
-    this.setState({
-      giftTaskLoading: true
-    })
-    NetworkManager.callAPI(rest.getGiftTasks, 'POST', { page: this.state.page }).then(result => {
-      if (result.gifttasks.length > 0) {
-        let data = (this.state.page == 0 ? [] : JSON.parse(JSON.stringify(this.props.gifttasks)))
-        let dataToInsert = { title: 'section' + this.state.page, data: [result.gifttasks] }
-        data.push(dataToInsert)
-        console.log(dataToInsert)
-        this.props.setGiftTaskData(data)
-      }
-      this.setState({
-        giftTaskLoading: false
-      })
-    }).catch(error => {
 
+    this.setState({  giftTaskLoading: true  })
+    NetworkManager.callAPI(rest.getGiftTasks, 'POST', { page: this.state.page }).then(result => {
+        
+        if(this.state.page == 0) 
+          this.props.emptyGiftTaskData();
+        
+        this.lastpagelength = result.gifttasks.length;
+        this.props.setGiftTaskData(result.gifttasks)    
+        this.setState({giftTaskLoading: false })
+
+    }).catch(error => {
+      this.setState({giftTaskLoading: false })
     })
+
   }
 
-  LoadMoreRandomData = () => {
-    if (!this.state.giftTaskLoading) {
+  loadMoreRandomData = () => {
+    if (!this.state.giftTaskLoading && this.lastpagelength==10) {
       this.setState({
         page: this.state.page + 1
       }, () => {
@@ -82,11 +89,12 @@ class Game extends React.Component {
       })
     }
   }
+  
   _renderList = (data) => {
     console.log('itemm', data)
     return (
       <FlatList numColumns={2}
-        style={{ padding: 10 }}
+        style={{ paddingLeft:10, paddingRight:10, paddingBottom:10, paddingTop:5 }}
         data={data}
         onEndReached={this.LoadMoreRandomData}
         onEndReachedThreshold={0.5}
@@ -104,16 +112,22 @@ class Game extends React.Component {
     return (
       //  item.title == 'section0' ? 
       <View>
-        <View style={{ paddingHorizontal: 15, paddingTop: 10 }}>
-          <Text style={{ color: color.jcgray, fontSize: 11, }}>WIN GAME POINTS AND GAME COINS</Text>
+        <View style={{ flexDirection:'row', paddingHorizontal: 15, paddingTop: 10, paddingBottom:5 }}>
+          <Text style={{ color: color.jcgray, fontSize: 11, fontWeight: "bold" }}>WIN GAME POINTS AND GAME COINS</Text>
+          {this.state.isLoading && <ActivityIndicator size="small" color="white" animating={true} style={{ width:14, height:14, marginLeft:10 }} />}
         </View>
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{ paddingHorizontal: 10 }}>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{ paddingHorizontal: 10 }} 
+        style={{height: PixelRatio.roundToNearestPixel(105 * global.scaleFactor), borderBottomWidth:1, borderBottomColor: colors.darkcolor2,}}>
           {
             this.props.tasks.map((task, key ) => (
               <TaskView navigation={this.props.navigation} task={task} key={task.task_id}/>
             ))
           }
         </ScrollView>
+        <View style={{ flexDirection:'row', paddingHorizontal: 15, paddingTop: 10}}>
+          <Text style={{ color: color.jcgray, fontSize: 11, fontWeight: "bold" }}>WIN CASH AND GIFTS</Text>
+          {this.state.giftTaskLoading && <ActivityIndicator size="small" color="white" animating={true} style={{ width:14, height:14, marginLeft:10 }} />}
+        </View>
       </View>
       //: null
     )
@@ -136,19 +150,26 @@ class Game extends React.Component {
   render() {
     return (
       <SafeAreaView style={styles.mainContainer}>
-        <CustomLoader loading={this.state.isLoading} />
+        
         <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
-        {this.props.gifttasks.length > 0 ?
+        
           <FlatList
             bounces={false}
             data={this.props.gifttasks}
+            numColumns={2}
+            onEndReached = { () => this.loadMoreRandomData() }
+            onEndReachedThreshold = {0.75}
             renderItem={({ item, index }) =>
-              this._renderList(item.data[0])
+              <GiftTaskView navigation={this.props.navigation} giftTask={item} key={index} />
             }
             ListHeaderComponent={this._renderSectionHeader}
             keyExtractor={(item, index) => item + index}
           />
-          : null}
+        {this.state.giftTaskLoading &&   
+          <View style={{ backgroundColor: color.darkcolor1, height: 25, width: '100%' }}>
+            <ActivityIndicator size="small" color="white" animating={true} />
+          </View>  
+        }
         <StatusBar barStyle="light-content" hidden={false} translucent={true} />
       </SafeAreaView>
     );
@@ -170,7 +191,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     setTaskData: (payload) => dispatch(actions.setTaskData(payload)),
-    setGiftTaskData: (payload) => dispatch(actions.setGiftTaskData(payload))
+    setGiftTaskData: (payload) => dispatch(actions.setGiftTaskData(payload)),
+    emptyGiftTaskData: () => dispatch(actions.emptyGiftTaskData())
   }
 }
 

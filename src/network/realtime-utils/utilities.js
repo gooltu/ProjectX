@@ -59,6 +59,8 @@ export const detectMessagetype = (incomingStanza) => {
 	var recieved = incomingStanza.getElementsByTagName('received')
 	var read = incomingStanza.getElementsByTagName('displayed')
 
+	let act_active = incomingStanza.getElementsByTagName('active');
+	let act_composing = incomingStanza.getElementsByTagName('composing');
 	
 
 	var date = dateToYMD((new Date()).getTime() + global.TimeDelta)
@@ -110,6 +112,13 @@ export const detectMessagetype = (incomingStanza) => {
 	else if (read.toString()) {
 		type = 'Read'
 		data = getFromattedReceipt(incomingStanza, type)
+	}
+	else if(incomingStanza.getAttribute('type').toString() === 'chatactivity') {
+		type = 'ChatStates'
+		data = {
+			CHAT_ROOM_JID: incomingStanza.getAttribute('from').split('/')[0],
+			CHAT_STATE: (act_composing.toString() ? 'composing' : 'active')
+		}
 	}
 	// incoming messages
 	else if(incomingStanza.getAttribute('type').toString() === 'chat') {

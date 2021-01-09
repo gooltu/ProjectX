@@ -92,6 +92,20 @@ export const updateChatlistRedux = () => {
 	}
 }
 
+export const sendOutgoingActivityMessage = (outgoingMessage) => {
+
+    let reply = $msg({to: outgoingMessage.CHAT_ROOM_JID , from: outgoingMessage.CREATOR_JID, type: 'chatactivity' })                        
+                .c( outgoingMessage.activity , {xmlns: "http://jabber.org/protocol/chatstates"});
+    console.log('TYPING ACTIVITY',reply);
+    
+    try{
+        getConnectionObj().send(reply.tree(), () => {});
+    }catch(err){
+        console.log('XMPP Message Error')
+    }
+
+}
+
 
 export const sendOutgoingMessage = (outgoingMessage) => {
 

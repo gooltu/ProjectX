@@ -29,6 +29,7 @@
     "react-art": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-native": "0.61.5",
+    "react-native-autolink": "^3.0.0",
     "react-native-contacts": "^5.2.0",
     "react-native-fast-image": "^8.3.2",
     "react-native-fs": "^2.16.6",

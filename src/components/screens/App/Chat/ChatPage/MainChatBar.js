@@ -10,10 +10,9 @@ import styles from './ChatPage.styles'
 import JCTextInput from "../../../../../utilities/JCTextInput/JCTextInput";
 import { connect } from 'react-redux';
 import colors from "../../../../shared_styles/colors";
-import Icon1 from 'react-native-vector-icons/MaterialIcons'
-import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons'
+import Icon1 from 'react-native-vector-icons/MaterialIcons';
 import ImagePicker from 'react-native-image-crop-picker';
-import { sendOutgoingMessage } from '../../../../../network/realtime-utils/messages';
+import { sendOutgoingMessage, sendOutgoingActivityMessage } from '../../../../../network/realtime-utils/messages';
 import { sendReply, sendSubscriptionRequest } from '../../../../../network/realtime'
 import { dateToYMD } from '../../../../../network/realtime-utils/utilities'
 import { updateChatPageRedux, updateChatlistRedux } from '../../../../../network/realtime-utils/messages';
@@ -27,16 +26,73 @@ class MainChatBar extends React.Component {
 
   componentDidMount() {    
     console.log('MAINBAR', this.props);
-    this.lastTick_textlength = 0;
-    this.timerId = setInterval(()=>{
-      console.log(this.lastTick_textlength++)
-    }, 2000);
+
+    if(this.props.activeChat.IS_GROUP_MSG == 0){
+          this.lastTick_textlength = 0;
+          this.lastTickAction = 'none'; // none|active|composing
+          let msg = {
+            CHAT_ROOM_JID: this.props.activeChat.CHAT_ROOM_JID,
+            IS_GROUP_MSG: this.props.activeChat.IS_GROUP_MSG,    
+            CREATOR_JID: this.props.mytoken.myphone + '@jewelchat.net',
+          }
+
+          this.timerId = setInterval(()=>{
+
+            if(this.lastTickAction === 'none'){
+
+              if( (this.lastTick_textlength + 2) < this.state.chatboxtext.length ){ 
+                //send composing
+                msg.activity = 'composing';  
+                if(this.props.presence[this.props.activeChat.CHAT_ROOM_JID] !== 'offline')        
+                  sendOutgoingActivityMessage(msg);
+                this.lastTickAction = 'composing';
+              }
+
+            }  
+            else if(this.lastTickAction === 'composing') {
+              
+              if( this.lastTick_textlength == this.state.chatboxtext.length ){ 
+                //send active
+                msg.activity = 'active';
+                if(this.props.presence[this.props.activeChat.CHAT_ROOM_JID] !== 'offline') 
+                  sendOutgoingActivityMessage(msg);
+                this.lastTickAction = 'active';
+              } 
+
+            }
+            else if(this.lastTickAction === 'active') {
+              
+              if(  (this.lastTick_textlength + 2) < this.state.chatboxtext.length  ){ 
+                //send composing
+                msg.activity = 'composing';
+                if(this.props.presence[this.props.activeChat.CHAT_ROOM_JID] !== 'offline') 
+                  sendOutgoingActivityMessage(msg);
+                this.lastTickAction = 'composing';
+              } 
+
+            }
+
+            this.lastTick_textlength = this.state.chatboxtext.length
+          }, 2000);
+    }      
 
   }
 
   componentWillUnmount() {
     console.log('UNMOUNT MAINCHATBAR')
-    clearInterval(this.timerId)
+    if(this.props.activeChat.IS_GROUP_MSG == 0){
+        clearInterval(this.timerId)
+        let msg = {
+          CHAT_ROOM_JID: this.props.activeChat.CHAT_ROOM_JID,            
+          CREATOR_JID: this.props.mytoken.myphone + '@jewelchat.net',
+          activity: 'active'
+        }
+        
+        if(this.props.presence[this.props.activeChat.CHAT_ROOM_JID] !== 'offline') 
+          sendOutgoingActivityMessage(msg);
+          
+    }      
+    
   }
 
   state = {
@@ -85,6 +141,8 @@ class MainChatBar extends React.Component {
     */
   }
 
+  
+
 
   sendMessage(eventnative) {
 
@@ -103,6 +161,8 @@ class MainChatBar extends React.Component {
     }
 
     this.processChatText('');
+    this.lastTick_textlength = 0;
+    this.lastTickAction = 'none';
 
     let createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
 
@@ -223,7 +283,8 @@ function mapStateToProps(state) {
     activeChat: state.activechat,
     game: state.game,
     mytoken: state.mytoken,
-    network: state.network
+    network: state.network,
+    presence: state.presence
   }
 }
 

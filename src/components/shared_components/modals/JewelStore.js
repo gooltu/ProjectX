@@ -143,21 +143,21 @@ class JewelStore extends React.Component {
                         />
                     </View>
                     <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-                        <View style={{ padding: 20, height: 100 }}>
-                            {/* <BannerAd
+                        <View >
+                            <BannerAd
                                 unitId={TestIds.BANNER}
                                 size={BannerAdSize.SMART_BANNER}
                                 requestOptions={{
                                     requestNonPersonalizedAdsOnly: true,
-                                }} /> */}
+                                }} />
                         </View>
                     </View>
-                    <Button
+                    {/* <Button
                         title="Show Rewarded Ad"
                         onPress={() => {
                             rewarded.show();
                         }}
-                    />
+                    /> */}
                 </View>
             </SafeAreaView>
         );

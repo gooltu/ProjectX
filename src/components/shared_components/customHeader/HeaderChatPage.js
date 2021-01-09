@@ -36,13 +36,16 @@ class HeaderChatPage extends React.Component {
         }
 
         if(this.props.activeChat.IS_PHONEBOOK_CONTACT == 1){
-            console.log('PRESENCE ROSTER ADD SUBSCRIBE')   
-            getConnectionObj().roster.add(this.props.activeChat.CHAT_ROOM_JID, this.props.activeChat.CONTACT_NAME, [], ()=>{
-                getConnectionObj().roster.subscribe(this.props.activeChat.CHAT_ROOM_JID, 'Online' ,this.props.activeChat.CONTACT_NAME)
-                getConnectionObj().roster.authorize(this.props.activeChat.CHAT_ROOM_JID, 'Online' )
-            })
-            
+            console.log('PRESENCE ROSTER ADD SUBSCRIBE')  
 
+            try{
+                getConnectionObj().roster.add(this.props.activeChat.CHAT_ROOM_JID, this.props.activeChat.CONTACT_NAME, [], ()=>{
+                    getConnectionObj().roster.subscribe(this.props.activeChat.CHAT_ROOM_JID, 'Online' ,this.props.activeChat.CONTACT_NAME)
+                    getConnectionObj().roster.authorize(this.props.activeChat.CHAT_ROOM_JID, 'Online' )
+                })
+            }catch(err){
+                console.log('XMPP not connected yet')
+            }   
 
         }
 
@@ -50,7 +53,7 @@ class HeaderChatPage extends React.Component {
 
     displayLogo() {
         
-        return (<TouchableOpacity style={styles.profilepic} onPress={() => this.props.navigation.navigate('FriendProfile')}>
+        return (<TouchableOpacity style={styles.profilepic}>
                     {
                     this.props.activeChat.JEWELCHAT_ID == 1 && <Logo height="75%" width="75%" style={{margin: 10, width: '100%', height: '100%', alignItems: 'center', overflow: 'hidden'}} />
                     }
@@ -122,7 +125,7 @@ class HeaderChatPage extends React.Component {
 
     displayTitle() {     
         
-    return  <TouchableOpacity onPress={() => this.props.navigation.navigate('FriendProfile')} style={{ flexDirection: 'column', paddingLeft: 5, height: 32, justifyContent: 'center' }}>
+    return  <TouchableOpacity style={{ flexDirection: 'column', paddingLeft: 5, height: 32, justifyContent: 'center' }}>
                 <Text style={{ fontSize: 14, color: 'white', fontWeight: 'bold' }}>
                     {this.props.activeChat.PHONEBOOK_CONTACT_NAME ? this.props.activeChat.PHONEBOOK_CONTACT_NAME.substring(0, 35)
                     : (this.props.activeChat.JEWELCHAT_ID == 1 ? 'Team JewelChat' 

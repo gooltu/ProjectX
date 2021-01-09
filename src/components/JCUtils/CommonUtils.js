@@ -1,9 +1,12 @@
 import React from 'react'
+import {    
+    Alert
+} from 'react-native';
 import { store } from '../../store'
 import Contacts from 'react-native-contacts'
 import db from '../../db/localdatabase'
 import { Platform, PermissionsAndroid } from "react-native";
-import phoneContactModal from '../../db/phoneContactModal'
+import phoneContactModal from '../../db/phoneContactModal';
 import J3 from '../svg_components/J3'
 import J4 from '../svg_components/J4'
 import J5 from '../svg_components/J5'
@@ -141,44 +144,90 @@ function insertContacts(Contacts, callback) {
 // }
 
 
+
+
 export const renderJewel = (id, width, height, style, key) => {
     let jewelView
     if (id == 0)
-        jewelView = <Diamond width={width} height={height} style={style} key={key} />
-    if (id == 1)
-        jewelView = <Coin width={width} height={height} style={style}  key={key} />
-    if (id == 3)
-        jewelView = <J3 width={width} height={height} style={style}  key={key} />
-    if (id == 4)
-        jewelView = <J4 width={width} height={height} style={style}  key={key} />
-    if (id == 5)
-        jewelView = <J5 width={width} height={height} style={style} key={key} />
-    if (id == 6)
-        jewelView = <J6 width={width} height={height} style={style} key={key} />
-    if (id == 7)
-        jewelView = <J7 width={width} height={height} style={style} key={key} />
-    if (id == 8)
-        jewelView = <J8 width={width} height={height} style={style} key={key} />
-    if (id == 9)
-        jewelView = <J9 width={width} height={height} style={style} key={key} />
-    if (id == 10)
-        jewelView = <J10 width={width} height={height} style={style} key={key} />
-    if (id == 11)
-        jewelView = <J11 width={width} height={height} style={style} key={key} />
-    if (id == 12)
-        jewelView = <J12 width={width} height={height} style={style} key={key} />
-    if (id == 13)
-        jewelView = <J13 width={width} height={height} style={style} key={key} />
-    if (id == 14)
-        jewelView = <J14 width={width} height={height} style={style} key={key} />
-    if (id == 15)
-        jewelView = <J15 width={width} height={height} style={style} key={key} />
-    if (id == 16)
-        jewelView = <J16 width={width} height={height} style={style} key={key} />
-    if (id == 17)
-        jewelView = <J17 width={width} height={height} style={style} key={key} />
+        jewelView = <Diamond width={width} height={height} style={style} key={key}  />
+    else if (id == 1)
+        jewelView = <Coin width={width} height={height} style={style} key={key} />
+    else if (id == 3)
+        jewelView = <J3 width={width} height={height} style={style} key={key}  />
+    else if (id == 4)
+        jewelView = <J4 width={width} height={height} style={style} key={key}    />
+    else if (id == 5)
+        jewelView = <J5 width={width} height={height} style={style} key={key}   />
+    else if (id == 6)
+        jewelView = <J6 width={width} height={height} style={style} key={key}   />
+    else if (id == 7)
+        jewelView = <J7 width={width} height={height} style={style} key={key}  />
+    else if (id == 8)
+        jewelView = <J8 width={width} height={height} style={style} key={key}   />
+    else if (id == 9)
+        jewelView = <J9 width={width} height={height} style={style} key={key}   />
+    else if (id == 10)
+        jewelView = <J10 width={width} height={height} style={style} key={key}   />
+    else if (id == 11)
+        jewelView = <J11 width={width} height={height} style={style} key={key}   />
+    else if (id == 12)
+        jewelView = <J12 width={width} height={height} style={style} key={key}  />
+    else if (id == 13)
+        jewelView = <J13 width={width} height={height} style={style} key={key}   />
+    else if (id == 14)
+        jewelView = <J14 width={width} height={height} style={style} key={key}   />
+    else if (id == 15)
+        jewelView = <J15 width={width} height={height} style={style} key={key}   />
+    else if (id == 16)
+        jewelView = <J16 width={width} height={height} style={style}  key={key}  />
+    else if (id == 17)
+        jewelView = <J17 width={width} height={height} style={style} key={key}   />
 
 
     return jewelView
+
+}
+
+
+export const jewelInfo = (jewel) => {
+    let id = jewel.jeweltype_id;
+    let msg = ''
+    if (id == 0)
+        msg = 'Collect this jewel from the Profile tab. This the most valuable jewel. Refer friends to JewelChat and win this jewel.'
+    else if (id == 1)
+        msg = 'Collect Coins by completing tasks from the Gifts tab.'
+    else if (id == 3)
+        msg = 'Collect this jewel from chat messages.'
+    else if (id == 4)
+        msg = 'Collect this jewel from Jewel Factory(right most header bar icon).'
+    else if (id == 5)
+        msg = 'Collect this jewel from Jewel Factory(right most header bar icon). '
+    else if (id == 6)
+        msg = 'Collect this jewel from chat messages.'
+    else if (id == 7)
+        msg = 'Collect this jewel from Jewel Factory(right most header bar icon). '
+    else if (id == 8)
+        msg = 'Collect this jewel from Jewel Factory(right most header bar icon). '
+    else if (id == 9)
+        msg = 'Collect this jewel from chat messages.'
+    else if (id == 10)
+        msg = 'Collect this jewel from Jewel Factory(right most header bar icon). '
+    else if (id == 11)
+        msg = 'Collect this jewel from Jewel Factory(right most header bar icon). '
+    else if (id == 12)
+        msg = 'Collect this jewel from chat messages.'
+    else if (id == 13)
+        msg = 'Collect this jewel from Jewel Factory(right most header bar icon). '
+    else if (id == 14)
+        msg = 'Collect this jewel from Jewel Factory(right most header bar icon). '
+    else if (id == 15)
+        msg = 'Collect this jewel from chat messages.'
+    else if (id == 16)
+        msg = 'Collect this jewel from Jewel Factory(right most header bar icon). '
+    else if (id == 17)
+        msg = 'Collect this jewel from Jewel Factory(right most header bar icon). '
+
+
+    Alert.alert('Info', msg, [], { cancelable: true });
 
 }
