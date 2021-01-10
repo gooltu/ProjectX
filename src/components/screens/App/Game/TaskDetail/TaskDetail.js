@@ -28,6 +28,7 @@ import { renderJewel, jewelInfo } from '../../../../JCUtils/CommonUtils'
 import actions from '../../../../../actions';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import CustomLoader from '../../../../shared_components/CustomLoader';
+import { BannerAdSize, BannerAd, TestIds } from '@react-native-firebase/admob';
 
 class TaskDetail extends React.Component {
 
@@ -224,6 +225,18 @@ class TaskDetail extends React.Component {
                 </View>
               </View>
                 :null}
+
+                <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+                        <View >
+                            <BannerAd
+                                unitId={TestIds.BANNER}
+                                size={BannerAdSize.SMART_BANNER}
+                                requestOptions={{
+                                    requestNonPersonalizedAdsOnly: true,
+                                }} />
+                        </View>
+                </View>
+
             </SafeAreaView>
         );
     }

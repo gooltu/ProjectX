@@ -60,7 +60,7 @@ export default styles = StyleSheet.create({
     },
     CollectText:{
         fontSize: 11 * global.scaleFactor,
-        color: color.jcgray,
+        color: color.darkcolor3,
         fontWeight: 'bold',
         padding:8        
     },

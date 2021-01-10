@@ -20,7 +20,7 @@ import { SafeAreaView } from 'react-navigation';
 import color from '../../../../shared_styles/colors'
 import XP from '../../../../svg_components/XP';
 import JCImages from '../../../../../assets/JCImages'
-import { renderJewel } from '../../../../JCUtils/CommonUtils';
+import { renderJewel, jewelInfo } from '../../../../JCUtils/CommonUtils';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import NetworkManager from '../../../../../network/NetworkManager';
 import rest from '../../../../../network/rest';
@@ -211,7 +211,9 @@ class TaskDetail extends React.Component {
                   </View>
                   <View style={{ width: '15%' }}>
                     {
-                      this.CheckAvailablity(jewel) ? <Icon name='close' color='red' size={20} /> : <Icon name='check' color='green' size={20} />
+                      this.CheckAvailablity(jewel) 
+                      ? <TouchableOpacity onPress={()=>jewelInfo(jewel)} style={{flexDirection:'row'}}><Icon name='close' color='red' size={20} /><Icon style={{marginLeft:3}} name='info-circle' color='white' size={20} /></TouchableOpacity>
+                      : <Icon name='check' color='green' size={20} />
                     }
                   </View>
                 </View>
