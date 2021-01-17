@@ -1,16 +1,12 @@
 import React from 'react'
 import {
-  Image,
-  ActivityIndicator,
-  AsyncStorage,
-  Platform,
-  StatusBar,
+  Image,  
   StyleSheet,
   View,
-  Text,
-  ScrollView,
+  Text,  
   TouchableOpacity,
-  ImageBackground
+  ImageBackground,
+  ScrollView
 } from 'react-native';
 import styles from './GiftTaskDetail.styles'
 import Coin from '../../../../svg_components/Coin';
@@ -28,7 +24,7 @@ import actions from '../../../../../actions';
 import CustomLoader from '../../../../shared_components/CustomLoader';
 
 
-class TaskDetail extends React.Component {
+class GiftTaskDetail extends React.Component {
 
   constructor(props) {
     super(props)
@@ -38,6 +34,7 @@ class TaskDetail extends React.Component {
       isLaoding: false
     }
   }
+
   jewelView(jewel) {
     let jewelView = []
     // show 3 dots with exact count
@@ -76,58 +73,59 @@ class TaskDetail extends React.Component {
   }
 
   componentDidMount() {
+    
     let data = {
       'gifttask_id': this.giftTask.id
     }
+
     if (!this.props.gifttaskdetails.hasOwnProperty(this.giftTask.id)) {
       NetworkManager.callAPI(rest.getGiftTasksElements, 'POST', data).then(result => {
         console.log(result)
-        let data = JSON.parse(JSON.stringify(this.props.gifttaskdetails))
+        let data = this.props.gifttaskdetails
         data[this.giftTask.id] = result.gifttaskdetails
         this.props.setGiftTaskDetails(data)
-      }).catch(error => {
-
-      })
+      }).catch(error => {})
     }
+
     if (!this.props.usergifttasks.hasOwnProperty(this.giftTask.id)) {
       NetworkManager.callAPI(rest.getGiftTaskLevel, 'POST', data).then(result => {
-        let data = JSON.parse(JSON.stringify(this.props.usergifttasks))
+        let data = this.props.usergifttasks
         data[this.giftTask.id] = result.gifttaskusers[0]
         this.props.setUserGiftTask(data)
-      }).catch(error => {
-
-      })
+      }).catch(error => {})
     }
-    else if (this.props.usergifttasks.hasOwnProperty(this.giftTask.id)) {
-      if (this.props.usergifttasks[this.giftTask.id].cycle < parseInt((new Date()).getFullYear() + '' + this.getCurrentCycle(new Date()))) {
-        console.log((new Date()).getFullYear() + '' + this.getCurrentCycle(new Date()), 'curewent', this.props.usergifttasks[this.giftTask.id].cycle)
-        NetworkManager.callAPI(rest.getGiftTaskLevel, 'POST', data).then(result => {
-          let data = JSON.parse(JSON.stringify(this.props.usergifttasks))
-          data[this.giftTask.id] = result.gifttaskusers[0]
-          this.props.setUserGiftTask(data)
-        }).catch(error => {
-
-        })
-      }
-    }
+    
   }
 
-  CheckAvailablity(RequiredJewel) {
-    let jewel = this.props.game.jewels.filter((jewelType) => {
-      return (RequiredJewel.jeweltype_id === jewelType.jeweltype_id)
-    })
-    console.log(RequiredJewel.count, jewel)
-    if (jewel[0].count < RequiredJewel.count) {
-      return true
-    }
-    else {
-      return false
-    }
+  CheckNonAvailablity(RequiredJewel) {
+    if(this.props.game.jewels[RequiredJewel.jeweltype_id].count < RequiredJewel.count)
+        return true;
+    else 
+        return false;
   }
+
+  CheckAvailablityForAllJewels() {
+
+      const nonavailablejewel = this.props.gifttaskdetails[this.giftTask.id].find((jewel) => {
+          return this.CheckNonAvailablity(jewel)
+      })           
+      
+      return ( !nonavailablejewel ? true : false );
+  }
+
+  checkDelay = () => {
+      return new Promise((resolve) =>
+        setTimeout(
+          () => { resolve('result') },
+          3000
+        )
+      )
+  }
+
   checkEligibility() {
     let count = 0
     this.props.gifttaskdetails[this.giftTask.id].map(item => {
-      if (!this.CheckAvailablity(item)) {
+      if (!this.CheckNonAvailablity(item)) {
         count++
       }
     })
@@ -139,122 +137,183 @@ class TaskDetail extends React.Component {
       return false
     }
   }
+
   winGift() {
     let data = {
       id: this.props.usergifttasks[this.giftTask.id].id,
       gifttask_id: this.props.usergifttasks[this.giftTask.id].gifttask_id
     }
-    this.setState({
-      isLaoding: true
-    })
-    NetworkManager.callAPI(rest.redeemGiftTask, 'POST', data).then(result => {
-      setTimeout(() => {
-        NetworkManager.callAPI(rest.checkGiftTaskCompletion, 'POST', data).then(completionStatus => {
-          this.setState({
-            isLaoding: false
-          })
-          let data = JSON.parse(JSON.stringify(this.props.usergifttasks))
-          data[this.giftTask.id].done = 1
-          this.props.setUserGiftTask(data)
-          this.props.loadGameState()
-          this.props.navigation.navigate('SuccessFullGiftRedeem')
-        }).catch(err => {
 
-        })
-      }, 2000);
-    }).catch(error => {
-
+    this.setState({ isLaoding: true  })
+    AsyncStorage.setItem('ActiveGiftTask', JSON.stringify(data))
+    .then(()=>{
+        return NetworkManager.callAPI(rest.redeemGiftTask, 'POST', data)
     })
+    .then( result => {
+        return this.checkDelay()
+    })
+    .then(() => {
+        return NetworkManager.callAPI(rest.checkGiftTaskCompletion, 'POST', data)
+    })
+    .then( (completedtask) => {            
+        
+        this.props.usergifttasks[this.giftTask.id].done = 1
+        this.props.setUserGiftTask(this.props.usergifttasks)
+        this.setState({  isLaoding: false  });
+        this.props.loadGameState()
+        AsyncStorage.removeItem('ActiveGiftTask').then(()=>{}).catch(err=>{})        
+        this.props.navigation.navigate('SuccessFullGiftRedeem')
+
+    })    
+    .catch(err =>{
+        this.setState({  isLaoding: false  });
+        AsyncStorage.removeItem('ActiveGiftTask').then(()=>{}).catch(err=>{})
+
+        if(err.response){
+            if(err.response.data.message === 'Invalid Task' || err.response.data.message === 'Task Not Completed'){
+                // remove this task and Go Back in navigation
+                // reload game state and task list
+
+                this.props.loadGameState();
+
+                let t = this.props.gifttaskdetails;
+                delete t[this.giftTask.id];      
+                this.props.setGiftTaskDetails(t);
+
+                t = this.props.usergifttasks;
+                delete t[this.giftTask.id];
+                this.props.setUserGiftTask(t);
+
+                this.props.navigation.goBack();                  
+                console.log('TASK ERROR',err.response.data)     
+                console.log('TASK ERROR',err.response.data.message)
+
+            }                       
+        }
+
+    })    
 
   }
+
+
+  displayButton(){
+
+    if(!(this.props.gifttaskdetails.hasOwnProperty(this.giftTask.id) && this.props.usergifttasks.hasOwnProperty(this.giftTask.id)))
+      return null;
+
+    if(this.props.game.scores.level < this.props.usergifttasks[this.giftTask.id].level)
+      return (<View style={{ alignItems: 'center', paddingTop: 10 }}>
+                <View style={{ justifyContent: 'center', width: 150, alignItems: 'center', backgroundColor: color.darkcolor2, borderRadius: 5, borderWidth: 1, borderColor: color.jcgray, paddingHorizontal: 25, paddingVertical: 10 }}>
+                  <Text style={{ color: color.jcgray }}>LEVEL {this.props.usergifttasks[this.giftTask.id].level}</Text>
+                </View>
+              </View>);
+
+    if(!this.CheckAvailablityForAllJewels())       
+      return (<View style={{ alignItems: 'center', paddingTop: 10 }}>
+                <View style={{ justifyContent: 'center', width: 150, alignItems: 'center', backgroundColor: color.darkcolor2, borderRadius: 5, borderWidth: 1, borderColor: color.jcgray, paddingHorizontal: 25, paddingVertical: 10 }}>
+                  <Text style={{ color: color.jcgray }}>Collect All Jewels</Text>
+                </View>
+              </View>);   
+
+    if(this.props.usergifttasks[this.giftTask.id].done >= 1)   
+      return null;
+
+    
+    if(this.giftTask.cash == 1 && this.props.usergifttasks[this.giftTask.id].done == 0 )   
+      return (<TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30, paddingTop: 10}} onPress = { ()=> this.winGift()}>
+                  <View style={{ width: 220, height: 45, zIndex: 1, backgroundColor: color.darkcolor3, borderColor: color.darkcolor3, borderRadius: 8, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
+                      <View style={{ width: "100%", height: '100%' }}>
+                          <ImageBackground source={JCImages.colorGrad} style={{
+                              width: '100%', height: '100%', justifyContent: 'center',
+                              alignItems: 'center', overflow: 'hidden'
+                          }}></ImageBackground>
+                      </View>
+                  </View>
+                  <View style={{ position: 'absolute', width: '100%', height: '100%', zIndex: 2, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                      <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>WIN CASH</Text>
+                  </View>
+              </TouchableOpacity>); 
+
+    if(this.giftTask.cash == 0 && this.props.usergifttasks[this.giftTask.id].done == 0 )   
+      return (<TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30, paddingTop: 10}} onPress = { ()=> this.winGift()}>
+                  <View style={{ width: 220, height: 45, zIndex: 1, backgroundColor: color.darkcolor3, borderColor: color.darkcolor3, borderRadius: 8, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
+                      <View style={{ width: "100%", height: '100%' }}>
+                          <ImageBackground source={JCImages.colorGrad} style={{
+                              width: '100%', height: '100%', justifyContent: 'center',
+                              alignItems: 'center', overflow: 'hidden'
+                          }}></ImageBackground>
+                      </View>
+                  </View>
+                  <View style={{ position: 'absolute', width: '100%', height: '100%', zIndex: 2, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        { this.giftTask.money==0 && <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>WIN GIFT</Text>} 
+                        { this.giftTask.money>0 && <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>Pay {'\u20B9'}{this.giftTask.money} only</Text>}
+                  </View>
+              </TouchableOpacity>);        
+    
+
+  }
+
+
   render() {
     return (
       <SafeAreaView style={styles.mainContainer}>
-        <CustomLoader loading={this.state.isLaoding} />
-        <View style={{ alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-          {this.giftTask.cash === 0 ?
-            <Image
-              style={{ width: 160, height: 200, borderRadius: 7 }}
-              source={{ uri: this.giftTask.product_pic }}
-            /> :
-            <View style={{ backgroundColor: color.jcgray, width: 160, height: 200, borderRadius: 7, alignItems: 'center', justifyContent: 'center' }}>
-               <Text style={{ color: color.darkcolor1, fontSize: 60, fontWeight: 'bold' }}>{'\u20B9'}</Text>
-                <Text style={{ color: color.darkcolor1, fontSize: 30, fontWeight: 'bold' }}> {this.giftTask.money}</Text>
-            </View>
-          }
-        </View>
-
-        <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
-        {this.props.usergifttasks.hasOwnProperty(this.giftTask.id) ?
-          <View style={{ padding: 10 }}>
-            <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold', paddingBottom: 8 }}>{this.giftTask.productname}</Text>
-            <Text style={{ color: color.jcgray, fontSize: 11, paddingBottom: 8 }}>{this.giftTask.productdetail}</Text>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text style={{ color: color.jcgray, fontSize: 11 }}>{this.giftTask.current_qty}/{this.giftTask.total_qty}</Text>
-              <Text style={{ color: color.jcgray, fontSize: 11 }}>EXPIRATION DATE: {(this.props.usergifttasks[this.giftTask.id].expiration_at).split('T')[0]}</Text>
-            </View>
-          </View> : null}
-
-        <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
-        <View>
-          <Text style={styles.CollectText}>COLLECT JEWELS</Text>
-        </View>
-        {this.props.gifttaskdetails.hasOwnProperty(this.giftTask.id) ?
-          <View style={{ paddingBottom: 20, flexDirection: 'column' }}>
-            {
-              this.props.gifttaskdetails[this.giftTask.id].map((jewel) =>
-
-                <View style={{ flexDirection: 'row', padding: 5 }}  key={jewel.id} >
-
-                  <View style={{ flexDirection: 'row', width: '85%', paddingLeft: '20%', justifyContent: 'center', alignItems: 'center' }}>
-                    {this.jewelView(jewel)}
-                  </View>
-                  <View style={{ width: '15%' }}>
-                    {
-                      this.CheckAvailablity(jewel) 
-                      ? <TouchableOpacity onPress={()=>jewelInfo(jewel)} style={{flexDirection:'row'}}><Icon name='close' color='red' size={20} /><Icon style={{marginLeft:3}} name='info-circle' color='white' size={20} /></TouchableOpacity>
-                      : <Icon name='check' color='green' size={20} />
-                    }
-                  </View>
-                </View>
-              )
-            }
-
-          </View> : null}
-        <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
-
-        {this.props.gifttaskdetails.hasOwnProperty(this.giftTask.id) && this.props.usergifttasks.hasOwnProperty(this.giftTask.id) ?
-          this.props.game.scores.level < this.props.usergifttasks[this.giftTask.id].level ?
-            <View style={{ alignItems: 'center', paddingTop: 10 }}>
-              <View style={{ justifyContent: 'center', width: 150, alignItems: 'center', backgroundColor: color.darkcolor2, borderRadius: 5, borderWidth: 1, borderColor: color.jcgray, paddingHorizontal: 25, paddingVertical: 10 }}>
-                <Text style={{ color: color.jcgray }}>LEVEL {this.props.usergifttasks[this.giftTask.id].level}</Text>
+        <ScrollView >
+          <CustomLoader loading={this.state.isLaoding} />
+          <View style={{ alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+            {this.giftTask.cash === 0 ?
+              <Image
+                style={{ width: 160, height: 200, borderRadius: 7 }}
+                source={{ uri: this.giftTask.product_pic }}
+              /> :
+              <View style={{ backgroundColor: color.jcgray, width: 160, height: 200, borderRadius: 7, alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ color: color.darkcolor1, fontSize: 60, fontWeight: 'bold' }}>{'\u20B9'}</Text>
+                  <Text style={{ color: color.darkcolor1, fontSize: 30, fontWeight: 'bold' }}> {this.giftTask.money}</Text>
               </View>
-            </View>
-            :
-            this.checkEligibility() || this.props.usergifttasks[this.giftTask.id].done == 1 ?
-              <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }} disabled={this.props.usergifttasks[this.giftTask.id].done == 1 ? true : false}>
-                <View style={{ width: 220, height: 45, zIndex: 1, backgroundColor: color.darkcolor3, borderColor: color.darkcolor3, borderRadius: 8, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
-                  <View style={{ width: "100%", height: '100%' }}>
-                    <ImageBackground source={JCImages.colorGrad} style={{
-                      width: '100%', height: '100%', justifyContent: 'center',
-                      alignItems: 'center', overflow: 'hidden'
-                    }}></ImageBackground>
-                  </View>
-                </View>
-                <TouchableOpacity
-                  disabled={this.props.usergifttasks[this.giftTask.id].done == 1 ? true : false}
-                  onPress={() => this.winGift()}
-                  style={{ position: 'absolute', width: '100%', height: '100%', zIndex: 2, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                  <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>{this.props.usergifttasks[this.giftTask.id].done == 1 ? 'ALREADY WON' : 'WIN GIFT'}</Text>
-                </TouchableOpacity>
-              </TouchableOpacity> :
-              <View style={{ alignItems: 'center', paddingTop: 10 }}>
-                <View style={{ justifyContent: 'center', width: 220, alignItems: 'center', backgroundColor: color.darkcolor2, borderRadius: 5, borderWidth: 1, borderColor: color.lightcolor1, paddingHorizontal: 25, paddingVertical: 10 }}>
-                  <Text style={{ color: color.jcgray }}>WIN GIFT</Text>
-                </View>
-              </View> : null
+            }
+          </View>
 
-        }
+          <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
+          {this.props.usergifttasks.hasOwnProperty(this.giftTask.id) ?
+            <View style={{ padding: 10 }}>
+              <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold', paddingBottom: 8 }}>{this.giftTask.productname}</Text>
+              <Text style={{ color: color.jcgray, fontSize: 11, paddingBottom: 8 }}>{this.giftTask.productdetail}</Text>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={{ color: color.jcgray, fontSize: 12, fontWeight:'600' }}>{this.giftTask.current_qty}/{this.giftTask.total_qty}</Text>
+                <Text style={{ color: color.jcgray, fontSize: 12, fontWeight:'600' }}>EXPIRATION DATE: {(this.props.usergifttasks[this.giftTask.id].expiration_at).split('T')[0]}</Text>
+              </View>
+            </View> : null}
+
+          <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
+          <View>
+            <Text style={styles.CollectText}>COLLECT JEWELS</Text>
+          </View>
+          {this.props.gifttaskdetails.hasOwnProperty(this.giftTask.id) ?
+            <View style={{ paddingBottom: 20, flexDirection: 'column' }}>
+              {
+                this.props.gifttaskdetails[this.giftTask.id].map((jewel) =>
+
+                  <View style={{ flexDirection: 'row', padding: 5 }}  key={jewel.id} >
+
+                    <View style={{ flexDirection: 'row', width: '85%', paddingLeft: '20%', justifyContent: 'center', alignItems: 'center' }}>
+                      {this.jewelView(jewel)}
+                    </View>
+                    <View style={{ width: '15%' }}>
+                      {
+                        this.CheckNonAvailablity(jewel) 
+                        ? <TouchableOpacity onPress={()=>jewelInfo(jewel)} style={{flexDirection:'row'}}><Icon name='close' color='red' size={20} /><Icon style={{marginLeft:3}} name='info-circle' color='white' size={20} /></TouchableOpacity>
+                        : <Icon name='check' color='green' size={20} />
+                      }
+                    </View>
+                  </View>
+                )
+              }
+
+            </View> : null}
+          <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
+
+          {this.displayButton()} 
+          
+          </ScrollView>
       </SafeAreaView>
     );
   }
@@ -283,4 +342,4 @@ function mapDispatchToProps(dispatch) {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(TaskDetail);
+export default connect(mapStateToProps, mapDispatchToProps)(GiftTaskDetail);

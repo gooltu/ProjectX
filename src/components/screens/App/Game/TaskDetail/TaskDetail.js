@@ -1,19 +1,12 @@
 import React from 'react'
-import {
-    Image,
-    ActivityIndicator,
-    AsyncStorage,
-    Button,
-    StatusBar,
+import {    
     StyleSheet,
     View,
-    Text,
-    Platform,
-    ScrollView,
+    Text,    
     TouchableOpacity,
-    ImageBackground,
-    Alert
+    ImageBackground
 } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import styles from './TaskDetail.styles'
 import Coin from '../../../../svg_components/Coin';
 import Logo from '../../../../svg_components/Logo';
@@ -63,6 +56,17 @@ class TaskDetail extends React.Component {
         })
     }
 
+    getTasks() {
+
+        console.log('GET TASKS')
+        NetworkManager.callAPI(rest.getTasks, 'POST', null).then(result => {
+            console.log('Tasks')
+            console.log(result.tasks)            
+            this.props.setTaskData(result.tasks)
+        }).catch(error => {})  
+        
+    }
+
     
 
     jewelView(jewel) {
@@ -88,32 +92,109 @@ class TaskDetail extends React.Component {
                 </View>
             )
         }
-        console.log('JEWELVIEW', jewelView)
+        //console.log('JEWELVIEW', jewelView)
         return jewelView
     }
     
-    CheckAvailablity(RequiredJewel) {
+    CheckNonAvailablity(RequiredJewel) {
 
-        let jewel = this.props.game.jewels.filter((jewelType) => {
-            return (RequiredJewel.jeweltype_id === jewelType.jeweltype_id)
-        })
-        console.log(RequiredJewel.count, jewel)
-        if (jewel[0].count < RequiredJewel.count) {
-            return true
-        }
-        else
-            return false
+        // const val = this.props.game.jewels.find((jewel) => {
+        //     return (RequiredJewel.jeweltype_id === jewel.jeweltype_id  &&  jewel.count<RequiredJewel.count )  
+        // })
+        //return ( val ? true: false);
+
+        if(this.props.game.jewels[RequiredJewel.jeweltype_id].count < RequiredJewel.count)
+            return true;
+        else 
+            return false;         
 
     }
+
     CheckAvailablityForAllJewels() {
-        let success = true
-        this.props.taskdetails[this.task.task_id].map((jewel) => {
-            if (this.CheckAvailablity(jewel)) {
-                success = false
-            }
-        })
-        return success
+        
+        const nonavailablejewel = this.props.taskdetails[this.task.task_id].find((jewel) => {
+            return this.CheckNonAvailablity(jewel)
+        })           
+        
+        return ( !nonavailablejewel ? true : false );
     }
+
+    checkDelay = () => {
+        return new Promise((resolve) =>
+          setTimeout(
+            () => { resolve('result') },
+            3000
+          )
+        )
+    }
+
+    handleTaskCompletion(){
+
+        console.log('HANDLE TASK COMPLETION')
+                    
+        let data = {
+            task_id: this.task.task_id,
+            id: this.task.id
+        }
+
+        if (this.CheckAvailablityForAllJewels()) {
+
+            this.setState({  isLaoding: true  });
+            AsyncStorage.setItem('ActiveGameTask', JSON.stringify(data))
+            .then(()=>{
+                return NetworkManager.callAPI(rest.redeemTask, 'POST', data)
+            })
+            .then( result => {
+                return this.checkDelay()
+            })
+            .then(() => {
+                return NetworkManager.callAPI(rest.checkTaskCompletion, 'POST', data)
+            })
+            .then( (completedtask) => {
+                
+                if( completedtask.taskusers && completedtask.taskusers.done == 1 ){
+                    console.log('TASK COMPLETED')
+                    this.props.loadGameState()
+                    return NetworkManager.callAPI(rest.getNewTaskOnTaskCompletion, 'GET', null)
+                    
+                }else{                    
+                    return new Promise( (resolve, reject) => { reject('TASK NOT COMPLETED') })                    
+                }              
+
+            })
+            .then(val => {
+                this.setState({  isLaoding: false  });
+                AsyncStorage.removeItem('ActiveGameTask').then(()=>{}).catch(err=>{})
+                this.getTasks()
+                this.props.navigation.navigate('SuccessFullGiftRedeem')
+            })
+            .catch(err =>{
+                this.setState({  isLaoding: false  });
+                AsyncStorage.removeItem('ActiveGameTask').then(()=>{}).catch(err=>{})
+
+                if(err.response){
+                    if(err.response.data.message === 'Invalid Task' || err.response.data.message === 'Task Not Completed'){
+                        // remove this task and Go Back in navigation
+                        // reload game state and task list 
+
+                        this.getTasks()
+                        this.props.loadGameState()
+                        this.props.setTaskDetails({})
+                        this.props.navigation.goBack();                  
+                        console.log('TASK ERROR',err.response.data)     
+                        console.log('TASK ERROR',err.response.data.message)
+
+                    }                       
+                }else if(err === 'TASK NOT COMPLETED'){
+                    console.log('TASK NOT COMPLETED');
+                }
+
+            })         
+
+        }       
+
+    }
+
     render() {
         return (
             <SafeAreaView style={styles.mainContainer}>
@@ -144,7 +225,7 @@ class TaskDetail extends React.Component {
                                     </View>
                                     <View style={{ width: '15%' }}>
                                         {
-                                            this.CheckAvailablity(jewel) 
+                                            this.CheckNonAvailablity(jewel) 
                                             ? <TouchableOpacity onPress={()=>jewelInfo(jewel)} style={{flexDirection:'row'}}><Icon name='close' color='red' size={20} /><Icon style={{marginLeft:3}} name='info-circle' color='white' size={20} /></TouchableOpacity>
                                             : <Icon name='check' color='green' size={20} />
                                         }
@@ -159,52 +240,7 @@ class TaskDetail extends React.Component {
                 <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
                 {this.props.taskdetails.hasOwnProperty(this.task.task_id) ?
                 this.CheckAvailablityForAllJewels()?
-                <TouchableOpacity disabled={!this.CheckAvailablityForAllJewels()} style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }} onPress={() => {
-                    let data = {
-                        task_id: this.task.task_id,
-                        id: this.task.id
-                    }
-                    if (this.CheckAvailablityForAllJewels()) {
-                        this.setState(({
-                            isLaoding: true
-                        }))
-                        NetworkManager.callAPI(rest.redeemTask, 'POST', data).then((result) => {
-
-                            setTimeout(() => {
-                                NetworkManager.callAPI(rest.checkTaskCompletion, 'POST', data).then((taskcompResult) => {
-                                    NetworkManager.callAPI(rest.getNewTaskOnTaskCompletion, 'GET', null).then((newTask) => {
-                                        console.log('new Task', newTask)
-                                        this.setState(({
-                                            isLaoding: false
-                                        }))
-                                        let data = JSON.parse(JSON.stringify(this.props.tasks))
-                                        let taskIndex
-                                        data.map((item, index) => {
-                                            if (item.id == this.task.id && item.task_id == this.task.task_id) {
-                                                taskIndex = index
-                                            }
-                                        })
-                                        console.log('new Task1', taskIndex)
-                                        if (newTask.newtask.length > 0)
-                                            data.splice(taskIndex, 1, newTask.newtask[0])
-                                        else
-                                            data.splice(taskIndex, 1)
-                                        this.props.setTaskData(data)
-                                        this.props.loadGameState()
-                                        this.props.navigation.navigate('SuccessFullGiftRedeem')
-                                    }).catch(error => {
-                                        console.log(error)
-                                    })
-                                }).catch(error => {
-
-                                })
-                            }, 2000);
-
-                        }).catch(error => {
-
-                        })
-                    }
-                }}>
+                <TouchableOpacity disabled={!this.CheckAvailablityForAllJewels()} style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }} onPress = { ()=> this.handleTaskCompletion()}>
 
                     <View style={{ width: 220, height: 45, zIndex: 1, backgroundColor: color.darkcolor3, borderColor: color.darkcolor3, borderRadius: 8, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
                         <View style={{ width: "100%", height: '100%' }}>

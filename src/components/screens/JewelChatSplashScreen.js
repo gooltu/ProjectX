@@ -23,11 +23,25 @@ class JewelChatSplashScreen extends React.Component {
     super();
     this._bootstrapAsync();
   }
+
   componentDidUpdate(prevProps, prevState) {
+
     if (!this.props.mytoken.isLoading && this.props.mytoken.token == null) {
       this.splashScreenDelay().then(() => this.props.navigation.navigate('Auth'))
     } else if (!this.props.mytoken.isLoading && this.props.mytoken.token !== null) {
       this.splashScreenDelay().then(() => this.props.navigation.navigate('App'))
+
+        axios.post(Constants.baseURL + Constants.getAccessToken,
+          { "refreshToken": this.props.mytoken.token }
+        ).then(response => { 
+            console.log('JEWELCHAT access token load successful')   
+            let temptokens = {};
+            temptokens.cookie = response.data.accessToken;                
+            this.props.tokenLoad(temptokens);    
+        }).catch(error => {              
+            console.log('JEWELCHAT access token load FAILED')     
+        }); 
+
     }
 
   }
@@ -59,22 +73,8 @@ class JewelChatSplashScreen extends React.Component {
           return acc
 
         }, {});    
-        
-        
-        axios.post(Constants.baseURL + Constants.getAccessToken,
-          { "refreshToken": myTokens.token }
-        ).then(response => { 
-            console.log('JEWELCHAT access token load successful')   
-            let temptokens = myTokens;
-            temptokens.cookie = response.data.accessToken; 
-            temptokens.isLoading = false    
-            this.props.tokenLoad(temptokens);    
-        }).catch(error => {
-              myTokens.isLoading = false;
-              this.props.tokenLoad(myTokens)
-        });     
-
-        
+        myTokens.isLoading = false;
+        this.props.tokenLoad(myTokens);        
 
       })
 

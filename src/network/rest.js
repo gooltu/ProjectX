@@ -15,6 +15,7 @@ export default {
     awsToken: '/awsToken',
     getGameState: '/getGameState',
     pickJewel: '/pickJewel',
+    getCurrentCycle: '/getCurrentCycle',
     getGiftTasks: '/getGiftTasks',
     getGiftTasksElements: '/getGiftTasksElements',
     getGiftTaskLevel: '/getGiftTaskLevel',

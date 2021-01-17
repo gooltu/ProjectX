@@ -357,7 +357,8 @@ class JewelChat extends React.Component {
         //     this.props.realtimeConnect();
         //     }
 
-        global.customheaderrender = 0;
+        
+        
     }
     componentWillUnmount() {
         console.log('UNMOUNT APP')
@@ -433,7 +434,12 @@ function mapStateToProps(state) {
         appstate: state.appstate,
         network: state.network,
         activeChat: state.activechat,
-        chatslist: state.chatslist
+        chatslist: state.chatslist,
+        tasks: state.tasks,
+        taskdetails: state.taskdetails,
+        gifttasks: state.gifttasks,
+        gifttaskdetails: state.gifttaskdetails,
+        usergifttasks: state.usergifttasks
     }
 }
 

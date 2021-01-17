@@ -5,10 +5,8 @@ import {
   Text,
   TouchableOpacity,
   ImageBackground,
-  BackHandler,
-  ActivityIndicator,
-  Keyboard,
-  KeyboardAvoidingView
+  BackHandler,  
+  Keyboard  
 } from 'react-native';
 
 import { connect } from 'react-redux';

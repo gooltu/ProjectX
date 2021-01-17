@@ -9,6 +9,7 @@ import {
   ActivityIndicator
 } from 'react-native';
 import styles from './Game.styles'
+import AsyncStorage from '@react-native-community/async-storage';
 import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
 import color from '../../../shared_styles/colors'
@@ -31,21 +32,47 @@ class Game extends React.Component {
     }
     this.lastpagelength = 10;
   }
+
   componentDidMount() {
-    //console.log(this.props.gifttasks)
-    this.getTaskDetails()
-    
-    //this.props.setTaskData([])
-    //
-    
-    this.getGiftTask()
+
+      this.setState({ isLoading: true });
+      this.setState({  giftTaskLoading: true  })
+
+      this.getTasks()    
+      this.updateCurrentCycle()
+
+      AsyncStorage.getItem('ActiveGameTask').then( val=>{
+        
+        if(val){
+          this.props.loadGameState()
+          AsyncStorage.removeItem('ActiveGameTask').then(()=>{}).catch(err=>{})
+        }
+        
+      }).catch(err=>{
+        
+      })
+
+
+      AsyncStorage.getItem('ActiveGiftTask').then( val=>{
+        
+        if(val){
+          this.props.loadGameState()
+          AsyncStorage.removeItem('ActiveGiftTask').then(()=>{}).catch(err=>{})
+        }
+        
+      }).catch(err=>{
+        
+      })
+      
   }
 
-  getTaskDetails() {
-      console.log('GET TASKS')
-      //if (this.props.tasks.length == 0) {
 
-          this.setState({ isLoading: true });
+  
+
+  getTasks() {
+
+          console.log('GET TASKS');
+
           NetworkManager.callAPI(rest.getTasks, 'POST', null).then(result => {
             console.log('Tasks')
             console.log(result.tasks)
@@ -59,24 +86,50 @@ class Game extends React.Component {
             })
           })
 
-      //}
+    
+  }
+
+
+  updateCurrentCycle(){
+
+    let currentcycle = '';
+
+    AsyncStorage.getItem('CurrentCycle')
+    .then(val => {
+      if(val) currentcycle = val;
+
+      return NetworkManager.callAPI(rest.getCurrentCycle, 'GET', null)
+
+    })
+    .then(result => {
+      console.log('CURRENT CYCLE')
+      console.log(result.currentcycle)
+
+      if(currentcycle !== result.currentcycle){
+        this.props.setGiftTaskDetails({});
+        this.props.setUserGiftTask({});
+        AsyncStorage.setItem('CurrentCycle', result.currentcycle)        
+      }    
+      this.getGiftTask()    
+      
+    }).catch(error => {})
+
   }
 
   getGiftTask() {
+      
+      NetworkManager.callAPI(rest.getGiftTasks, 'POST', { page: this.state.page }).then(result => {
+          
+          if(this.state.page == 0) 
+            this.props.emptyGiftTaskData();
+          
+          this.lastpagelength = result.gifttasks.length;
+          this.props.setGiftTaskData(result.gifttasks)    
+          this.setState({giftTaskLoading: false })
 
-    this.setState({  giftTaskLoading: true  })
-    NetworkManager.callAPI(rest.getGiftTasks, 'POST', { page: this.state.page }).then(result => {
-        
-        if(this.state.page == 0) 
-          this.props.emptyGiftTaskData();
-        
-        this.lastpagelength = result.gifttasks.length;
-        this.props.setGiftTaskData(result.gifttasks)    
+      }).catch(error => {
         this.setState({giftTaskLoading: false })
-
-    }).catch(error => {
-      this.setState({giftTaskLoading: false })
-    })
+      })
 
   }
 
@@ -90,22 +143,22 @@ class Game extends React.Component {
     }
   }
   
-  _renderList = (data) => {
-    console.log('itemm', data)
-    return (
-      <FlatList numColumns={2}
-        style={{ paddingLeft:10, paddingRight:10, paddingBottom:10, paddingTop:5 }}
-        data={data}
-        onEndReached={this.LoadMoreRandomData}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={this._renderSectionFooter}
-        renderItem={({ item, index }) =>
-          <GiftTaskView navigation={this.props.navigation} giftTask={item} />
-        }
-        keyExtractor={item => item.id + ''}
-      />
-    )
-  }
+  // _renderList = (data) => {
+  //   console.log('itemm', data)
+  //   return (
+  //     <FlatList numColumns={2}
+  //       style={{ paddingLeft:10, paddingRight:10, paddingBottom:10, paddingTop:5 }}
+  //       data={data}
+  //       onEndReached={this.LoadMoreRandomData}
+  //       onEndReachedThreshold={0.5}
+  //       ListFooterComponent={this._renderSectionFooter}
+  //       renderItem={({ item, index }) =>
+  //         <GiftTaskView navigation={this.props.navigation} giftTask={item} />
+  //       }
+  //       keyExtractor={item => item.id + ''}
+  //     />
+  //   )
+  // }
 
   _renderSectionHeader = () => {
     console.log('HEADER')
@@ -133,21 +186,22 @@ class Game extends React.Component {
     )
   }
 
-  _renderSectionFooter = () => {
-    return (
-      // <BannerAd
-      //   unitId={TestIds.BANNER}
-      //   size={BannerAdSize.SMART_BANNER}
-      //   requestOptions={{
-      //     requestNonPersonalizedAdsOnly: true,
-      //   }} />
-      <View>
-        <Text>footer replace by ads</Text>
-      </View>
-    )
-  }
+  // _renderSectionFooter = () => {
+  //   return (
+  //     // <BannerAd
+  //     //   unitId={TestIds.BANNER}
+  //     //   size={BannerAdSize.SMART_BANNER}
+  //     //   requestOptions={{
+  //     //     requestNonPersonalizedAdsOnly: true,
+  //     //   }} />
+  //     <View>
+  //       <Text>footer replace by ads</Text>
+  //     </View>
+  //   )
+  // }
 
   render() {
+
     return (
       <SafeAreaView style={styles.mainContainer}>
         
@@ -160,7 +214,7 @@ class Game extends React.Component {
             onEndReached = { () => this.loadMoreRandomData() }
             onEndReachedThreshold = {0.75}
             renderItem={({ item, index }) =>
-              <GiftTaskView navigation={this.props.navigation} giftTask={item} key={index} />
+              <GiftTaskView navigation={this.props.navigation} giftTask={item} key={index} userGiftTask={this.props.usergifttasks} />
             }
             ListHeaderComponent={this._renderSectionHeader}
             keyExtractor={(item, index) => item + index}
@@ -192,7 +246,10 @@ function mapDispatchToProps(dispatch) {
   return {
     setTaskData: (payload) => dispatch(actions.setTaskData(payload)),
     setGiftTaskData: (payload) => dispatch(actions.setGiftTaskData(payload)),
-    emptyGiftTaskData: () => dispatch(actions.emptyGiftTaskData())
+    emptyGiftTaskData: () => dispatch(actions.emptyGiftTaskData()),
+    setGiftTaskDetails: (payload) => dispatch(actions.setGiftTaskDetails(payload)),
+    setUserGiftTask: (payload) => dispatch(actions.setUserGiftTask(payload)),
+    loadGameState: () => dispatch(actions.loadGameState())
   }
 }
 

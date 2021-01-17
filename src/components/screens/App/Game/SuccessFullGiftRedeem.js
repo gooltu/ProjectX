@@ -1,5 +1,5 @@
 import React from 'react'
-import { TouchableOpacity, View, Text, Alert, SafeAreaView } from 'react-native'
+import { TouchableOpacity, View, Text, SafeAreaView, BackHandler,  } from 'react-native'
 import LottieView from 'lottie-react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import colors from '../../../shared_styles/colors';
@@ -15,6 +15,16 @@ export default class SuccessFullGiftRedeem extends React.Component {
     this.animation.play();
     // Or set a specific startFrame and endFrame with:
     this.animation.play(25, 50);
+
+    this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+  }
+
+  componentWillUnmount() {
+    this.backHandler.remove()
+  }
+
+  handleBackPress = () => {    
+    return true;
   }
 
 
