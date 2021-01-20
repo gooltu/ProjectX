@@ -108,7 +108,7 @@ class Game extends React.Component {
       if(currentcycle !== result.currentcycle){
         this.props.setGiftTaskDetails({});
         this.props.setUserGiftTask({});
-        AsyncStorage.setItem('CurrentCycle', result.currentcycle)        
+        AsyncStorage.setItem('CurrentCycle', result.currentcycle+'')        
       }    
       this.getGiftTask()    
       

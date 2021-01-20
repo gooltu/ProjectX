@@ -8,10 +8,12 @@ export default class SuccessFullGiftRedeem extends React.Component {
 
   constructor(props) {
     super(props)
+    this.params = this.props.navigation.state.params
+    
   }
 
   componentDidMount() {
-    console.log("Came to lottie")
+    console.log("Came to lottie", this.params)
     this.animation.play();
     // Or set a specific startFrame and endFrame with:
     this.animation.play(25, 50);
@@ -23,7 +25,8 @@ export default class SuccessFullGiftRedeem extends React.Component {
     this.backHandler.remove()
   }
 
-  handleBackPress = () => {    
+  handleBackPress = () => {
+    
     return true;
   }
 
@@ -35,16 +38,36 @@ export default class SuccessFullGiftRedeem extends React.Component {
           <Icon name='close' color={colors.lightcolor1} size={30} />
         </TouchableOpacity>
         <View style={{ width: '100%', height: '70%', alignItems: 'center' }}>
-          <LottieView
+          { this.params.tasktype === 'gametask' && !this.params.newlevel && <LottieView
             ref={animation => {
               this.animation = animation;
             }}
-             source={require('../../../../LottieSamples/trophy.json')}
-           // source={{ uri: 'https://testjatinbucket.s3.ap-south-1.amazonaws.com/trophy.json' }}
-          />
+             source={require('../../../../LottieSamples/thumbsup.json')}           
+          />}
+          { this.params.tasktype === 'gametask' && this.params.newlevel && <LottieView
+            ref={animation => {
+              this.animation = animation;
+            }}
+             source={require('../../../../LottieSamples/trophy.json')}           
+          />}
+          { this.params.tasktype === 'gifttask' && this.params.cash && <LottieView
+            ref={animation => {
+              this.animation = animation;
+            }}
+             source={require('../../../../LottieSamples/cash.json')}           
+          />}
+          { this.params.tasktype === 'gifttask' && !this.params.cash && <LottieView
+            ref={animation => {
+              this.animation = animation;
+            }}
+             source={require('../../../../LottieSamples/gift.json')}           
+          />}
         </View>
-        <View style={{ alignItems: 'center' }}>
-          <Text style={{ fontSize: 30, color: colors.lightcolor1, textAlign: 'center', fontWeight: '500' }}>Congratulations... {'\n'} You have won</Text>
+        <View style={{ alignItems: 'center' }}>          
+          { this.params.tasktype === 'gametask' && !this.params.newlevel && <Text style={{ fontSize: 30, color: colors.lightcolor1, textAlign: 'center', fontWeight: '500' }}>Congratulations!!! {'\n'} Task Completed</Text>}
+          { this.params.tasktype === 'gametask' && this.params.newlevel && <Text style={{ fontSize: 30, color: colors.lightcolor1, textAlign: 'center', fontWeight: '500' }}>Congratulations!!! {'\n'} New Level</Text>}
+          { this.params.tasktype === 'gifttask' && this.params.cash && <Text style={{ fontSize: 30, color: colors.lightcolor1, textAlign: 'center', fontWeight: '500' }}>Congratulations!!!</Text>}
+          { this.params.tasktype === 'gifttask' && !this.params.cash && <Text style={{ fontSize: 30, color: colors.lightcolor1, textAlign: 'center', fontWeight: '500' }}>Congratulations!!!</Text>}
         </View>
 
       </SafeAreaView>

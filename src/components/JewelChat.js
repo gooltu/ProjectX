@@ -439,7 +439,8 @@ function mapStateToProps(state) {
         taskdetails: state.taskdetails,
         gifttasks: state.gifttasks,
         gifttaskdetails: state.gifttaskdetails,
-        usergifttasks: state.usergifttasks
+        usergifttasks: state.usergifttasks,
+        game: state.game
     }
 }
 

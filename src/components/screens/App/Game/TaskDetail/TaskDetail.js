@@ -4,7 +4,8 @@ import {
     View,
     Text,    
     TouchableOpacity,
-    ImageBackground
+    ImageBackground,
+    ScrollView
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import styles from './TaskDetail.styles'
@@ -166,7 +167,11 @@ class TaskDetail extends React.Component {
                 this.setState({  isLaoding: false  });
                 AsyncStorage.removeItem('ActiveGameTask').then(()=>{}).catch(err=>{})
                 this.getTasks()
-                this.props.navigation.navigate('SuccessFullGiftRedeem')
+
+                let newlevel=false;
+                if(this.props.game.scores.points + this.task.points  > this.props.game.scores.max_level_points)
+                    newlevel = true
+                this.props.navigation.navigate('SuccessFullGiftRedeem', {tasktype: 'gametask', newlevel })
             })
             .catch(err =>{
                 this.setState({  isLaoding: false  });
@@ -197,82 +202,83 @@ class TaskDetail extends React.Component {
 
     render() {
         return (
-            <SafeAreaView style={styles.mainContainer}>
+            <SafeAreaView style={styles.mainContainer}>               
                 <CustomLoader  loading={this.state.isLaoding}/>
-                <View style={{ alignItems: 'center', justifyContent: 'center', padding: 50 }}>
-                    <View style={styles.scrollBarItem}>
-                        <View style={styles.itemOne}>
-                            <Coin height="30" width="30" />
-                            <Text style={styles.itemText}>{this.task.coins}</Text>
-                        </View>
-                        <View style={styles.itemOne}>
-                            <XP height="30" width="30" />
-                            <Text style={styles.itemText}>{this.task.points}</Text>
-                        </View>
-                    </View>
-                </View>
-                <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
-                <View>
-                    <Text style={styles.CollectText}>COLLECT JEWELS</Text>
-                </View>
-                {this.props.taskdetails.hasOwnProperty(this.task.task_id) ?
-                    <View style={{ paddingBottom: 20, flexDirection: 'column' }}>
-                        {
-                            this.props.taskdetails[this.task.task_id].map((jewel) => 
-                                <View style={{ flexDirection: 'row', padding: 5 }} key={jewel.id}>
-                                    <View style={{ flexDirection: 'row', width: '85%', paddingLeft: '15%', alignItems: 'center', justifyContent: 'center' }}>
-                                        {this.jewelView(jewel)}
-                                    </View>
-                                    <View style={{ width: '15%' }}>
-                                        {
-                                            this.CheckNonAvailablity(jewel) 
-                                            ? <TouchableOpacity onPress={()=>jewelInfo(jewel)} style={{flexDirection:'row'}}><Icon name='close' color='red' size={20} /><Icon style={{marginLeft:3}} name='info-circle' color='white' size={20} /></TouchableOpacity>
-                                            : <Icon name='check' color='green' size={20} />
-                                        }
-                                    </View>
+                <View style={{flex:1, flexDirection: 'column-reverse', justifyContent: 'flex-end',}}>
+                        
+                        <BannerAd
+                            unitId={TestIds.BANNER}
+                            size={BannerAdSize.SMART_BANNER}
+                            requestOptions={{
+                                requestNonPersonalizedAdsOnly: true,
+                        }} />
+                    <ScrollView style={{width: '100%', flexGrow: 1}}>        
+                        <View style={{ alignItems: 'center', justifyContent: 'center', padding: 50 }}>
+                            <View style={styles.scrollBarItem}>
+                                <View style={styles.itemOne}>
+                                    <Coin height="30" width="30" />
+                                    <Text style={styles.itemText}>{this.task.coins}</Text>
                                 </View>
-                            )
-                        }
+                                <View style={styles.itemOne}>
+                                    <XP height="30" width="30" />
+                                    <Text style={styles.itemText}>{this.task.points}</Text>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
+                        <View>
+                            <Text style={styles.CollectText}>COLLECT JEWELS</Text>
+                        </View>
+                        {this.props.taskdetails.hasOwnProperty(this.task.task_id) ?
+                            <View style={{ paddingBottom: 20, flexDirection: 'column' }}>
+                                {
+                                    this.props.taskdetails[this.task.task_id].map((jewel) => 
+                                        <View style={{ flexDirection: 'row', padding: 5 }} key={jewel.id}>
+                                            <View style={{ flexDirection: 'row', width: '85%', paddingLeft: '15%', alignItems: 'center', justifyContent: 'center' }}>
+                                                {this.jewelView(jewel)}
+                                            </View>
+                                            <View style={{ width: '15%' }}>
+                                                {
+                                                    this.CheckNonAvailablity(jewel) 
+                                                    ? <TouchableOpacity onPress={()=>jewelInfo(jewel)} style={{flexDirection:'row'}}><Icon name='close' color='red' size={20} /><Icon style={{marginLeft:3}} name='info-circle' color='white' size={20} /></TouchableOpacity>
+                                                    : <Icon name='check' color='green' size={20} />
+                                                }
+                                            </View>
+                                        </View>
+                                    )
+                                }
 
-                    </View> : null}
+                            </View> : null}
 
+                    
+                        <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
+                        {this.props.taskdetails.hasOwnProperty(this.task.task_id) ?
+                        this.CheckAvailablityForAllJewels()?
+                        <TouchableOpacity disabled={!this.CheckAvailablityForAllJewels()} style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30, marginBottom:30 }} onPress = { ()=> this.handleTaskCompletion()}>
+
+                            <View style={{ width: 220, height: 45, zIndex: 1, backgroundColor: color.darkcolor3, borderColor: color.darkcolor3, borderRadius: 8, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
+                                <View style={{ width: "100%", height: '100%' }}>
+                                    <ImageBackground source={JCImages.colorGrad} style={{
+                                        width: '100%', height: '100%', justifyContent: 'center',
+                                        alignItems: 'center', overflow: 'hidden'
+                                    }}></ImageBackground>
+                                </View>
+                            </View>
+                            <View style={{ position: 'absolute', width: '100%', height: '100%', zIndex: 2, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>WIN POINTS & COINS</Text>
+                            </View>
+                        </TouchableOpacity>
+                        :
+                        <View style={{ alignItems: 'center', paddingTop: 10, marginBottom:30 }}>
+                        <View style={{ justifyContent: 'center', width: 220, alignItems: 'center', backgroundColor: color.darkcolor2, borderRadius: 5, borderWidth: 1, borderColor: color.lightcolor1, paddingHorizontal: 25, paddingVertical: 10 }}>
+                        <Text style={{ color: color.jcgray }}>COLLECT ALL JEWELS</Text>
+                        </View>
+                    </View>
+                        :null}
+
+                    </ScrollView> 
+                </View>
             
-                <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
-                {this.props.taskdetails.hasOwnProperty(this.task.task_id) ?
-                this.CheckAvailablityForAllJewels()?
-                <TouchableOpacity disabled={!this.CheckAvailablityForAllJewels()} style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }} onPress = { ()=> this.handleTaskCompletion()}>
-
-                    <View style={{ width: 220, height: 45, zIndex: 1, backgroundColor: color.darkcolor3, borderColor: color.darkcolor3, borderRadius: 8, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
-                        <View style={{ width: "100%", height: '100%' }}>
-                            <ImageBackground source={JCImages.colorGrad} style={{
-                                width: '100%', height: '100%', justifyContent: 'center',
-                                alignItems: 'center', overflow: 'hidden'
-                            }}></ImageBackground>
-                        </View>
-                    </View>
-                    <View style={{ position: 'absolute', width: '100%', height: '100%', zIndex: 2, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>WIN POINTS & COINS</Text>
-                    </View>
-                </TouchableOpacity>
-                :
-                <View style={{ alignItems: 'center', paddingTop: 10 }}>
-                <View style={{ justifyContent: 'center', width: 220, alignItems: 'center', backgroundColor: color.darkcolor2, borderRadius: 5, borderWidth: 1, borderColor: color.lightcolor1, paddingHorizontal: 25, paddingVertical: 10 }}>
-                  <Text style={{ color: color.jcgray }}>WIN POINTS & COINS</Text>
-                </View>
-              </View>
-                :null}
-
-                <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-                        <View >
-                            <BannerAd
-                                unitId={TestIds.BANNER}
-                                size={BannerAdSize.SMART_BANNER}
-                                requestOptions={{
-                                    requestNonPersonalizedAdsOnly: true,
-                                }} />
-                        </View>
-                </View>
-
             </SafeAreaView>
         );
     }
