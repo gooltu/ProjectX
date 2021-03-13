@@ -89,6 +89,8 @@ export default styles = StyleSheet.create({
         paddingVertical: PixelRatio.roundToNearestPixel(3*global.moderateScaleFactor),
         backgroundColor: color.darkcolor3,
         width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'center',
         alignItems: 'center'
     },
     buyText: {

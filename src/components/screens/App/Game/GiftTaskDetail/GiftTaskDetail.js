@@ -184,11 +184,11 @@ class GiftTaskDetail extends React.Component {
 
                 this.props.loadGameState();
 
-                let t = this.props.gifttaskdetails;
+                let t = Object.create(this.props.gifttaskdetails);
                 delete t[this.giftTask.id];      
                 this.props.setGiftTaskDetails(t);
 
-                t = this.props.usergifttasks;
+                t = Object.create(this.props.usergifttasks);
                 delete t[this.giftTask.id];
                 this.props.setUserGiftTask(t);
 

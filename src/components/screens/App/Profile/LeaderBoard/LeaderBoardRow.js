@@ -19,11 +19,7 @@ const LeaderBoardRow = (props) => {
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Text style={{ color: colors.lightcolor1, fontWeight: 'bold' }}>LEVEL:</Text>
                         <Text style={{ color: 'white' }}> {item.level}</Text>
-                    </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <XP width={25} height={25} />
-                        <Text style={{ color: 'white' }}> {item.points}</Text>
-                    </View>
+                    </View>                    
                 </View>
             </View>
         </View>

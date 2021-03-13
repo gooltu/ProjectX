@@ -66,7 +66,8 @@ export default styles = StyleSheet.create({
     transferTextContainer: {
         width: '25%',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        marginRight: 10        
     },
     paymentOptionConatiner: {
         width: '70%',

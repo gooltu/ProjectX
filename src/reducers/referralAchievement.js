@@ -1,42 +1,33 @@
 
 let initialState = {
-    invite :{
-        total_users : 0
-    },
-    referralAchievement:[
-        {
-            achievement_id : 1,
-            total_count:0,
-        },
-        {
-            achievement_id : 2,
-            total_count:0,
-        },
-        {
-            achievement_id : 18-32,
-            total_count:0,
-        }
-    ]
-}   
+    1: { total_count: 0},
+    2: { total_count: 0},
+    18: { total_count: 1},
+    19: { total_count: 0},
+    20: { total_count: 0},
+    21: { total_count: 0},
+    22: { total_count: 0},
+    23: { total_count: 0},
+    24: { total_count: 0},
+    25: { total_count: 0},
+    26: { total_count: 0},
+    27: { total_count: 0},
+    28: { total_count: 0},
+    29: { total_count: 0},
+    30: { total_count: 0},
+    31: { total_count: 0},
+    32: { total_count: 0}
+};  
 
         
 const referralAchievement = (state = initialState, action) => {
+    console.log('Referral Reducer')
+	console.log(action)	
     switch (action.type) {
-        /*
-        case 'GAMEDATA_LOAD_START':            
-            return Object.assign({}, state, { isDatabaseLoading: true })
-
-        case 'GAMEDATA_LOAD_DONE':            
-            action.payload.isDatabaseLoading = false
-            action.payload.isNetworkLoading = false
-            return Object.assign({}, state, action.payload) 
-
-        case 'GAMEDATA_NETWORK_LOAD_START':            
-            return Object.assign({}, state, { isNetworkLoading: true }) 
-
-        case 'GAMEDATA_LOAD_ERROR':            
-            return Object.assign({}, state, { isDatabaseLoading:false, isNetworkLoading:false }) 
-        */
+        
+        case 'UPDATE_REFERRAL_ACHIEVEMENTS':            
+            return Object.assign({}, state, action.payload)        
+        
         default:            
             return state        
     }

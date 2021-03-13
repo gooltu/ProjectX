@@ -98,21 +98,36 @@ class Contacts extends React.Component {
         }
         NetworkManager.callAPI(rest.inviteUser, 'post', data).then(result => {
             console.log(result)       
-            if(result.is_regis){
-              let contact = {
-                JEWELCHAT_ID: result.contact.id,
-                IS_REGIS: 1,
-                IS_INVITED: 1,
-                STATUS_MSG: result.contact.status
-              }
-              db.updateContact(contact, item.CONTACT_NUMBER).then(result => {
-                this.getContactsCallback()
-              }) 
+            if(result.is_regis && result.invite == 0){
+                let contact = {
+                  JEWELCHAT_ID: result.contact.id,
+                  IS_REGIS: 1,
+                  IS_INVITED: 0,
+                  STATUS_MSG: result.contact.status
+                }
+                db.updateContact(contact, item.CONTACT_NUMBER).then(result => {
+                  this.getContactsCallback()
+                }) 
+            }else if(!result.is_regis && result.invite == 1){
+                db.updateContact({IS_INVITED:1}, item.CONTACT_NUMBER).then(result => {
+                  this.getContactsCallback()
+
+                  let  t = this.props.referralAchievement
+                  if( t['1'] ){
+                    t['1'].total_count++
+                  }else{
+                    t['1'] = { total_count : 1 }
+                  }
+
+                  this.props.setReferralAchievement( {type:'UPDATE_REFERRAL_ACHIEVEMENTS', payload: Object.create(t)} )
+                  
+                })     
             }else{
-              db.updateContact({IS_INVITED:1}, item.CONTACT_NUMBER).then(result => {
-                this.getContactsCallback()
-              })     
-            }     
+                // User has already invited previously so marking it as invited but not increasing the game metrics
+                db.updateContact({IS_INVITED:1}, item.CONTACT_NUMBER).then(result => {
+                  this.getContactsCallback()                
+                })
+            }   
             
         
         }).catch(error => {
@@ -193,7 +208,7 @@ class Contacts extends React.Component {
 
 
 function mapStateToProps(state) {
-  return { }
+  return { referralAchievement: state.referralAchievement }
 }
 
 
@@ -201,7 +216,8 @@ function mapDispatchToProps(dispatch) {
   return {
     setActiveChat: (activeChat) => dispatch(actions.setActiveChat(activeChat)),
     setChatListData: (chatList) => dispatch(actions.setChatListData(chatList)),
-    setChatData: (chatdata) => dispatch(actions.setChatData(chatdata))
+    setChatData: (chatdata) => dispatch(actions.setChatData(chatdata)),
+    setReferralAchievement: (referralAchievement) => dispatch(referralAchievement)
   }
 }
 

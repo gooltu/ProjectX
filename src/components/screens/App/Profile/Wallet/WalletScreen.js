@@ -4,6 +4,7 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
+  Alert
 } from "react-native";
 
 import styles from './Wallet.styles'
@@ -29,7 +30,7 @@ class WalletScreen extends React.Component {
   }
 
   componentDidMount() {
-    this.props.getWalletJewels()
+    //this.props.getWalletJewels()
     this.loadWallet()
   }
   loadWallet = () => {
@@ -37,25 +38,62 @@ class WalletScreen extends React.Component {
       this.setState({
         money: result.money
       })
-    }).catch(error => {
-
-    })
+    }).catch(error => {    })
   }
+
+
+  redeemWalletMoneyAlertbox(channel){
+
+    if(this.state.money > 0){
+
+        Alert.alert(
+          "Money Transfer",
+          "Transferring money via "+channel+". Are you sure?",
+          [
+            {
+              text: "Cancel",
+              onPress: () => console.log("Cancel")
+            },
+            { text: "OK", onPress: () => this.redeemWalletMoney(channel) }
+          ],
+          {
+            cancelable: true          
+          }
+
+        );
+
+
+    }else{
+      this.setState({
+        visible: true
+      })
+    }
+
+  }
+
   redeemWalletMoney = (channel) => {
     if (this.state.money > 0) {
       this.setState({
         isLoading: true
       })
+
       NetworkManager.callAPI(rest.redeemMoney, 'POST', { 'channel': channel }).then(result => {
         console.log(result)
         this.setState({
           money: 0,
           isLoading: false
         })
-        this.props.naviation.navigate('SuccessFullGiftRedeem')
+        console.log(this.props)
+        this.props.navigation.navigate("GiftsWon")
+        
       }).catch(error => {
-
+        console.log(error);
+        this.setState({        
+          isLoading: false
+        })
       })
+
+
     }
     else {
       this.setState({
@@ -63,32 +101,33 @@ class WalletScreen extends React.Component {
       })
     }
   }
+
   _onDismissSnackBar = () => this.setState({ visible: false });
 
-  purchaseJewels = (item) => {
-    if (this.state.money >= item.money) {
-      this.setState({
-        isLoading: true
-      })
-      NetworkManager.callAPI(rest.buyJewelsFromWallet, 'POST', { id: item.id }).then(result => {
-        if (!result.error) {
-          this.loadWallet()
-          this.props.loadGameState()
-          this.setState({
-            isLoading: false
-          })
-        }
-      }).catch(error => {
+  // purchaseJewels = (item) => {
+  //   if (this.state.money >= item.money) {
+  //     this.setState({
+  //       isLoading: true
+  //     })
+  //     NetworkManager.callAPI(rest.buyJewelsFromWallet, 'POST', { id: item.id }).then(result => {
+  //       if (!result.error) {
+  //         this.loadWallet()
+  //         this.props.loadGameState()
+  //         this.setState({
+  //           isLoading: false
+  //         })
+  //       }
+  //     }).catch(error => {
 
-      })
-    }
-    else {
-      this.setState({
-        visible: true
-      })
-    }
+  //     })
+  //   }
+  //   else {
+  //     this.setState({
+  //       visible: true
+  //     })
+  //   }
 
-  }
+  // }
 
   render() {
     return (
@@ -120,26 +159,26 @@ class WalletScreen extends React.Component {
 
         <View style={styles.transferMoneyContainer}>
           <View style={styles.transferTextContainer}>
-            <Text style={styles.transferText}>TRANSFER{"\n"} MONEY</Text>
+            <Text style={styles.transferText}>Transfer{"\n"} Money via</Text>
           </View>
 
           <View style={styles.paymentOptionConatiner}>
-            <TouchableOpacity style={styles.transferOptionContainer} onPress={() => this.redeemWalletMoney('PAYTM')}>
+            <TouchableOpacity style={styles.transferOptionContainer} onPress={() => this.redeemWalletMoneyAlertbox('PAYTM')}>
               <Text style={styles.optionText}>PAYTM</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.transferOptionContainer} onPress={() => this.redeemWalletMoney('PHONEPAY')}>
+            <TouchableOpacity style={styles.transferOptionContainer} onPress={() => this.redeemWalletMoneyAlertbox('PHONEPE')}>
               <Text style={styles.optionText}>PHONEPE</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.transferOptionContainer} onPress={() => this.redeemWalletMoney('UPI')}>
+            {/* <TouchableOpacity style={styles.transferOptionContainer} onPress={() => this.redeemWalletMoney('UPI')}>
               <Text style={styles.optionText}>UPI</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.transferOptionContainer} onPress={() => this.redeemWalletMoney('GAPY')}>
+            </TouchableOpacity> */}
+            <TouchableOpacity style={styles.transferOptionContainer} onPress={() => this.redeemWalletMoneyAlertbox('GPAY')}>
               <Text style={styles.optionText}>GPAY</Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        {this.props.walletjewels.length > 0 ?
+        {/* {this.props.walletjewels.length > 0 ?
           <View>
             <View style={{ paddingTop: 15 }}>
               <View style={styles.diamondContainer}>
@@ -188,10 +227,10 @@ class WalletScreen extends React.Component {
               </ScrollView>
             </View>
           </View>
-          : null}
+          : null} */}
         <Snackbar
           duration={1000}
-          style={{ backgroundColor: colors.lightcolor1, alignItems: 'center' }}
+          style={{ backgroundColor: colors.darkcolor3, alignItems: 'center' }}
           visible={this.state.visible}
           onDismiss={this._onDismissSnackBar}>
           Not Enough Money in Wallet.
@@ -204,14 +243,14 @@ class WalletScreen extends React.Component {
 function mapStateToProps(state) {
   console.log(state)
   return {
-    walletjewels: state.walletjewels.prices,
+    //walletjewels: state.walletjewels.prices,
     networkLoading: state.walletjewels.networkLoading
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    getWalletJewels: () => dispatch(actions.getWalletJewels()),
+    //getWalletJewels: () => dispatch(actions.getWalletJewels()),
     loadGameState: () => dispatch(actions.loadGameState())
   }
 }

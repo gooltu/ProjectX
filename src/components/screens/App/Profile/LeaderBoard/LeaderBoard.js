@@ -58,10 +58,9 @@ class LeaderBoard extends React.Component {
       this.setState({
         isLoading: false
       })
-    }).catch(error => {
-
-    })
+    }).catch(error => { })
   }
+
   loadProfilePicture = () => {
     AsyncStorage.multiGet(["UserProfileImage", "UserProfile"]).then(profileData => {
       if (profileData[0][1] && profileData[1][1]) {
@@ -89,6 +88,7 @@ class LeaderBoard extends React.Component {
       }
     })
   }
+
   render() {
     return (
       <SafeAreaView style={styles.mainContainer}>
@@ -117,6 +117,7 @@ class LeaderBoard extends React.Component {
       </SafeAreaView >
     );
   }
+  
 }
 
 function mapStateToProps(state) {

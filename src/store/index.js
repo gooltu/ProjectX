@@ -3,6 +3,7 @@ import { createStore, applyMiddleware } from 'redux'
 import rootReducer from '../reducers'
 import thunk from 'redux-thunk'
 import { persistStore, persistReducer } from 'redux-persist'
+import referralAchievement from '../reducers/referralAchievement'
 
 
 const persistConfig = {
@@ -12,7 +13,7 @@ const persistConfig = {
     // Storage Method (React Native)
     storage: AsyncStorage,
     // Whitelist (Save Specific Reducers)
-    whitelist: ['game','tasks','taskdetails','gifttasks', 'gifttaskdetails','usergifttasks', 'userachievements', 'achievements', 'factory'],
+    whitelist: ['game','tasks','taskdetails','gifttasks', 'gifttaskdetails','usergifttasks', 'userachievements', 'achievements', 'factory', 'referralAchievement'],
     // Blacklist (Don't Save Specific Reducers)
     blacklist: [],
 };

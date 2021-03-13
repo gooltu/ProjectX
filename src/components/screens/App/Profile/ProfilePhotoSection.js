@@ -133,13 +133,13 @@ class ProfilePhotoSection extends React.Component {
                 <View style={{ paddingTop: 40 }}>
                     <View style={styles.profileSection}>
                         <View style={styles.firstDiamond}>
-                            {this.state.diamondLoading ?
+                            {/* {this.state.diamondLoading ?
                                 <ActivityIndicator size={30}/>
                                 :
                                 <TouchableOpacity onPress={() => this.showRewardeAd('diamond')}>
                                     <Icon name={'add'} size={30} color={'white'} />
                                 </TouchableOpacity>
-                            }
+                            } */}
                             <View style={styles.mainLeftLayout}>
                                 <Diamond width={PixelRatio.roundToNearestPixel(35 * global.scaleFactor)} height={PixelRatio.roundToNearestPixel(30 * global.scaleFactor)} />
                                 <Text style={{ color: 'white' }}>{this.props.game.jewels[0].count}</Text>
@@ -148,7 +148,7 @@ class ProfilePhotoSection extends React.Component {
                         <TouchableOpacity style={styles.profilePictureBorder} onPress={() => this.props.navigation.navigate('UserProfile')}>
                             { !this.state.profileimageerror &&
                                 <Image
-                                    source={{ headers: { Pragma: 'no-cache' }, uri: 'https://profileprojectx.s3.ap-south-1.amazonaws.com/918756463536.jpeg?time=' + new Date().getTime()}}
+                                    source={{ headers: { Pragma: 'no-cache' }, uri: rest.imageBaseURL + this.props.mytoken.myphone + '?time=' + new Date().getTime()}}
                                     style={{ position:'absolute', top:0, left:0, width: '100%',height: '100%', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}
                                     onLoad={()=>{
                                         //this.setState( { profileimageerror: false } ) 
@@ -161,19 +161,19 @@ class ProfilePhotoSection extends React.Component {
                             {
                                 this.state.profileimageerror && <Iconfa  name='user' color={colors.jcgray} size={48} solid />
                             }
-                            { false && <Image style={styles.ProfilePicture} key={this.state.imagepath} resizeMode="contain" source={{ uri: rest.imageBaseURL + this.props.mytoken.myphone + '.jpeg?time=' + new Date() }} /> }
+                            { false && <Image style={styles.ProfilePicture} key={this.state.imagepath} resizeMode="contain" source={{ uri: rest.imageBaseURL + this.props.mytoken.myphone + '?time=' + new Date() }} /> }
                         </TouchableOpacity>
                         <View style={styles.SecondDiamond}>
                             <View style={styles.mainRightLayout}>
                                 <Coin width={PixelRatio.roundToNearestPixel(35 * global.scaleFactor)} height={PixelRatio.roundToNearestPixel(30 * global.scaleFactor)} />
                                 <Text style={{ color: 'white' }}>{this.props.game.jewels[1].count}</Text>
                             </View>
-                            {this.state.coinLoading ?
+                            {/* {this.state.coinLoading ?
                                 <ActivityIndicator size={30}/>
                                 :
                                 <TouchableOpacity onPress={() => this.showRewardeAd('coin')} >
                                     <Icon name={'add'} size={30} color={'white'} />
-                                </TouchableOpacity>}
+                                </TouchableOpacity>} */}
 
                         </View>
                     </View>
