@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  CameraRoll
+  FlatList
 } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
 import CustomHeader from "../../../../shared_components/customHeader/CustomHeader";
@@ -35,84 +35,55 @@ class LeaderBoard extends React.Component {
 };*/
   constructor(props) {
     super(props)
-    this.state = {
-      imagepath: '',
-      userProfile: {},
+    this.state = {  
+      leaderboard: [],    
       isLoading: false
     }
   }
 
-  componentDidMount() {
-    console.log(this.props.leaderboard)
-    this.loadProfilePicture()
-    if (!Object.keys(this.props.leaderboard).length > 0) {
-      this.setState({
-        isLoading: true
-      })
-    }
+  componentDidMount() {   
+    
+    this.setState({
+      isLoading: true
+    })
+    
     NetworkManager.callAPI(rest.getLeaderBoard, 'GET', null).then(result => {
-      console.log(result)
-      let top1 = result.top1.concat(result.top2)
-      let top2 = result.top3.concat(result.top4)
-      this.props.setLeaderBoard({ top1: top1, top2: top2 })
-      this.setState({
+      console.log('LEADERBOARD')
+      
+      //let t = Object.create(result.top);
+      let lb;
+      lb = result.top.reverse()
+      lb.push({id:this.props.mytoken.myid, phone: this.props.mytoken.myphone, name: 'You', level: this.props.game.scores.level, total_points:0})
+             
+      lb = lb.concat(result.down);
+      console.log(lb);             
+                  
+      this.setState({        
+        leaderboard: lb
+      })
+
+      this.setState({        
         isLoading: false
       })
+
+      
+
     }).catch(error => { })
   }
 
-  loadProfilePicture = () => {
-    AsyncStorage.multiGet(["UserProfileImage", "UserProfile"]).then(profileData => {
-      if (profileData[0][1] && profileData[1][1]) {
-        this.setState({
-          imagepath: profileData[0][1],
-          userProfile: JSON.parse(profileData[1][1]),
-        })
-      }
-      else {
-        var data = {
-          'phone': this.props.mytoken.myphone
-        }
-        NetworkManager.callAPI(rest.downloadContact_Phone, 'post', data).then((responseJson) => {
-          console.log(responseJson)
-          if (responseJson.error == false) {
-            this.setState({
-              userProfile: responseJson.contact
-            })
-            AsyncStorage.setItem('UserProfileImage', responseJson.contact.large_pic)
-            AsyncStorage.setItem('UserProfile', JSON.stringify(responseJson.contact))
-          }
-        }).catch((error) => {
-          console.log(error)
-        })
-      }
-    })
-  }
+  
 
   render() {
     return (
       <SafeAreaView style={styles.mainContainer}>
         <CustomLoader loading={this.state.isLoading} />
-        {Object.keys(this.props.leaderboard).length > 0 ?
-          <ScrollView style={{ padding: 10 }}>
-            {this.props.leaderboard.top1.map(item =>
-              <LeaderBoardRow type={'other'} item={item} />
-            )}
-            {Object.keys(this.props.game).length > 0 ?
-              <LeaderBoardRow type={'user'} item={
-                {
-                  pic: this.state.imagepath,
-                  name: 'You',
-                  level: this.props.game.scores.level,
-                  points: this.props.game.scores.points
-                }
-              } />
-              : null}
-            {this.props.leaderboard.top2.map(item =>
-              <LeaderBoardRow type={'other'} item={item} />
-            )}
-          </ScrollView> : null
-        }
+        <FlatList                    
+            data={this.state.leaderboard}                    
+            renderItem={({ item, index }) =>
+                <LeaderBoardRow type={'other'} item={item} />
+            }                    
+            keyExtractor={(item, index) => item.id+''}
+        />
 
       </SafeAreaView >
     );
@@ -121,8 +92,7 @@ class LeaderBoard extends React.Component {
 }
 
 function mapStateToProps(state) {
-  return {
-    leaderboard: state.leaderboard.leaderboard,
+  return {    
     game: state.game,
     mytoken: state.mytoken
   };
@@ -131,7 +101,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    setLeaderBoard: (payload) => dispatch(actions.setLeaderBoard(payload))
+    //setLeaderBoard: (payload) => dispatch(actions.setLeaderBoard(payload))
   }
 }
 

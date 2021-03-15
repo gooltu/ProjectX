@@ -4,7 +4,7 @@ import {
     View,
     Text,
 		TouchableOpacity,
-		FlatList,
+		FlatList
 } from "react-native";
 import styles from '../LeaderBoard/LeaderBoard.styles'
 

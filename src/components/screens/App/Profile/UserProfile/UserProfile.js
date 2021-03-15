@@ -264,7 +264,12 @@ class UserProfile extends React.Component {
 
                     <View style={{ flex:1, flexDirection:'column', marginLeft:16, marginRight:16}}>
 
-                        <View style={{marginTop:30}}><Text style={{color:'white'}}>NAME (max 30 characters)</Text></View>
+												<View style={{marginTop:30, marginBottom:15}}>
+													<Text style={{color:colors.lightcolor1}}>PHONE</Text>
+													<Text style={{color:'white'}}>+{this.props.mytoken.myphone}</Text>
+												</View>
+
+                        <View style={{marginTop:15}}><Text style={{color:colors.lightcolor1}}>NAME (max 30 characters)</Text></View>
                         <View style={{ flex:1, flexDirection:'row', justifyContent:'space-between', height:44, marginTop:5, marginBottom:15}}>
                             <Item regular style={{ width: '70%', alignSelf:'center' ,color: colors.lightcolor1, borderColor: colors.lightcolor1, borderRadius:5}}>
                                 <Input placeholder='Name'
@@ -283,7 +288,7 @@ class UserProfile extends React.Component {
                             </TouchableOpacity>
                         </View>
 
-                        <View style={{marginTop:15}}><Text style={{color:'white'}}>STATUS (max 250 characters)</Text></View>
+                        <View style={{marginTop:15}}><Text style={{color:colors.lightcolor1}}>STATUS (max 250 characters)</Text></View>
                         <View style={{ flex:1, flexDirection:'row', justifyContent:'space-between',  marginBottom:15}}>
                             <Form style={{ width: '70%', alignSelf:'center' ,color: colors.lightcolor1, borderColor: colors.lightcolor1, borderRadius:5}}>
                                 <Textarea rowSpan={3} bordered 
@@ -302,7 +307,7 @@ class UserProfile extends React.Component {
                             </TouchableOpacity>
                         </View> 
 
-                        <View style={{marginTop:15}}><Text style={{color:'white'}}>ADDRESS</Text></View>
+                        <View style={{marginTop:15}}><Text style={{color:colors.lightcolor1}}>ADDRESS</Text></View>
                         <View style={{ flex:1, flexDirection:'row', justifyContent:'space-between',  marginBottom:15}}>
                             <Form style={{ width: '70%', alignSelf:'center' ,color: colors.lightcolor1, borderColor: colors.lightcolor1, borderRadius:5}}>
                                 <Textarea rowSpan={5} bordered 
