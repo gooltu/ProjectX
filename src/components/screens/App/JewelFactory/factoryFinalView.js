@@ -42,6 +42,7 @@ class factoryFinalView extends React.Component {
             let factoryID = { factory_id: factory.factory_id }
             NetworkManager.callAPI(rest.transferJewelsFromFactory, 'POST', factoryID).then(result => {
                 this.props.getUserFactory()
+                this.props.loadGameState()
                 this.setState({
                     isLoading: false
                 })
@@ -59,6 +60,7 @@ class factoryFinalView extends React.Component {
         let factoryID = { factory_id: factory.factory_id }
         NetworkManager.callAPI(rest.flushFactory, 'POST', factoryID).then(result => {
             this.props.getUserFactory()
+            this.props.loadGameState()
             this.setState({
                 isLoadingFlush: false
             })
@@ -69,7 +71,7 @@ class factoryFinalView extends React.Component {
 
     render() {
         return (
-            <SafeAreaView style={{ marginHorizontal: 10, marginVertical: 5, height: 250, backgroundColor: colors.darkcolor3 }}>
+            <SafeAreaView key={this.props.factory.factory_id+''} style={{ marginHorizontal: 10, marginVertical: 5, height: 250, backgroundColor: colors.darkcolor3 }}>
                 <View style={{ marginHorizontal: 5, alignItems: 'center', justifyContent: 'center', marginVertical: 5, height: 120, backgroundColor: colors.darkcolor1 }}>
                     {renderJewel(this.props.factory.jeweltype_id, 75, 75, styles.jewelStyle)}
                 </View>
@@ -105,7 +107,7 @@ class factoryFinalView extends React.Component {
                         style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10 }}
                         onPress={() => this.flushFactory(this.props.factory)}
                     >
-                        <View style={{ width: 150, height: 40, zIndex: 1, backgroundColor: colors.darkcolor3, borderColor: colors.darkcolor3, borderRadius: 8, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
+                        <View style={{ width: 100, height: 40, zIndex: 1, backgroundColor: colors.darkcolor3, borderColor: colors.darkcolor3, borderRadius: 8, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' }}>
                             <View style={{ width: "100%", height: '100%' }}>
                                 <ImageBackground source={JCImages.colorGrad} style={{
                                     width: '100%', height: '100%', justifyContent: 'center',

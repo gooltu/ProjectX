@@ -53,11 +53,14 @@ class factoryRunningview extends React.Component {
             let factoryID = { factory_id: factory.factory_id }
             NetworkManager.callAPI(rest.stopFactory, 'POST', factoryID).then(result => {
                 this.props.getUserFactory()
+                this.props.loadGameState()
                 this.setState({
                     isLoading: false
                 })
             }).catch(error => {
-
+                this.setState({
+                    isLoading: false
+                })
             })
         }
     }
@@ -68,7 +71,7 @@ class factoryRunningview extends React.Component {
             outputRange: ['0deg', '360deg']
         });
         return (
-            <SafeAreaView style={{ marginHorizontal: 10, marginVertical: 5, height: 250, backgroundColor: colors.darkcolor3 }}>
+            <SafeAreaView key={this.props.factory.factory_id+''} style={{ marginHorizontal: 10, marginVertical: 5, height: 250, backgroundColor: colors.darkcolor3 }}>
                 <View style={{ marginHorizontal: 5, alignItems: 'center', justifyContent: 'center', marginVertical: 5, height: 150, backgroundColor: colors.darkcolor1 }}>
                     <Animated.View style={{
                         transform: [{ rotate: rotation, },

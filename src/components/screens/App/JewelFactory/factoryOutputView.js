@@ -34,6 +34,7 @@ class factoryOutputview extends React.Component {
         let factoryID = { factory_id: factory.factory_id }
         NetworkManager.callAPI(rest.startFactory, 'POST', factoryID).then(result => {
             this.props.getUserFactory()
+            this.props.loadGameState()
             setTimeout(() => {
                 this.setState({
                     isLoading: false
@@ -52,7 +53,7 @@ class factoryOutputview extends React.Component {
     }
     render() {
         return (
-            <SafeAreaView style={{ marginHorizontal: 10, marginVertical: 5, height: 250, backgroundColor: colors.darkcolor3 }}>
+            <SafeAreaView key={this.props.factory.factory_id+''} style={{ marginHorizontal: 10, marginVertical: 5, height: 250, backgroundColor: colors.darkcolor3 }}>
                 <View style={{ marginHorizontal: 5, alignItems: 'center', justifyContent: 'center', marginVertical: 5, height: 120, backgroundColor: colors.darkcolor1 }}>
                     {renderJewel(this.props.factory.jeweltype_id, 75, 75, styles.jewelStyle)}
                 </View>
