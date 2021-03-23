@@ -16,6 +16,7 @@ import db from '../../../../../db/localdatabase'
 import actions from '../../../../../actions'
 import { setActiveChat } from '../../../../../actions/chatListActions'
 import { updateChatPageRedux, updateChatlistRedux } from '../../../../../network/realtime-utils/messages';
+import rest from "../../../../../network/rest";
 
 // { _ID, 
 // MSG_TEXT, 
@@ -40,7 +41,7 @@ class Item extends React.Component {
   }
 
   state = {
-    profileimageerror: true
+    profileimageerror: false
   }
 
   randomstring = '?'+Math.ceil(Math.random()*1000000);
@@ -62,10 +63,10 @@ class Item extends React.Component {
           <View style={styles.chatBox}>
             { this.props.item.JEWELCHAT_ID != 1 &&
               <Image
-                source={{ headers: { Pragma: 'no-cache' }, uri:'https://kuchbhi.com/'+this.props.item.CHAT_ROOM_JID.split('@')[0]+this.randomstring}}
+                source={{ headers: { Pragma: 'no-cache' }, uri:rest.imageBaseURL + this.props.item.CHAT_ROOM_JID.split('@')[0] + '?time=' + new Date().getTime()}}
                 style={[{ position:'absolute', top:0, left:0 },styles.imgBackground]}
                 onLoad={()=>{
-                  this.setState( { profileimageerror: false } ) 
+                  //this.setState( { profileimageerror: false } ) 
                 }}
                 onError={(error) => {                    
                     //console.log('https://kuchbhi.com/'+this.props.item.CHAT_ROOM_JID.split('@')[0]+'?'+Math.ceil(Math.random()*1000000));

@@ -59,7 +59,7 @@ class EnterDetails extends React.Component {
         STATUS_MSG: 'Keep Collecting...'
       };
 
-      let msg = {
+      let msg1 = {
         CHAT_ROOM_JID: '910000000000@jewelchat.net',
         IS_GROUP_MSG: 0,
         MSG_TEXT: 'Welcome to JewelChat',
@@ -77,10 +77,90 @@ class EnterDetails extends React.Component {
         TIME_DELIVERED: createdDateTime.fulltime
       };
 
+      createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
+      let msg2 = {
+        CHAT_ROOM_JID: '910000000000@jewelchat.net',
+        IS_GROUP_MSG: 0,
+        MSG_TEXT: 'Collect Jewels from received chat messages. Fullfill task to win Cash/Gifts/Discounts',
+        CREATOR_JID: '910000000000@jewelchat.net',		
+        JEWEL_TYPE: 6,
+        CREATED_DATE: createdDateTime.date,
+        CREATED_TIME: createdDateTime.time,
+        TIME_CREATED: createdDateTime.fulltime,
+        SENDER_MSG_ID: 2,
+        MSG_TYPE: 0,
+        MEDIA_CLOUD: null,
+        MEDIA_CLOUD_THUMBNAIL: null,
+        SEQUENCE: -1,
+        IS_DELIVERED: 1,
+        TIME_DELIVERED: createdDateTime.fulltime
+      };
+
+      createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
+      let msg3 = {
+        CHAT_ROOM_JID: '910000000000@jewelchat.net',
+        IS_GROUP_MSG: 0,
+        MSG_TEXT: '',
+        CREATOR_JID: '910000000000@jewelchat.net',		
+        JEWEL_TYPE: 9,
+        CREATED_DATE: createdDateTime.date,
+        CREATED_TIME: createdDateTime.time,
+        TIME_CREATED: createdDateTime.fulltime,
+        SENDER_MSG_ID: 3,
+        MSG_TYPE: 1,
+        MEDIA_CLOUD: 'https://s3.ap-south-1.amazonaws.com/jewelchat.net/IntroImages/jcpic2.jpg',
+        MEDIA_CLOUD_THUMBNAIL: null,
+        SEQUENCE: -1,
+        IS_DELIVERED: 1,
+        TIME_DELIVERED: createdDateTime.fulltime
+      };
+
+      createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
+      let msg4 = {
+        CHAT_ROOM_JID: '910000000000@jewelchat.net',
+        IS_GROUP_MSG: 0,
+        MSG_TEXT: '',
+        CREATOR_JID: '910000000000@jewelchat.net',		
+        JEWEL_TYPE: 12,
+        CREATED_DATE: createdDateTime.date,
+        CREATED_TIME: createdDateTime.time,
+        TIME_CREATED: createdDateTime.fulltime,
+        SENDER_MSG_ID: 4,
+        MSG_TYPE: 1,
+        MEDIA_CLOUD: 'https://s3.ap-south-1.amazonaws.com/jewelchat.net/IntroImages/jcpic3.jpg',
+        MEDIA_CLOUD_THUMBNAIL: null,
+        SEQUENCE: -1,
+        IS_DELIVERED: 1,
+        TIME_DELIVERED: createdDateTime.fulltime
+      };
+
+      createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
+      let msg5 = {
+        CHAT_ROOM_JID: '910000000000@jewelchat.net',
+        IS_GROUP_MSG: 0,
+        MSG_TEXT: 'Chat karo Cash jeeto.',
+        CREATOR_JID: '910000000000@jewelchat.net',		
+        JEWEL_TYPE: 15,
+        CREATED_DATE: createdDateTime.date,
+        CREATED_TIME: createdDateTime.time,
+        TIME_CREATED: createdDateTime.fulltime,
+        SENDER_MSG_ID: 5,
+        MSG_TYPE: 0,
+        MEDIA_CLOUD: null,
+        MEDIA_CLOUD_THUMBNAIL: null,
+        SEQUENCE: -1,
+        IS_DELIVERED: 1,
+        TIME_DELIVERED: createdDateTime.fulltime
+      };
+
       db.insertTeamJC(teamjc).then(val => {
         console.log('Team JC inserted')
       })
-      this.props.insertmsg(msg);
+      this.props.insertmsg(msg1);
+      this.props.insertmsg(msg2);
+      this.props.insertmsg(msg3);
+      this.props.insertmsg(msg4);
+      this.props.insertmsg(msg5);
 
     }).catch(err => {})
     
@@ -202,10 +282,10 @@ class EnterDetails extends React.Component {
         </Form>
 
         <View style = {{marginTop:20, alignItems: 'center'}}> 
-              <Text style={{fontSize:12, color: '#777777', width: '100%', textAlign: "center"}}>Enter a valid 10 digit referrer number and win a DIAMOND.</Text>
-              <Text style={{fontSize:12, color: '#777777', width: '100%', textAlign: "center"}}>The referrer number should be a registered and active</Text>
+              <Text style={{fontSize:12, color: '#777777', textAlign: "center"}}>Enter a valid 10 digit referrer number and win a DIAMOND.The referrer number should be a registered and active JewelChat user. To report any issues chat with Team JewelChat.</Text>
+              {/* <Text style={{fontSize:12, color: '#777777', width: '100%', textAlign: "center"}}>The referrer number should be a registered and active</Text>
               <Text style={{fontSize:12, color: '#777777', width: '100%', textAlign: "center"}}>JewelChat user. To report any issues chat with</Text>
-              <Text style={{fontSize:12, color: '#777777', width: '100%', textAlign: "center"}}>Team JewelChat.</Text>
+              <Text style={{fontSize:12, color: '#777777', width: '100%', textAlign: "center"}}>Team JewelChat.</Text> */}
         </View>
 
         <TouchableOpacity style={styles.button} onPress={() => this.onContinue()} >

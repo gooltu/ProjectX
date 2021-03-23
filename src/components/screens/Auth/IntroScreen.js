@@ -12,7 +12,7 @@ export default class IntroScreen extends React.Component {
       <View style={styles.container}>
         <View style={{width:'100%', height: 420 }}>
           <ScrollView horizontal={true} style={{ width: '100%'}} >
-            <View style={{width:300, height:400, backgroundColor:'red', margin:10, borderColor:'white', borderWidth:2}}>
+            <View style={{width:300, height:400,  margin:10, borderColor:'white', borderWidth:2}}>
                 <FastImage
                           style={{width: '100%', height: '100%', borderRadius: 5, backgroundColor: 'transparent' }}
                           source={{
@@ -21,7 +21,7 @@ export default class IntroScreen extends React.Component {
                           resizeMode={FastImage.resizeMode.cover}
                       />
             </View>
-            <View style={{width:300, height:400, backgroundColor:'blue', margin:10, borderColor:'white', borderWidth:2}}>
+            <View style={{width:300, height:400,  margin:10, borderColor:'white', borderWidth:2}}>
                   <FastImage
                           style={{width: '100%', height: '100%', borderRadius: 5, backgroundColor: 'transparent' }}
                           source={{
@@ -30,7 +30,7 @@ export default class IntroScreen extends React.Component {
                           resizeMode={FastImage.resizeMode.cover}
                       />
             </View>
-            <View style={{width:300, height:400, backgroundColor:'red', margin:10, borderColor:'white', borderWidth:2}}>
+            <View style={{width:300, height:400,  margin:10, borderColor:'white', borderWidth:2}}>
                   <FastImage
                           style={{width: '100%', height: '100%', borderRadius: 5, backgroundColor: 'transparent' }}
                           source={{
@@ -39,7 +39,7 @@ export default class IntroScreen extends React.Component {
                           resizeMode={FastImage.resizeMode.cover}
                       />
             </View>
-            <View style={{width:300, height:400, backgroundColor:'blue', margin:10, borderColor:'white', borderWidth:2}}>
+            <View style={{width:300, height:400,  margin:10, borderColor:'white', borderWidth:2}}>
                   <FastImage
                           style={{width: '100%', height: '100%', borderRadius: 5, backgroundColor: 'transparent' }}
                           source={{

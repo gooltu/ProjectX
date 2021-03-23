@@ -96,16 +96,20 @@ class Game extends React.Component {
 
     AsyncStorage.getItem('CurrentCycle')
     .then(val => {
-      if(val) currentcycle = val;
+      if(val) 
+        currentcycle = val;
+
+      console.log('OLD CYCLE', currentcycle)  
 
       return NetworkManager.callAPI(rest.getCurrentCycle, 'GET', null)
 
     })
     .then(result => {
-      console.log('CURRENT CYCLE')
-      console.log(result.currentcycle)
+      console.log('CURRENT CYCLE', result.currentcycle)
+      //console.log(result.currentcycle)
 
       if(currentcycle !== result.currentcycle){
+        console.log('>>>>CURRENT CYCLE  '+currentcycle, result.currentcycle)
         this.props.setGiftTaskDetails({});
         this.props.setUserGiftTask({});
         AsyncStorage.setItem('CurrentCycle', result.currentcycle+'')        

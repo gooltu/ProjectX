@@ -56,7 +56,7 @@ class LeaderBoard extends React.Component {
       lb.push({id:this.props.mytoken.myid, phone: this.props.mytoken.myphone, name: 'You', level: this.props.game.scores.level, total_points:0})
              
       lb = lb.concat(result.down);
-      console.log(lb);             
+      //console.log(lb);             
                   
       this.setState({        
         leaderboard: lb
@@ -64,11 +64,11 @@ class LeaderBoard extends React.Component {
 
       this.setState({        
         isLoading: false
-      })
+      })      
 
-      
+    })
+    .catch(error => { })
 
-    }).catch(error => { })
   }
 
   

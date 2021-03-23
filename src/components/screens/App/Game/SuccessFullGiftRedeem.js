@@ -16,7 +16,7 @@ export default class SuccessFullGiftRedeem extends React.Component {
     console.log("Came to lottie", this.params)
     this.animation.play();
     // Or set a specific startFrame and endFrame with:
-    this.animation.play(25, 50);
+    //this.animation.play(25, 50);
 
     this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
   }
@@ -69,6 +69,10 @@ export default class SuccessFullGiftRedeem extends React.Component {
           { this.params.tasktype === 'gifttask' && this.params.cash && <Text style={{ fontSize: 30, color: colors.lightcolor1, textAlign: 'center', fontWeight: '500' }}>Congratulations!!!</Text>}
           { this.params.tasktype === 'gifttask' && !this.params.cash && <Text style={{ fontSize: 30, color: colors.lightcolor1, textAlign: 'center', fontWeight: '500' }}>Congratulations!!!</Text>}
         </View>
+
+        <TouchableOpacity style={{ alignItems: 'center', marginBottom:25 }} onPress={() => this.props.navigation.navigate('MainTabs')}>
+          <Text style={{ fontSize: 16, color: colors.lightcolor2, textAlign: 'center', fontWeight: '500' }}>Close</Text>
+        </TouchableOpacity>
 
       </SafeAreaView>
     );

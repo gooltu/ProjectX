@@ -42,26 +42,26 @@ class Profile extends React.Component {
   }
   componentDidMount() {
     //this.getAchievements()
-    //console.log('PROFILE STATE')
-    //console.log(this.props)
+    console.log('PROFILE STATE')
+    console.log(this.props)
     //console.log(this.processAllAchievementData());
 
-    if (this.props.userachievements.length == 0 && this.props.achievements.length == 0)
+    if (this.props.userachievements.length == 0 || this.props.achievements.length == 0)
       this.getAchievements()
 
-    this.setState({ processedlist: this.processAllAchievementData() });  
+    this.setState({ processedlist: this.processAllAchievementData() }); 
 
   }
 
 
   componentDidUpdate(prevProps, prevState) {
-    console.log('PROFILE STATE')
-    console.log(this.props)
+    //console.log('PROFILE STATE')
+    //console.log(this.props)
 
     if(this.props.userachievements != prevProps.userachievements ||
       this.props.achievements  != prevProps.achievements ||
       this.props.referralAchievement  != prevProps.referralAchievement ||
-      this.props.game  != prevProps.game){
+      this.props.game  != prevProps.game ){
 
         this.setState({ processedlist: this.processAllAchievementData() });
 
@@ -75,17 +75,21 @@ class Profile extends React.Component {
 
     this.setState({ isLoading: true })
 
-    NetworkManager.callAPI(rest.getAchievements, 'POST', null)
-    .then(resulta => {
+    NetworkManager.callAPI(rest.getUsersAchievement, 'POST', null)    
+    .then(resultb => {   
+      console.log('LOAD USER ACHIEVEMENT', resultb.userachievements)     
+      this.props.setUserAchievement(resultb.userachievements)
 
-      this.props.setAchievements(resulta.achievements) 
-      return NetworkManager.callAPI(rest.getUsersAchievement, 'POST', null)      
+      return NetworkManager.callAPI(rest.getAchievements, 'POST', null)    
       
     })
-    .then(resultb => {
+    .then(resulta => {     
 
-      this.props.setUserAchievement(resultb.userachievements)
+      console.log('LOAD ACHIEVEMENT', resulta.achievements)      
+      this.props.setAchievements(resulta.achievements)
+
       this.setState({ isLoading: false   })
+      
 
     })      
     .catch( error => { 
@@ -101,6 +105,9 @@ class Profile extends React.Component {
   processAllAchievementData(){
 
     let p = [];
+
+    if(this.props.userachievements.length == 0 || this.props.achievements.length == 0)
+      return p;
 
     for(let i=0; i< this.props.achievements.length; i++){
 
