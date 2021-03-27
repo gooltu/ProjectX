@@ -30,7 +30,7 @@ class GiftTaskDetail extends React.Component {
   constructor(props) {
     super(props)
     this.giftTask = this.props.navigation.state.params.giftTask
-    console.log(this.giftTask)
+    console.log('GiftTask',this.giftTask)
     this.state = {
       isLaoding: false
     }
@@ -225,7 +225,7 @@ class GiftTaskDetail extends React.Component {
                 </View>
               </View>);   
 
-    if(this.props.usergifttasks[this.giftTask.id].done >= 1)   
+    if(this.props.usergifttasks[this.giftTask.id].done >= 1 || this.giftTask.current_qty <=0)   
       return null;
 
     

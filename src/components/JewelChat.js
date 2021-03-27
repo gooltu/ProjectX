@@ -5,6 +5,10 @@ import NetInfo from "@react-native-community/netinfo";
 import axios from 'axios';
 import Constants from '../network/rest';
 
+import NetworkManager from '../network/NetworkManager';
+import rest from '../network/rest';
+import messaging from '@react-native-firebase/messaging';
+
 import AsyncStorage from '@react-native-community/async-storage';
 
 import {
@@ -357,6 +361,19 @@ class JewelChat extends React.Component {
         //     this.props.realtimeConnect();
         //     }
 
+        messaging().onTokenRefresh(async (fcmToken) => {
+            
+            let data = {
+							token: fcmToken,
+							push_service: Platform.OS === 'ios' ? 'ios' : 'android'
+						}      
+        
+						NetworkManager.callAPI(rest.updatePushNotificationToken, 'POST', data).then((responseJson) => {
+										this.props.tokenLoad({tokenrefresh: true, fcmToken })
+						})
+						.catch((error) => {});
+
+        });
         
         
     }

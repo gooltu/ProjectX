@@ -179,7 +179,7 @@ class ProfilePhotoSection extends React.Component {
                     </View>
                 </View>
                 <View style={{ alignItems: 'center', paddingTop: 20 }}>
-                    <Text style={{ color: 'white' }}>{this.state.name}</Text>
+                    <Text style={{ color: 'white' }}>{this.props.mytoken.name? this.props.mytoken.name : this.state.name}</Text>
                 </View>
             </SafeAreaView >
         );

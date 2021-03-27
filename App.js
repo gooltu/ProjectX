@@ -26,71 +26,43 @@ export default class App extends React.Component {
   componentDidMount() {
   
     
-    this.handleBackgroundState = messaging().onNotificationOpenedApp(remoteMessage => {
-      console.log(
-        'Notification caused app to open from background state:',
-        remoteMessage.notification,
-      );
-      //navigation.navigate(remoteMessage.data.type);
-    });
-    this.setBackgroundMessageHandler = messaging().setBackgroundMessageHandler(async remoteMessage => {
-      console.log('Message handled in the background!', remoteMessage);
-    });
+    // this.handleBackgroundState = messaging().onNotificationOpenedApp(remoteMessage => {
+    //   console.log(
+    //     'Notification caused app to open from background state:',
+    //     remoteMessage.notification,
+    //   );
+    //   //navigation.navigate(remoteMessage.data.type);
+    // });
+    // this.setBackgroundMessageHandler = messaging().setBackgroundMessageHandler(async remoteMessage => {
+    //   console.log('Message handled in the background!', remoteMessage);
+    // });
 
 
     // Check whether an initial notification is available
-    this.handleQuitState = messaging()
-      .getInitialNotification()
-      .then(remoteMessage => {
-        if (remoteMessage) {
-          console.log(
-            'Notification caused app to open from quit state:',
-            remoteMessage.notification,
-          );
-          // setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
-        }
-      });   
+    // this.handleQuitState = messaging()
+    //   .getInitialNotification()
+    //   .then(remoteMessage => {
+    //     if (remoteMessage) {
+    //       console.log(
+    //         'Notification caused app to open from quit state:',
+    //         remoteMessage.notification,
+    //       );
+    //       // setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
+    //     }
+    //   });   
     
-    //console.log(this.getFCMToken())
-    this.messageListener = messaging().onMessage(async remoteMessage => {
-      console.log('testy')
-      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-    });
-    console.log(messaging())
+    // console.log(this.getFCMToken())
+    // this.messageListener = messaging().onMessage(async remoteMessage => {
+    //   console.log('testy')
+    //   Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    // });
+    // console.log(messaging())
   }
 
   componentWillUnmount() {
   //  this.messageListener();
   }
-  getToken = async () => {
-    try {
-      const token = await messaging().getToken();
-      console.log('FCM Token', token)
-      if (token) return token;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  getFCMToken = async () => {
-    try {
-      const authorized = await messaging().hasPermission();
-      const fcmToken = await this.getToken();
-
-      if (authorized) return fcmToken;
-
-      messaging().requestPermission().then(() => {
-        Alert.alert("User Now Has Permission")
-      })
-        .catch(error => {
-          Alert.alert("Error", error)
-          // User has rejected permissions  
-        });
-      return fcmToken;
-    } catch (error) {
-      console.log(error);
-    }
-  };  
+   
 
   render() {
     return (

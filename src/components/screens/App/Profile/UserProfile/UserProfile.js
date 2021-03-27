@@ -112,15 +112,14 @@ class UserProfile extends React.Component {
         }
 
         NetworkManager.callAPI(rest.updateProfileName, 'post', data).then((responseJson) => {
+            
             AsyncStorage.setItem('name', this.state.name)
-						this.setState({
-							isLoading: false
-					})
+            this.setState({	isLoading: false })
+            this.props.tokenLoad({ name: this.state.name })
+
         }).catch((error) => {
             console.log(error)
-						this.setState({
-							isLoading: false
-					})
+            this.setState({ isLoading: false  })
         })
 
     }
@@ -230,6 +229,7 @@ class UserProfile extends React.Component {
 										imageUri: data.Location+'?time=' + new Date().getTime(),
 										isLoading: false
 								})
+                                this.props.tokenLoad({ imageUri: data.Location+'?time=' + new Date().getTime() })
 						});
 				});
 
@@ -395,7 +395,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-
+        tokenLoad: (myTokens) => dispatch({ type: 'USER_TOKEN_LOADED', myTokens })
     }
 }
 

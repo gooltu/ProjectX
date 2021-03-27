@@ -164,6 +164,7 @@ class TaskDetail extends React.Component {
 
             })
             .then(val => {
+                console.log('New task Creation success')
                 this.setState({  isLaoding: false  });
                 AsyncStorage.removeItem('ActiveGameTask').then(()=>{}).catch(err=>{})
                 this.getTasks()
@@ -174,6 +175,7 @@ class TaskDetail extends React.Component {
                 this.props.navigation.navigate('SuccessFullGiftRedeem', {tasktype: 'gametask', newlevel })
             })
             .catch(err =>{
+                console.log('New task Creation error')
                 this.setState({  isLaoding: false  });
                 AsyncStorage.removeItem('ActiveGameTask').then(()=>{}).catch(err=>{})
 

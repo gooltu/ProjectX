@@ -141,6 +141,42 @@ export const realtimeConnect = () => {
 
 				})
 
+
+				if(getState().mytoken.tokenrefresh == true){
+					console.log('Push Notification Setup')
+					let pn = $iq({type:'set'})
+							.c('enable', {xmlns: 'urn:xmpp:push:0', jid:'virtual.jewelchat.net', node:getState().mytoken.myphone})
+							.c('x',{xmlns:'jabber:x:data', type:'submit'})
+							.c('field',{var:'FORM_TYPE'})
+								.c('value').t('http://jabber.org/protocol/pubsub#publish-options')
+								.up()
+							.up()
+							.c('field',{var:'service'})
+								.c('value').t('fcm')
+								.up()
+							.up()
+							.c('field',{var:'device_id'})
+								.c('value').t(getState().mytoken.fcmToken)
+								.up()
+							.up()
+							.c('field',{var:'silent'})
+								.c('value').t('false')
+								.up()
+							.up()							
+							
+								
+
+					getConnectionObj().sendIQ(pn.tree(), (stanza) => {
+						console.log('CALLBACK SEND IQ PUSH NOTIFICATION SETUP')
+						let myTokens = {
+							tokenrefresh:false, fcmToken: ''
+						}
+						dispatch({ type: 'USER_TOKEN_LOADED', myTokens })
+						//console.log(stanza)
+					}); 
+
+				}
+
 				
 			}
 		});

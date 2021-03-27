@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   ImageBackground,
   BackHandler,  
-  Keyboard  
+  Keyboard,
+  Platform
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -23,7 +24,7 @@ import NetworkManager from '../../../network/NetworkManager';
 import rest from '../../../network/rest';
 import { dateToYMD } from '../../../network/realtime-utils/utilities';
 import {insertIncomingMessage } from '../../../network/realtime-utils/messages'
-
+import messaging from '@react-native-firebase/messaging';
 
 
 class EnterDetails extends React.Component {
@@ -39,10 +40,9 @@ class EnterDetails extends React.Component {
     buttonDisabled: false
   }
 
-  componentDidMount() {
+  componentDidMount() {   
 
     
-
     
     db.deleteAllData().then(result => {
       let createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
@@ -166,7 +166,57 @@ class EnterDetails extends React.Component {
     
     this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
     // console.log('Token', this.props.mytoken)
+
+    this.getFCMToken();
+    
   }
+
+
+  getToken = async () => {
+    try {
+      const token = await messaging().getToken();
+      console.log('FCM Token', token)    
+
+      if (token) return token;
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  getFCMToken = async () => {
+
+    try {
+      const authorized = await messaging().hasPermission();
+      const fcmToken = await this.getToken();
+
+      if (authorized){
+        let data = {
+          token: fcmToken,
+          push_service: Platform.OS === 'ios' ? 'ios' : 'android'
+        }      
+  
+        NetworkManager.callAPI(rest.updatePushNotificationToken, 'POST', data).then((responseJson) => {
+               this.props.tokenLoad({tokenrefresh: true, fcmToken })
+        })
+        .catch((error) => {});
+
+      }
+
+
+      messaging().requestPermission().then(() => {
+        Alert.alert("User Now Has Permission")
+      })
+      .catch(error => {
+        Alert.alert("Error", error)
+        // User has rejected permissions  
+      });
+      
+    } catch (error) {
+      console.log(error);
+    }
+
+  }; 
 
   componentWillUnmount() {
     this.backHandler.remove()
@@ -244,12 +294,12 @@ class EnterDetails extends React.Component {
       <View style={{ backgroundColor: colors.darkcolor1, width: '100%', height: '100%', paddingLeft: 40, paddingRight: 40, alignItems: 'center' }} >
         <CustomLoader loading={this.state.networkloading} />
         <TouchableOpacity onPress={() => { this.props.loadGameData(); this.props.navigation.navigate('App')}}>
-          <Text style={{ marginTop: 50, fontSize: 16, color: colors.lightcolor1, width: '100%', textAlign: "center" }}>SKIP</Text>
+          <Text style={{ marginTop: 50, fontSize: 16, color: colors.lightcolor1, width: '100%', textAlign: "center" }}>Skip this step</Text>
         </TouchableOpacity>
         <View style={styles.headingview}>
-          <Text style={styles.heading}>Enter Details</Text>
+          <Text style={styles.heading}>Who referred you?</Text>
         </View>
-        <Form style={{ width: 250, marginBottom: 30, marginRight: 20 }}>
+        {/* <Form style={{ width: 250, marginBottom: 30, marginRight: 20 }}>
           <Item style={{ borderColor: colors.lightcolor2 }}>
             <Input
               placeholder='name'
@@ -260,9 +310,9 @@ class EnterDetails extends React.Component {
               onChangeText={(val) => { this.state.name = val }}
               style={{ color: colors.lightcolor1, textAlign: 'center' }} />
           </Item>
-        </Form>
+        </Form> */}
 
-        <Form style={{ width: 250, marginRight: 20 }}>
+        <Form style={{ width: 250, marginRight: 30 }}>
           <Item style={{ borderColor: colors.lightcolor2 }}>
             <TabIcon
               name="NineOne"
@@ -295,7 +345,11 @@ class EnterDetails extends React.Component {
           }}>
             <Text style={styles.buttontext}> Save </Text>
           </ImageBackground>
-        </TouchableOpacity>        
+        </TouchableOpacity>  
+
+        <TouchableOpacity onPress={() => { this.props.loadGameData(); this.props.navigation.navigate('App')}}>
+          <Text style={{ marginTop: 50, fontSize: 16, color: colors.lightcolor1, width: '100%', textAlign: "center" }}>Skip this step</Text>
+        </TouchableOpacity>      
 
         <Snackbar visible={this.state.snackbar.visible} onDismiss={() => this.setState( { snackbar: { visible: false, text: '' }} )}>
             {this.state.snackbar.text}

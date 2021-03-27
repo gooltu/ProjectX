@@ -1,42 +1,34 @@
 {
   "project_info": {
-    "project_number": "387287567213",
-    "firebase_url": "https://jewelchat-650db.firebaseio.com",
-    "project_id": "jewelchat-650db",
-    "storage_bucket": "jewelchat-650db.appspot.com"
+    "project_number": "630521576575",
+    "project_id": "jewelchat-a7cfd",
+    "storage_bucket": "jewelchat-a7cfd.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:387287567213:android:99092336fd4fdb9fbc6864",
+        "mobilesdk_app_id": "1:630521576575:android:4936599aca659767a3134a",
         "android_client_info": {
           "package_name": "net.jewelchat"
         }
       },
       "oauth_client": [
         {
-          "client_id": "387287567213-hgs6n9245gprd5907vqd8uqu1rjet1c1.apps.googleusercontent.com",
+          "client_id": "630521576575-80pipes8c7ue77q9fo3om161mokioonc.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBZyd4bP0eGXJMn9GqOUSof933U56cAd0w"
+          "current_key": "AIzaSyCNZOxJBCS3YaUACOLUZnqWPpyYvg5YvpU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "387287567213-hgs6n9245gprd5907vqd8uqu1rjet1c1.apps.googleusercontent.com",
+              "client_id": "630521576575-80pipes8c7ue77q9fo3om161mokioonc.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "387287567213-h9clg87sf4jptaehc1m6fj1ptaam036c.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "net.jewelchat"
-              }
             }
           ]
         }

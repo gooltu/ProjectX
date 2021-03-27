@@ -4,6 +4,7 @@ export default {
     TIMEOUT_DURATION: 120000,
     enterOTP: '/resendVcode',
     initialDetails: '/initialDetails',
+    updatePushNotificationToken: '/updatePushNotificationToken',
     getProfile: '/getProfile',
     downloadContact: '/downloadContact',
     downloadContact_Phone: '/downloadContact_Phone',
