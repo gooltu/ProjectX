@@ -49,6 +49,7 @@ import { updateChatPageRedux, updateChatlistRedux } from '../../../../../network
 import {sendBulkReadReceipts} from '../../../../../network/realtime-utils/read-delivery-messages'
 
 class ChatPage extends React.Component {
+
   constructor(props) {
     super(props);
   }
@@ -190,7 +191,7 @@ class ChatPage extends React.Component {
                 console.log('end reached')
                 this.onListEndReached()
               }}
-              keyExtractor={item => item._ID + ''}
+              keyExtractor={ item => item._ID + ''}
             />
             <Snackbar
               duration={2000}

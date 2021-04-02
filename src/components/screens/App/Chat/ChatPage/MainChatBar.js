@@ -158,6 +158,7 @@ class MainChatBar extends React.Component {
       console.log(this.state.chatboxtext)
       msgtype = 0;
       msgtext = this.state.chatboxtext.trim();
+      if(msgtext.length == 0) return;
     }
 
     this.processChatText('');

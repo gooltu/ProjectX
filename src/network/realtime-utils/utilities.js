@@ -243,7 +243,7 @@ function getFormattedMessages(msg, createdDateTime, IS_GROUP_MSG ) {
 		REPLY_PARENT: parent
 	}
 
-	console.log(incomingMessage);
+	console.log('Incoming Message >>>',incomingMessage);
 	
 	return incomingMessage
 }

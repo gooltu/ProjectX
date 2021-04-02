@@ -15,7 +15,9 @@ export const insertIncomingMessageViaHistoryDownload = (incomingMessage) => {
                     _sendReceiptsOnReceivingMessages(incomingMessage, getState);
                 }    
     
-            }).catch(err => {})
+            }).catch(err => {
+                console.log('Download history INSERT ERROR:', err)
+            })
         }
 		
 	}
@@ -41,7 +43,9 @@ export const insertIncomingMessage = (incomingMessage) => {
                     _sendReceiptsOnReceivingMessages(incomingMessage, getState);
                 }
 
-            }).catch(err => {})
+            }).catch(err => {
+                console.log('INSERT ERROR:', err)
+            })
         }else{
             // Update delivered flag
         }

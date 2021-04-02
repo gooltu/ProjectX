@@ -420,6 +420,9 @@ class JewelChat extends React.Component {
                 console.log(error)
             });
 
+            global.randstr = 'time=' + new Date().getTime();
+            console.log('RANDSTR ', global.randstr);
+
         }  
 
     };

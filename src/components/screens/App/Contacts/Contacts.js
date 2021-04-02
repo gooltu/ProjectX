@@ -50,10 +50,7 @@ class Contacts extends React.Component {
   }
 
   getContactsCallback = () => {
-    console.log('came to callback')
-    this.setState({
-      isLoading: true
-    })
+    console.log('came to callback')    
     db.getContactList('Contact', this.state.searchQuery).then(results => {   
       console.log('JC CONTACTS', results);       
       this.setState({

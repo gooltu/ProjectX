@@ -168,6 +168,10 @@ class EnterDetails extends React.Component {
     // console.log('Token', this.props.mytoken)
 
     this.getFCMToken();
+
+    AsyncStorage.getItem('name').then(val => {            
+        this.setState({'name': val})
+    })
     
   }
 

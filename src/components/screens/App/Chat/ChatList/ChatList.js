@@ -51,7 +51,7 @@ class Item extends React.Component {
   
 
   render(){
-    console.log('CHATLIST ITEM', this.props.item.CHAT_ROOM_JID);
+    //console.log('CHATLIST ITEM', this.props.item.CHAT_ROOM_JID);
     return (
       <TouchableOpacity
         onPress={() => this.props.onpressitem(this.props.item)}

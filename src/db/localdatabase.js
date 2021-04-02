@@ -217,7 +217,7 @@ function getContactList( type, query ) {
 	if (type === 'Forward')
 		Query = 'Select * from Contact where IS_REGIS=1';
 	else if(type === 'Contact' && query )
-		Query = "Select * from Contact where IS_PHONEBOOK_CONTACT=1 AND IS_GROUP=0 AND PHONEBOOK_CONTACT_NAME LIKE '%" +query+"%' ORDER BY IS_REGIS DESC, PHONEBOOK_CONTACT_NAME ASC"; 
+		Query = "Select * from Contact where IS_PHONEBOOK_CONTACT=1 AND IS_GROUP=0 AND PHONEBOOK_CONTACT_NAME LIKE '%" +query+"%' ORDER BY PHONEBOOK_CONTACT_NAME ASC"; //IS_REGIS DESC,
 	else
 		Query = 'Select * from Contact where IS_PHONEBOOK_CONTACT=1 AND IS_GROUP=0 ORDER BY IS_REGIS DESC, PHONEBOOK_CONTACT_NAME ASC';
 
@@ -293,18 +293,21 @@ function insertStropheChatData(data) {
 				sql = "INSERT INTO ChatMessage "
 					+ "( " + Object.keys(data).join(', ') + " ) "
 					+ " VALUES (?" + q.repeat(Object.keys(data).length - 1) + ")";
-
+				console.log('INSERT MESSAGE SQL ', sql, Object.values(data))
 				txn.executeSql(sql, Object.values(data))
 					.then((results) => {
 						console.log('ChatMessage insert Query COMPLETED for');
 						console.log(results[1].insertId)
 						resolve(results[1].insertId)
 					}).catch(err => {
+						console.log('INSERT MESSAGE SQL ERROR', err ) 
 						reject(err)
 					})
 			})
 		}).then(result => {
+			console.log('INSERT Successful:', result)
 		}).catch(error => {
+			console.log('INSERT ERROR:', err)
 			reject(error)
 		})
 	})
@@ -456,7 +459,7 @@ function getHighestNotReadMsgID(CHAT_ROOM_JID, myjid) {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 					let sql;		
-					sql = "select max(SENDER_MSG_ID) AS MAX_ID from ChatMessage WHERE CHAT_ROOM_JID LIKE ? AND CREATOR_JID NOT LIKE ? AND IS_READ=0 AND SENDER_MSG_ID IS NOT NULL"
+					sql = "select max(_ID) AS MAX_ID from ChatMessage WHERE CHAT_ROOM_JID LIKE ? AND CREATOR_JID NOT LIKE ? AND IS_READ=0 AND SENDER_MSG_ID IS NOT NULL"
 					txn.executeSql(sql, [ CHAT_ROOM_JID, myjid ]).then((results) => {
 						console.log('getHighestNotReadMsgID....', results[1].rows.raw())
 						resolve(results[1].rows.raw())
