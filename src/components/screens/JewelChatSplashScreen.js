@@ -17,6 +17,7 @@ import * as jcdb from '../../db/localdatabase'
 import * as game from '../../db/localdatabase'
 import axios from 'axios';
 import Constants from '../../network/rest';
+import { realtimeConnect} from "../../network/realtime" 
 
 class JewelChatSplashScreen extends React.Component {
   constructor() {
@@ -52,7 +53,7 @@ class JewelChatSplashScreen extends React.Component {
     return new Promise((resolve) =>
       setTimeout(
         () => { resolve('result') },
-        1000
+        100
       )
     )
   }
@@ -72,7 +73,8 @@ class JewelChatSplashScreen extends React.Component {
 
           return acc
 
-        }, {});    
+        }, {});        
+
         myTokens.isLoading = false;
         this.props.tokenLoad(myTokens);        
 
@@ -108,6 +110,7 @@ function mapDispatchToProps(dispatch) {
   return {
     tokenLoad: (myTokens) => dispatch({ type: 'USER_TOKEN_LOADED', myTokens }),
     initDatabase: () => dispatch(jcdb.initLocalDatabase()),
+    //openRealtimeConnection: () => dispatch(realtimeConnect())   
     //gameDataLoad: () => dispatch(game.gameDataLoad())
     //chatListDataLoad: () => dispatch(jcdb.chatListDataLoad()),
     //taskDataLoad: () => dispatch(jcdb.taskDataLoad()),

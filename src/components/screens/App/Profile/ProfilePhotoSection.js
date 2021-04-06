@@ -148,7 +148,7 @@ class ProfilePhotoSection extends React.Component {
                         <TouchableOpacity style={styles.profilePictureBorder} onPress={() => this.props.navigation.navigate('UserProfile')}>
                             { !this.state.profileimageerror &&
                                 <Image
-                                    source={{ headers: { Pragma: 'no-cache' }, uri: rest.imageBaseURL + this.props.mytoken.myphone + '?time=' + new Date().getTime()}}
+                                    source={{ headers: { Pragma: 'no-cache' }, uri: rest.imageBaseURL + this.props.mytoken.myphone + '?' + global.randstr }}
                                     style={{ position:'absolute', top:0, left:0, width: '100%',height: '100%', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}
                                     onLoad={()=>{
                                         //this.setState( { profileimageerror: false } ) 

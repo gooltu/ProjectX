@@ -93,8 +93,8 @@ class HeaderLevelZero extends React.PureComponent {
 
 
     render() {
-        global.customheaderrender++;
-        console.log('rendercount', global.customheaderrender);
+
+        
 
         return (
 

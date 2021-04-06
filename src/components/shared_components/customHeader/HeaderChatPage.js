@@ -67,7 +67,7 @@ class HeaderChatPage extends React.Component {
 
                     { this.props.activeChat.JEWELCHAT_ID != 1 &&
                         <Image
-                            source={{ headers: { Pragma: 'no-cache' }, uri: rest.imageBaseURL + this.props.activeChat.CHAT_ROOM_JID.split('@')[0] + '?time=' + new Date().getTime()}}
+                            source={{ headers: { Pragma: 'no-cache' }, uri: rest.imageBaseURL + this.props.activeChat.CHAT_ROOM_JID.split('@')[0] + '?' + global.randstr}}
                             style={[{ position:'absolute', top:0, left:0 },{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', overflow: 'hidden'}]}
                             onLoad={()=>{
                                 //this.setState( { profileimageerror: false } ) 

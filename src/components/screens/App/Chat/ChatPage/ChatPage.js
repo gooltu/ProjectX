@@ -47,6 +47,7 @@ import MainChatBar from './MainChatBar';
 import ChatItem from './ChatItem';
 import { updateChatPageRedux, updateChatlistRedux } from '../../../../../network/realtime-utils/messages';
 import {sendBulkReadReceipts} from '../../../../../network/realtime-utils/read-delivery-messages'
+import { setActiveChat } from '../../../../../actions/chatListActions'
 
 class ChatPage extends React.Component {
 
@@ -68,6 +69,13 @@ class ChatPage extends React.Component {
     //handle Subscription Request
      
   } 
+
+  componentWillUnmount() {
+    console.log('Chatpage Unmount');
+    this.props.updateChatlistRedux();
+    //this.props.setActiveChat({})
+    
+  }
 
   state = {    
     visible: false,   

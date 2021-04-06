@@ -403,8 +403,9 @@ class JewelChat extends React.Component {
                 }
 
             }
-
-            this.props.closeRealtimeDisconnect();
+            
+            this.props.setActiveChat({})
+            //this.props.closeRealtimeDisconnect();
 
         }else if(nextAppState == 'active')  {
 
@@ -460,7 +461,8 @@ function mapStateToProps(state) {
         gifttasks: state.gifttasks,
         gifttaskdetails: state.gifttaskdetails,
         usergifttasks: state.usergifttasks,
-        game: state.game
+        game: state.game,
+        presence: state.presence
     }
 }
 
@@ -473,7 +475,8 @@ function mapDispatchToProps(dispatch) {
         openRealtimeConnect: () => dispatch(realtimeConnect()),
         closeRealtimeDisconnect: () => dispatch(realtimeDisconnect()),
         setChatListData: (chatList) => dispatch(actions.setChatListData(chatList)),
-        setChatData: (chatData) => dispatch(actions.setChatData(chatData))
+        setChatData: (chatData) => dispatch(actions.setChatData(chatData)),
+        setActiveChat: (activeChat) => dispatch(actions.setActiveChat(activeChat))
     }
 }
 

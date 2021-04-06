@@ -63,7 +63,7 @@ class Item extends React.Component {
           <View style={styles.chatBox}>
             { this.props.item.JEWELCHAT_ID != 1 &&
               <Image
-                source={{ headers: { Pragma: 'no-cache' }, uri:rest.imageBaseURL + this.props.item.CHAT_ROOM_JID.split('@')[0] + '?time=' + new Date().getTime()}}
+                source={{ headers: { Pragma: 'no-cache' }, uri:rest.imageBaseURL + this.props.item.CHAT_ROOM_JID.split('@')[0] + '?' + global.randstr }}
                 style={[{ position:'absolute', top:0, left:0 },styles.imgBackground]}
                 onLoad={()=>{
                   //this.setState( { profileimageerror: false } ) 

@@ -6,7 +6,8 @@ export const handleReadAndDeliveryMessages = (processedMessage) => {
 	return (dispatch, getState) => {
 		var type = processedMessage.type;		
 		if (processedMessage.data.from != getState().mytoken.myphone + '@jewelchat.net') {
-			db.updateDeliveryAndReadReceipt(type, processedMessage.data.id, processedMessage.data.time, processedMessage.data.from).then(result => {
+
+			db.updateReceivedDeliveryAndReadReceipt(type, processedMessage.data.id, processedMessage.data.time, processedMessage.data.from).then(result => {
 				
 				if (getState().activechat.JID === processedMessage.data.from) 
 					dispatch(updateChatPageRedux());                    
@@ -23,7 +24,7 @@ export const handleReadAndDeliveryMessagesViaHistoryDownload = (processedMessage
 	return (dispatch, getState) => {
 		var type = processedMessage.subtype;
 		if (processedMessage.data.from != getState().mytoken.myphone + '@jewelchat.net') {
-            db.updateDeliveryAndReadReceipt(type, processedMessage.data.id, processedMessage.data.time, processedMessage.data.from)
+            db.updateReceivedDeliveryAndReadReceipt(type, processedMessage.data.id, processedMessage.data.time, processedMessage.data.from)
             .then(result => {}).catch(err => {})
 		}
 	}
@@ -42,12 +43,16 @@ export const sendBulkReadReceipts = (CHAT_ROOM_JID, myjid) => {
 
 				let read = $msg({ to: CHAT_ROOM_JID, from: myjid }).c('displayed', { xmlns: 'urn:xmpp:chat-markers:0', id: results[0].MAX_ID });
 				console.log(read);
-				getConnectionObj().send(read.tree(), () => {
-					console.log('Displayed Message sent');
-					db.updateBulkReadReceipt(CHAT_ROOM_JID, results[0].MAX_ID, createdDateTime).then(val=>{
-						dispatch(updateChatlistRedux());
-					}).catch(err=>{});
-				});	
+				try{	
+					getConnectionObj().send(read.tree(), () => {
+						console.log('Displayed Message sent');
+						db.updateBulkReadReceipt(CHAT_ROOM_JID, results[0].MAX_ID, createdDateTime).then(val=>{
+							dispatch(updateChatlistRedux());
+						}).catch(err=>{});
+					});	
+				}catch(err){
+					console.log('XMPP error')
+				}
 			
 			}
 			

@@ -57,7 +57,7 @@ class LeaderBoardRow extends React.Component {
                     onError={(error) => { 
 											this.setState({profileimageerror : true})
 										}}
-                    source={{ uri: rest.imageBaseURL+ this.props.item.phone + '?time=' + new Date().getTime() }}>
+                    source={{ uri: rest.imageBaseURL+ this.props.item.phone + '?' + global.randstr }}>
                 </Image>}
             {
                 this.state.profileimageerror 

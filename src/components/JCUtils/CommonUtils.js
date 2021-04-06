@@ -26,7 +26,7 @@ import Diamond from '../svg_components/Diamond'
 import Coin from '../svg_components/Coin'
 import { sendSubscriptionRequest } from '../../network/realtime'
 
-export const getContacts = (callback) => {
+export const getContacts = (callback, myphone) => {
     if (Platform.OS == 'android') {
         PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
@@ -36,31 +36,31 @@ export const getContacts = (callback) => {
                 'buttonPositive': 'Please accept bare mortal'
             }
         ).then(() => {
-            getAllContactsAndroid(callback)
+            getAllContactsAndroid(callback, myphone)
         })
     }
     else {
-        getAllContactsIOS(callback)
+        getAllContactsIOS(callback, myphone)
     }
 }
 
-function getAllContactsAndroid(callback) {
+function getAllContactsAndroid(callback, myphone) {
     Contacts.getAll((err, contacts) => {
         if (err === 'denied') {
             // Alert.alert("Error", err)
         } else {
             console.log('contacts', contacts)            
-            insertContacts(contacts, callback)
+            insertContacts(contacts, callback, myphone)
         }
     })
 }
 
-function getAllContactsIOS(callback) {
+function getAllContactsIOS(callback, myphone) {
     callback();
 }
 
 
-function insertContacts(Contacts, callback) {
+function insertContacts(Contacts, callback, myphone) {
 
     let p = [];
     const regex1 = /\D/g;
@@ -81,6 +81,10 @@ function insertContacts(Contacts, callback) {
                 else 
                     break;      
                 console.log('CONTACT LIST', ph);
+                
+                if(ph === myphone)
+                    break;
+
                 let data = {
                     PHONEBOOK_CONTACT_NAME : Contacts[i].givenName + " " + Contacts[i].middleName + " " + Contacts[i].familyName,
                     CONTACT_NUMBER : ph,

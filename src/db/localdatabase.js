@@ -13,8 +13,8 @@ SQLite.enablePromise(true);
 let _jcdb
 
 export default {
-	getChats, getAllChatsGreaterThanEqual_ID, getChatList, updatePhoneContact, insertStropheChatData, insertAffiliations, updateDeliveryAndReadReceipt, updateBulkReadReceipt, getHighestNotReadMsgID, getContactList, updatePickedJewel,
-	updateLastMessageAndText, selectUnreadMessages, selectUnsendMessages, updateContact, insertContactData, checkIfRowExist, insertTeamJC, deleteAllData
+	getChats, getAllChatsGreaterThanEqual_ID, getChatList, updatePhoneContact, insertStropheChatData, insertAffiliations, updateReceivedDeliveryAndReadReceipt, updateDeliveryAndReadReceipt, updateBulkReadReceipt, getHighestNotReadMsgID, getContactList, updatePickedJewel,
+	updateLastMessageAndText, selectUnreadMessages, selectUnsendMessages, updateContact, insertContactData, checkIfRowExist, insertTeamJC, deleteAllData, getAllChatsDbInspect
 };
 
 SQLite.openDatabase({
@@ -68,6 +68,31 @@ function _initDb() {
 			})
 		}
 	})
+}
+
+function getAllChatsDbInspect(){
+
+	return new Promise((resolve, reject) => {
+		_initDb().then(instance => {
+			jcdb = instance;
+			jcdb.transaction((txn) => {
+
+				
+					txn.executeSql('select _ID, SENDER_MSG_ID, CHAT_ROOM_JID,CREATOR_JID, IS_READ FROM ChatMessage ORDER BY _ID')
+						.then((results) => {							
+							resolve(results[1].rows.raw())
+						})
+						.catch(err => {
+							reject(err)
+						})
+				
+			})
+		}).then(result => {
+		}).catch(err => {
+			reject(err)
+		})
+	});
+
 }
 
 function getChats(JID, offset, isgroupmsg) {
@@ -213,11 +238,12 @@ function getChatList() {
 }
 
 function getContactList( type, query ) {
+	
 	let Query
 	if (type === 'Forward')
 		Query = 'Select * from Contact where IS_REGIS=1';
 	else if(type === 'Contact' && query )
-		Query = "Select * from Contact where IS_PHONEBOOK_CONTACT=1 AND IS_GROUP=0 AND PHONEBOOK_CONTACT_NAME LIKE '%" +query+"%' ORDER BY PHONEBOOK_CONTACT_NAME ASC"; //IS_REGIS DESC,
+		Query = "Select * from Contact where IS_PHONEBOOK_CONTACT=1 AND IS_GROUP=0 AND ( PHONEBOOK_CONTACT_NAME LIKE '%" +query+ "%' OR CONTACT_NUMBER LIKE '%"+query+"%' ) ORDER BY PHONEBOOK_CONTACT_NAME ASC"; //IS_REGIS DESC,
 	else
 		Query = 'Select * from Contact where IS_PHONEBOOK_CONTACT=1 AND IS_GROUP=0 ORDER BY IS_REGIS DESC, PHONEBOOK_CONTACT_NAME ASC';
 
@@ -375,6 +401,61 @@ function updatePickedJewel(id, flag) {
 	})
 }
 
+
+function updateReceivedDeliveryAndReadReceipt(type, id, time, CHAT_ROOM_JID) {
+	console.log(type, id, time)
+	return new Promise((resolve, reject) => {
+		_initDb().then(instance => {
+			jcdb = instance;
+			jcdb.transaction((txn) => {
+				let sql;
+				if (type === 'Delivery') {
+					sql = "UPDATE ChatMessage SET IS_DELIVERED = 1, TIME_DELIVERED = " + time + " WHERE _ID =  " + id
+					txn.executeSql(sql).then((results) => {
+						console.log('ChatMessage Delivered Query updated for id, ', id);
+						resolve('success')
+					}).catch(err => {
+						reject(err)
+					})
+				}
+				else if (type === 'Both') {
+					sql = "UPDATE ChatMessage SET IS_READ = 1,TIME_READ=" + time + ", IS_DELIVERED = 1, TIME_DELIVERED = " + time + "  WHERE _ID =  " + id
+					txn.executeSql(sql).then((results) => {
+						console.log('ChatMessage Both Query COMPLETED for id, ', id);
+						resolve('success')
+					}).catch(err => {
+						reject(err)
+					})
+				}
+				else if (type === 'Read') {
+					sql = "UPDATE ChatMessage SET IS_READ = 1, TIME_READ = ? WHERE _ID <= ? AND CHAT_ROOM_JID LIKE ? AND CREATOR_JID NOT LIKE ? AND IS_DELIVERED = 1" 
+					//sql = "UPDATE ChatMessage SET IS_READ = 1, TIME_READ = ? WHERE _ID = ?" 
+					txn.executeSql(sql,[ time, id , CHAT_ROOM_JID, CHAT_ROOM_JID ]).then((results) => {
+						console.log('ChatMessage READ Query updated for id');
+						resolve('success')
+					}).catch(err => {
+						reject(err)
+					})
+				}
+				else if (type === 'Submit') {
+					sql = "UPDATE ChatMessage SET IS_SUBMITTED = 1,TIME_SUBMITTED=" + time + " WHERE _ID = " + id
+					txn.executeSql(sql).then((results) => {
+						console.log('ChatMessage Delivered Query updated for id, ', id);
+						resolve('success')
+					}).catch(err => {
+						reject(err)
+					})
+				}
+			}).then(result => {
+
+			}).catch(error => {
+				reject(error)
+			})
+		})
+	})
+}
+
+
 function updateDeliveryAndReadReceipt(type, id, time, CHAT_ROOM_JID) {
 	console.log(type, id, time)
 	return new Promise((resolve, reject) => {
@@ -401,9 +482,10 @@ function updateDeliveryAndReadReceipt(type, id, time, CHAT_ROOM_JID) {
 					})
 				}
 				else if (type === 'Read') {
-					sql = "UPDATE ChatMessage SET IS_READ = 1, TIME_READ = ? WHERE _ID <= ? AND CHAT_ROOM_JID LIKE ? AND CREATOR_JID NOT LIKE ? AND IS_READ = 0 AND IS_DELIVERED = 1" 
-					txn.executeSql(sql,[ time, id, CHAT_ROOM_JID, CHAT_ROOM_JID ]).then((results) => {
-						console.log('ChatMessage READ Query updated for id, ', id);
+					//sql = "UPDATE ChatMessage SET IS_READ = 1, TIME_READ = ? WHERE _ID = ? AND CHAT_ROOM_JID LIKE ? AND CREATOR_JID LIKE ? AND IS_READ = 0 AND IS_DELIVERED = 1" 
+					sql = "UPDATE ChatMessage SET IS_READ = 1, TIME_READ = ? WHERE _ID = ?" 
+					txn.executeSql(sql,[ time, id ]).then((results) => {
+						console.log('ChatMessage READ Query updated for id');
 						resolve('success')
 					}).catch(err => {
 						reject(err)

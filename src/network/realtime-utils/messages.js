@@ -2,6 +2,7 @@ import db from '../../db/localdatabase';
 import {getConnectionObj} from './realtimeobj';
 import actions from '../../actions'
 
+
 // function to handlle incoming messages (insertion to DB , sending delivery and read receipt)
 export const insertIncomingMessageViaHistoryDownload = (incomingMessage) => {
     console.log('HISTORY MESSAGE', incomingMessage )
@@ -39,7 +40,7 @@ export const insertIncomingMessage = (incomingMessage) => {
                 if(incomingMessage.IS_GROUP_MSG != 1){
                     incomingMessage['_ID'] = _id         
                     //let activechat_jid = getState().activeChat.JID;   
-                    //console.log('OMGOMGOMG', activechat_jid)  
+                    //console.log('OMGOMGOMG', )  
                     _sendReceiptsOnReceivingMessages(incomingMessage, getState);
                 }
 
@@ -81,6 +82,11 @@ export const updateChatPageRedux = () => {
             }     
 
         }
+
+        db.getAllChatsDbInspect()
+        .then( data => {
+            console.log('ALL CHATS:', data )
+        })
 	}
 }
 
@@ -227,32 +233,42 @@ function _sendReceiptsOnReceivingMessages(incomingMessage, getState){
         var received = $msg({ to: incomingMessage.CHAT_ROOM_JID, from: getState().mytoken.myphone + '@jewelchat.net' })
             .c('received', { xmlns: 'urn:xmpp:chat-markers:0', id: incomingMessage.SENDER_MSG_ID });
 
-        getConnectionObj().send(received.tree(), () => {
-            console.log('UPDATE DATABASE');    
-            db.updateDeliveryAndReadReceipt('Delivery', incomingMessage._ID, createdDateTime, incomingMessage.CHAT_ROOM_JID).then(()=>{
-                console.log('Delivery Success')
-            }).catch(err => {
-                console.log('Delivery Error')
-            });
-        }); 
-        
-        
-        if (getState().activechat.JID === incomingMessage.CHAT_ROOM_JID) {	                    
-            console.log('SEND READ RECEIPT');
-            var read = $msg({ to: incomingMessage.CHAT_ROOM_JID, from: getState().mytoken.myphone + '@jewelchat.net' })
-                .c('displayed', { xmlns: 'urn:xmpp:chat-markers:0', id: incomingMessage.SENDER_MSG_ID });
+				try{	
 
-            getConnectionObj().send(read.tree(), () => {
-                console.log('READ RECEIPT SENT')
-                db.updateDeliveryAndReadReceipt('Read', incomingMessage._ID, createdDateTime, incomingMessage.CHAT_ROOM_JID).then(()=>{
-                    console.log('Read Success')
+            getConnectionObj().send(received.tree(), () => {
+                console.log('UPDATE DATABASE');    
+                db.updateDeliveryAndReadReceipt('Delivery', incomingMessage._ID, createdDateTime, incomingMessage.CHAT_ROOM_JID).then(()=>{
+                    console.log('Delivery Success')
+
+										if (getState().activechat.JID === incomingMessage.CHAT_ROOM_JID) {	                    
+												console.log('SEND READ RECEIPT');
+												var read = $msg({ to: incomingMessage.CHAT_ROOM_JID, from: getState().mytoken.myphone + '@jewelchat.net' })
+														.c('displayed', { xmlns: 'urn:xmpp:chat-markers:0', id: incomingMessage.SENDER_MSG_ID });
+						
+												getConnectionObj().send(read.tree(), () => {
+														console.log('READ RECEIPT SENT')
+														db.updateDeliveryAndReadReceipt('Read', incomingMessage._ID, createdDateTime, incomingMessage.CHAT_ROOM_JID).then(()=>{
+																console.log('Read Success')
+														}).catch(err => {
+																console.log('Read Error')
+														});
+												});
+										}
+
+
                 }).catch(err => {
-                    console.log('Read Error')
+                    console.log('Delivery Error')
                 });
-            });                   
-                
 
-        }
+            }); 
+
+				} 
+				catch(err){
+					console.log('XMPP Error')
+				}		
+        
+        
+        
     
     } 
 

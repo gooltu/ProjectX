@@ -1,7 +1,6 @@
 import React from "react";
 import {
-  ActivityIndicator,
-  AsyncStorage,
+  ActivityIndicator,  
   TouchableOpacity,
   StatusBar,
   StyleSheet,
@@ -41,17 +40,18 @@ class Contacts extends React.Component {
       isLoading: false
     }
   }
+
   componentDidMount() {
     this.setState({
       isLoading: true
     })
     this.getContactsCallback()
-    getContacts(this.getContactsCallback)
+    getContacts(this.getContactsCallback, this.props.mytoken.myphone)
   }
 
-  getContactsCallback = () => {
-    console.log('came to callback')    
-    db.getContactList('Contact', this.state.searchQuery).then(results => {   
+  getContactsCallback = (query) => {
+       
+    db.getContactList('Contact', query).then(results => {   
       console.log('JC CONTACTS', results);       
       this.setState({
         contactData: results,        
@@ -60,6 +60,7 @@ class Contacts extends React.Component {
     }).catch(err => {
       console.log(err)
     })
+
   }
 
   _onChangeSearch = (query) => {    
@@ -77,9 +78,9 @@ class Contacts extends React.Component {
     //   })
     // }
 
-    this.setState({
-      searchQuery: query
-    })
+    // this.setState({
+    //   searchQuery: query
+    // })
 
     this.getContactsCallback()
 
@@ -88,7 +89,7 @@ class Contacts extends React.Component {
 
   inviteUser(item) {
     console.log('INVITE USER',item)
-    if(item.IS_REGIS == 0 && item.IS_INVITED == 0){
+    if( item.IS_REGIS == 0 ){
   
         let data = {
           phone: item.CONTACT_NUMBER
@@ -181,7 +182,8 @@ class Contacts extends React.Component {
         <CustomLoader loading={this.state.isLoading} />
         <Searchbar
           placeholder="Search Contacts"
-          onChangeText={this._onChangeSearch}
+          //onChangeText={ (query) => { console.log('came to callback', query); this._onChangeSearch(query) }}
+          onChangeText={ (query) => { console.log('came to callback', query); this.getContactsCallback(query) }}
           //value={this.state.searchQuery}
           style={{ backgroundColor: colors.darkcolor3, color: 'white' }}
           inputStyle={{ color: 'white', fontSize: 14 }}
@@ -205,7 +207,10 @@ class Contacts extends React.Component {
 
 
 function mapStateToProps(state) {
-  return { referralAchievement: state.referralAchievement }
+  return { 
+    referralAchievement: state.referralAchievement,
+    mytoken: state.mytoken 
+  }
 }
 
 

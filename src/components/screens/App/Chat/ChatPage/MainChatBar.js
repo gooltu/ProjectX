@@ -81,6 +81,7 @@ class MainChatBar extends React.Component {
   componentWillUnmount() {
     console.log('UNMOUNT MAINCHATBAR')
     if(this.props.activeChat.IS_GROUP_MSG == 0){
+      
         clearInterval(this.timerId)
         let msg = {
           CHAT_ROOM_JID: this.props.activeChat.CHAT_ROOM_JID,            
@@ -241,7 +242,7 @@ class MainChatBar extends React.Component {
           />}
 
           {Platform.OS !== 'ios' && <JCTextInput
-            placeholder="Type here Android"
+            placeholder="Type here"
             placeholderTextColor="white"
             ref={ref => {
               this.textInput = ref;

@@ -7,7 +7,8 @@ import {
   ImageBackground,
   BackHandler,  
   Keyboard,
-  Platform
+  Platform,
+  Alert
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -45,7 +46,7 @@ class EnterDetails extends React.Component {
     
     
     db.deleteAllData().then(result => {
-      let createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
+      
 
       let teamjc = {
         JEWELCHAT_ID: 1,
@@ -57,110 +58,167 @@ class EnterDetails extends React.Component {
       	IS_REGIS: 1,
         IS_GROUP: 0,
         STATUS_MSG: 'Keep Collecting...'
-      };
-
-      let msg1 = {
-        CHAT_ROOM_JID: '910000000000@jewelchat.net',
-        IS_GROUP_MSG: 0,
-        MSG_TEXT: 'Welcome to JewelChat',
-        CREATOR_JID: '910000000000@jewelchat.net',		
-        JEWEL_TYPE: 3,
-        CREATED_DATE: createdDateTime.date,
-        CREATED_TIME: createdDateTime.time,
-        TIME_CREATED: createdDateTime.fulltime,
-        SENDER_MSG_ID: 1,
-        MSG_TYPE: 0,
-        MEDIA_CLOUD: null,
-        MEDIA_CLOUD_THUMBNAIL: null,
-        SEQUENCE: -1,
-        IS_DELIVERED: 1,
-        TIME_DELIVERED: createdDateTime.fulltime
-      };
-
-      createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
-      let msg2 = {
-        CHAT_ROOM_JID: '910000000000@jewelchat.net',
-        IS_GROUP_MSG: 0,
-        MSG_TEXT: 'Collect Jewels from received chat messages. Fullfill task to win Cash/Gifts/Discounts',
-        CREATOR_JID: '910000000000@jewelchat.net',		
-        JEWEL_TYPE: 6,
-        CREATED_DATE: createdDateTime.date,
-        CREATED_TIME: createdDateTime.time,
-        TIME_CREATED: createdDateTime.fulltime,
-        SENDER_MSG_ID: 2,
-        MSG_TYPE: 0,
-        MEDIA_CLOUD: null,
-        MEDIA_CLOUD_THUMBNAIL: null,
-        SEQUENCE: -1,
-        IS_DELIVERED: 1,
-        TIME_DELIVERED: createdDateTime.fulltime
-      };
-
-      createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
-      let msg3 = {
-        CHAT_ROOM_JID: '910000000000@jewelchat.net',
-        IS_GROUP_MSG: 0,
-        MSG_TEXT: '',
-        CREATOR_JID: '910000000000@jewelchat.net',		
-        JEWEL_TYPE: 9,
-        CREATED_DATE: createdDateTime.date,
-        CREATED_TIME: createdDateTime.time,
-        TIME_CREATED: createdDateTime.fulltime,
-        SENDER_MSG_ID: 3,
-        MSG_TYPE: 1,
-        MEDIA_CLOUD: 'https://s3.ap-south-1.amazonaws.com/jewelchat.net/IntroImages/jcpic2.jpg',
-        MEDIA_CLOUD_THUMBNAIL: null,
-        SEQUENCE: -1,
-        IS_DELIVERED: 1,
-        TIME_DELIVERED: createdDateTime.fulltime
-      };
-
-      createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
-      let msg4 = {
-        CHAT_ROOM_JID: '910000000000@jewelchat.net',
-        IS_GROUP_MSG: 0,
-        MSG_TEXT: '',
-        CREATOR_JID: '910000000000@jewelchat.net',		
-        JEWEL_TYPE: 12,
-        CREATED_DATE: createdDateTime.date,
-        CREATED_TIME: createdDateTime.time,
-        TIME_CREATED: createdDateTime.fulltime,
-        SENDER_MSG_ID: 4,
-        MSG_TYPE: 1,
-        MEDIA_CLOUD: 'https://s3.ap-south-1.amazonaws.com/jewelchat.net/IntroImages/jcpic3.jpg',
-        MEDIA_CLOUD_THUMBNAIL: null,
-        SEQUENCE: -1,
-        IS_DELIVERED: 1,
-        TIME_DELIVERED: createdDateTime.fulltime
-      };
-
-      createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
-      let msg5 = {
-        CHAT_ROOM_JID: '910000000000@jewelchat.net',
-        IS_GROUP_MSG: 0,
-        MSG_TEXT: 'Chat karo Cash jeeto.',
-        CREATOR_JID: '910000000000@jewelchat.net',		
-        JEWEL_TYPE: 15,
-        CREATED_DATE: createdDateTime.date,
-        CREATED_TIME: createdDateTime.time,
-        TIME_CREATED: createdDateTime.fulltime,
-        SENDER_MSG_ID: 5,
-        MSG_TYPE: 0,
-        MEDIA_CLOUD: null,
-        MEDIA_CLOUD_THUMBNAIL: null,
-        SEQUENCE: -1,
-        IS_DELIVERED: 1,
-        TIME_DELIVERED: createdDateTime.fulltime
-      };
+      };     
 
       db.insertTeamJC(teamjc).then(val => {
         console.log('Team JC inserted')
       })
-      this.props.insertmsg(msg1);
-      this.props.insertmsg(msg2);
-      this.props.insertmsg(msg3);
-      this.props.insertmsg(msg4);
-      this.props.insertmsg(msg5);
+
+      setTimeout( () =>{
+        let createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
+        let msg1 = {
+          CHAT_ROOM_JID: '910000000000@jewelchat.net',
+          IS_GROUP_MSG: 0,
+          MSG_TEXT: 'Welcome to JewelChat',
+          CREATOR_JID: '910000000000@jewelchat.net',		
+          JEWEL_TYPE: 3,
+          CREATED_DATE: createdDateTime.date,
+          CREATED_TIME: createdDateTime.time,
+          TIME_CREATED: createdDateTime.fulltime,
+          SENDER_MSG_ID: '1',
+          MSG_TYPE: 0,
+          MEDIA_CLOUD: null,
+          MEDIA_CLOUD_THUMBNAIL: null,
+          SEQUENCE: -1,
+          IS_DELIVERED: 1,
+          TIME_DELIVERED: createdDateTime.fulltime
+        };
+        this.props.insertmsg(msg1);
+      }, 500)
+
+      setTimeout( () =>{
+        let createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);        
+        let msg2 = {
+          CHAT_ROOM_JID: '910000000000@jewelchat.net',
+          IS_GROUP_MSG: 0,
+          MSG_TEXT: 'Collect Jewels from received chat messages. Click on the green triangle beside this message to collect it.',
+          CREATOR_JID: '910000000000@jewelchat.net',		
+          JEWEL_TYPE: 6,
+          CREATED_DATE: createdDateTime.date,
+          CREATED_TIME: createdDateTime.time,
+          TIME_CREATED: createdDateTime.fulltime,
+          SENDER_MSG_ID: '2',
+          MSG_TYPE: 0,
+          MEDIA_CLOUD: null,
+          MEDIA_CLOUD_THUMBNAIL: null,
+          SEQUENCE: -1,
+          IS_DELIVERED: 1,
+          TIME_DELIVERED: createdDateTime.fulltime
+        };
+        this.props.insertmsg(msg2);
+      }, 1500)
+
+      setTimeout( () =>{
+        let createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);        
+        let msg3 = {
+          CHAT_ROOM_JID: '910000000000@jewelchat.net',
+          IS_GROUP_MSG: 0,
+          MSG_TEXT: 'Image',
+          CREATOR_JID: '910000000000@jewelchat.net',		
+          JEWEL_TYPE: 9,
+          CREATED_DATE: createdDateTime.date,
+          CREATED_TIME: createdDateTime.time,
+          TIME_CREATED: createdDateTime.fulltime,
+          SENDER_MSG_ID: '3',
+          MSG_TYPE: 1,
+          MEDIA_CLOUD: 'https://s3.ap-south-1.amazonaws.com/jewelchat.net/IntroImages/jcpic6.jpg',
+          MEDIA_CLOUD_THUMBNAIL: null,
+          SEQUENCE: -1,
+          IS_DELIVERED: 1,
+          TIME_DELIVERED: createdDateTime.fulltime
+        };
+        this.props.insertmsg(msg3);
+      }, 2500)
+
+      setTimeout( () =>{
+        let createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
+        let msg4 = {
+          CHAT_ROOM_JID: '910000000000@jewelchat.net',
+          IS_GROUP_MSG: 0,
+          MSG_TEXT: 'Image',
+          CREATOR_JID: '910000000000@jewelchat.net',		
+          JEWEL_TYPE: 12,
+          CREATED_DATE: createdDateTime.date,
+          CREATED_TIME: createdDateTime.time,
+          TIME_CREATED: createdDateTime.fulltime,
+          SENDER_MSG_ID: '4',
+          MSG_TYPE: 1,
+          MEDIA_CLOUD: 'https://s3.ap-south-1.amazonaws.com/jewelchat.net/IntroImages/jcpic5.jpg',
+          MEDIA_CLOUD_THUMBNAIL: null,
+          SEQUENCE: -1,
+          IS_DELIVERED: 1,
+          TIME_DELIVERED: createdDateTime.fulltime
+        };        
+        this.props.insertmsg(msg4);
+      }, 3500)
+
+      setTimeout( () =>{
+        let createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
+        let msg5 = {
+          CHAT_ROOM_JID: '910000000000@jewelchat.net',
+          IS_GROUP_MSG: 0,
+          MSG_TEXT: 'Image',
+          CREATOR_JID: '910000000000@jewelchat.net',		
+          JEWEL_TYPE: 12,
+          CREATED_DATE: createdDateTime.date,
+          CREATED_TIME: createdDateTime.time,
+          TIME_CREATED: createdDateTime.fulltime,
+          SENDER_MSG_ID: '5',
+          MSG_TYPE: 1,
+          MEDIA_CLOUD: 'https://s3.ap-south-1.amazonaws.com/jewelchat.net/IntroImages/jcpic4.jpg',
+          MEDIA_CLOUD_THUMBNAIL: null,
+          SEQUENCE: -1,
+          IS_DELIVERED: 1,
+          TIME_DELIVERED: createdDateTime.fulltime
+        };        
+        this.props.insertmsg(msg5);
+      }, 4000)
+
+      setTimeout( () =>{
+        let createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
+        let msg6 = {
+          CHAT_ROOM_JID: '910000000000@jewelchat.net',
+          IS_GROUP_MSG: 0,
+          MSG_TEXT: 'Image',
+          CREATOR_JID: '910000000000@jewelchat.net',		
+          JEWEL_TYPE: 6,
+          CREATED_DATE: createdDateTime.date,
+          CREATED_TIME: createdDateTime.time,
+          TIME_CREATED: createdDateTime.fulltime,
+          SENDER_MSG_ID: '6',
+          MSG_TYPE: 1,
+          MEDIA_CLOUD: 'https://s3.ap-south-1.amazonaws.com/jewelchat.net/IntroImages/jcpic3.jpg',
+          MEDIA_CLOUD_THUMBNAIL: null,
+          SEQUENCE: -1,
+          IS_DELIVERED: 1,
+          TIME_DELIVERED: createdDateTime.fulltime
+        };        
+        this.props.insertmsg(msg6);
+      }, 4500)
+
+      setTimeout( () =>{
+        let createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
+        let msg7 = {
+          CHAT_ROOM_JID: '910000000000@jewelchat.net',
+          IS_GROUP_MSG: 0,
+          MSG_TEXT: 'Chat karo Cash jeeto.',
+          CREATOR_JID: '910000000000@jewelchat.net',		
+          JEWEL_TYPE: 15,
+          CREATED_DATE: createdDateTime.date,
+          CREATED_TIME: createdDateTime.time,
+          TIME_CREATED: createdDateTime.fulltime,
+          SENDER_MSG_ID: '7',
+          MSG_TYPE: 0,
+          MEDIA_CLOUD: null,
+          MEDIA_CLOUD_THUMBNAIL: null,
+          SEQUENCE: -1,
+          IS_DELIVERED: 1,
+          TIME_DELIVERED: createdDateTime.fulltime
+        };
+        this.props.insertmsg(msg7);
+      }, 5000)
+      
+      
 
     }).catch(err => {})
     
@@ -209,7 +267,7 @@ class EnterDetails extends React.Component {
 
 
       messaging().requestPermission().then(() => {
-        Alert.alert("User Now Has Permission")
+        //Alert.alert("User Now Has Permission")
       })
       .catch(error => {
         Alert.alert("Error", error)

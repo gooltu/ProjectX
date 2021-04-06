@@ -22,7 +22,7 @@ const scrollBarData = [
     },
     {
         'image': <Icon name='share-alt' size={35} color='white' />,
-        'text': 'SHARE'
+        'text': 'REFERRALS'
     },
     {
         'image': <Icon1 name='settings' size={35} color='white' />,
@@ -44,7 +44,7 @@ scrollBarNaviagtion = (text, navigation, children) => {
     if (text === 'GIFTS WON') {
         navigation.navigate("GiftsWon")
     }
-    if (text === 'SHARE') {
+    if (text === 'REFERRALS') {
         navigation.navigate("ShareScreen", {children: children})
     }
 }
