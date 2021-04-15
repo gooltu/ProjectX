@@ -28,6 +28,11 @@ class HeaderChatPage extends React.Component {
 
     randomstring = '?'+Math.ceil(Math.random()*1000000);
 
+    componentDidUpdate(prevProps, prevState) {
+        
+        console.log('HEADER CHAT PAGE', this.props.getParam('JEWEL_TYPE'))
+    }
+
     componentDidMount() {
         console.log('HEADERCHATPAGE', this.props)    
 

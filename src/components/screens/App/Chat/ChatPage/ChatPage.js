@@ -117,6 +117,7 @@ class ChatPage extends React.Component {
                   .then(result => {
                     this.props.updateChatPageRedux();
                     this.setState({ collectingJewel: false, collectionId: null });
+                    this.props.navigation.setParam({ 'JEWEL_TYPE' : item.JEWEL_TYPE, 'ANIMATE': true })
                     this.props.game.jewels[item.JEWEL_TYPE].count = this.props.game.jewels[item.JEWEL_TYPE].count + 1
                     this.props.loadGameState(this.props.game)
                   })

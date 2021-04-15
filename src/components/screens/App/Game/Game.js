@@ -48,9 +48,7 @@ class Game extends React.Component {
           AsyncStorage.removeItem('ActiveGameTask').then(()=>{}).catch(err=>{})
         }
         
-      }).catch(err=>{
-        
-      })
+      }).catch(err=>{})
 
 
       AsyncStorage.getItem('ActiveGiftTask').then( val=>{
@@ -60,9 +58,7 @@ class Game extends React.Component {
           AsyncStorage.removeItem('ActiveGiftTask').then(()=>{}).catch(err=>{})
         }
         
-      }).catch(err=>{
-        
-      })
+      }).catch(err=>{})
       
   }
 
@@ -74,12 +70,28 @@ class Game extends React.Component {
           console.log('GET TASKS');
 
           NetworkManager.callAPI(rest.getTasks, 'POST', null).then(result => {
+            
             console.log('Tasks')
             console.log(result.tasks)
             this.setState({
               isLoading: false
             })
             this.props.setTaskData(result.tasks)
+
+            if(result.tasks.length<8){
+
+                NetworkManager.callAPI(rest.getNewTaskOnTaskCompletion, 'GET', null)
+                .then(val => {
+                  return NetworkManager.callAPI(rest.getTasks, 'POST', null)
+                })
+                .then(result1 => {
+                  this.props.setTaskData(result1.tasks)
+                })
+                .catch(error =>{})
+
+            }
+            
+
           }).catch(error => {
             this.setState({
               isLoading: false

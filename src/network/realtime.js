@@ -23,7 +23,7 @@ export default {
 }
 
 
-
+global.xmppconnection_inprocess = false;
 
 
 
@@ -36,35 +36,46 @@ export const realtimeConnect = () => {
 		// console.log(getState().mytoken.token)
 		//		connection.connect(getState().mytoken.myphone + '@jewelchat.net', getState().mytoken.token, (status, err) => {
 
-		
+			
+
+			console.log('Strophe Conn start.', (new Date()).toTimeString());	
+			console.log('Strophe Conn start.', getState().mytoken.myphone + '@jewelchat.net' );
+			console.log('Strophe Conn start.', getState().mytoken.token );
+			console.log('Strophe Conn isconnected', getConnectionObj().connected );
+
+			if(getConnectionObj().connected)
+				return;
 
 			getConnectionObj().connect(getState().mytoken.myphone + '@jewelchat.net', getState().mytoken.token, (status, err) => {
-			if (err) {
-				console.log(' XMPP Error:' + err);
-				//dispatch({ type: 'XMPP_ERROR' });
-			}
-			if (status == Strophe.Status.CONNECTING) {
-				console.log('Strophe is connecting.');
-				//dispatch({ type: 'XMPP_CONNECTING' });
-			} else if (status == Strophe.Status.CONNFAIL) {
-				console.log('Strophe failed to connect.');
-				//dispatch({ type: 'XMPP_CONNECTION_FAIL' });
-			} else if (status == Strophe.Status.AUTHENTICATING) {
-				console.log('Strophe is authenticating.');
-				//dispatch({ type: 'XMPP_AUTHENTICATING' });
-			} else if (status == Strophe.Status.AUTHFAIL) {
-				//dispatch({ type: 'XMPP_AUTH_FAILURE' });
-				console.log('Strophe is auth failure.');
-			} else if (status == Strophe.Status.DISCONNECTING) {
-				//dispatch({ type: 'XMPP_DISCONNECTING' });
-				console.log('Strophe is disconnecting.');
-			} else if (status == Strophe.Status.DISCONNECTED) {
+			// if (err) {
+			// 	console.log(' XMPP Error:' + err);
+			// 	//dispatch({ type: 'XMPP_ERROR' });
+			// }
+			// if (status == Strophe.Status.CONNECTING) {
+			// 	console.log('Strophe is connecting.');
+			// 	//dispatch({ type: 'XMPP_CONNECTING' });
+			// } else if (status == Strophe.Status.CONNFAIL) {
+			// 	console.log('Strophe failed to connect.');
+			// 	//dispatch({ type: 'XMPP_CONNECTION_FAIL' });
+			// } else if (status == Strophe.Status.AUTHENTICATING) {
+			// 	console.log('Strophe is authenticating.');
+			// 	//dispatch({ type: 'XMPP_AUTHENTICATING' });
+			// } else if (status == Strophe.Status.AUTHFAIL) {
+			// 	//dispatch({ type: 'XMPP_AUTH_FAILURE' });
+			// 	console.log('Strophe is auth failure.');
+			// } else if (status == Strophe.Status.DISCONNECTING) {
+			// 	//dispatch({ type: 'XMPP_DISCONNECTING' });
+			// 	console.log('Strophe is disconnecting.');
+			// } else 
+			if (status == Strophe.Status.DISCONNECTED) {
 				dispatch({ type: 'XMPP_DISCONNECTED' });
 				console.log('Strophe is disconnected.');
+				getConnectionObj().reset();
 				//save logout time
 			} else if (status == Strophe.Status.CONNECTED) {
 				dispatch({ type: 'XMPP_CONNECTED' });
-				console.log('Strophe is connected.');	
+				
+				console.log('Strophe is connected.', (new Date()).toTimeString());	
 
 				
 
@@ -73,7 +84,7 @@ export const realtimeConnect = () => {
 
 				// onMessage Handler
 				getConnectionObj().addHandler((msg) => {
-
+					console.log('STANZA', msg);
 					let processedMessage = detectMessagetype(msg)
 					console.log('PROCESSED MSG', processedMessage);
 					if (processedMessage.type === 'DownLoad') {
@@ -178,7 +189,8 @@ export const realtimeConnect = () => {
 				}
 
 				
-			}
+				
+			}//End of Connected if statement 
 		});
 
 		

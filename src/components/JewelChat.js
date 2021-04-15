@@ -57,7 +57,10 @@ import JCModal from "./shared_components/JCModal";
 import colors from "./shared_styles/colors";
 import TabIcon from "./svg_components/TabIcons";
 import db from "../db/localdatabase";
+
 import { realtimeConnect, realtimeDisconnect } from "../network/realtime"
+import { downloadMessages } from "../network/realtime-utils/download-history"
+
 import actions from '../actions'
 import ContactsScreen from '../components/screens/App/Contacts/Contacts'
 
@@ -423,6 +426,24 @@ class JewelChat extends React.Component {
 
             global.randstr = 'time=' + new Date().getTime();
             console.log('RANDSTR ', global.randstr);
+
+						if(this.props.network.xmppState === 'XMPP_CONNECTED'){
+
+								AsyncStorage.getItem('logOutTime')
+								.then( (lastlogouttime) => {	
+									console.log('LOGOUT TIME', lastlogouttime);	
+									
+									if( lastlogouttime ){		
+											
+										let current_servertime = new Date().getTime() + global.TimeDelta
+										lastlogouttime = current_servertime - parseInt(lastlogouttime) > 604800000 ? (current_servertime - 604800000) : parseInt(lastlogouttime);
+										downloadMessages(lastlogouttime);
+
+									}
+
+								});
+
+						}
 
         }  
 

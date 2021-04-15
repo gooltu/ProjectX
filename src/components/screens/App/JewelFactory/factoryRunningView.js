@@ -11,6 +11,7 @@ import rest from '../../../../network/rest';
 import actions from '../../../../actions';
 
 class factoryRunningview extends React.Component {
+    
     constructor(props) {
         super(props)
         this.state = {
@@ -19,6 +20,7 @@ class factoryRunningview extends React.Component {
         }
         this.animation = new Animated.Value(0);
     }
+
     componentDidMount() {
         Animated.loop(
             Animated.timing(this.animation, { toValue: 1, duration: 4000, easing: Easing.linear, useNativeDriver: true })

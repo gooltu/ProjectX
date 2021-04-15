@@ -26,12 +26,14 @@ import rest from '../../../network/rest';
 import { dateToYMD } from '../../../network/realtime-utils/utilities';
 import {insertIncomingMessage } from '../../../network/realtime-utils/messages'
 import messaging from '@react-native-firebase/messaging';
+import { realtimeConnect, realtimeDisconnect } from "../../../network/realtime"
 
 
 class EnterDetails extends React.Component {
 
   state = {
     networkloading: false,
+    buttonpressed: false,
     refphone: '',
     name: '',
     snackbar: {
@@ -43,7 +45,7 @@ class EnterDetails extends React.Component {
 
   componentDidMount() {   
 
-    
+    this.props.openRealtimeConnect();
     
     db.deleteAllData().then(result => {
       
@@ -64,9 +66,13 @@ class EnterDetails extends React.Component {
         console.log('Team JC inserted')
       })
 
-      setTimeout( () =>{
-        let createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
+        let currdate = new Date().getTime() + global.TimeDelta;
+        let createdDateTime = dateToYMD(currdate);
+
+        let idd = (Math.floor( Math.random() * 9999) + 1)*1000000000;
+
         let msg1 = {
+          _ID: idd,
           CHAT_ROOM_JID: '910000000000@jewelchat.net',
           IS_GROUP_MSG: 0,
           MSG_TEXT: 'Welcome to JewelChat',
@@ -83,12 +89,15 @@ class EnterDetails extends React.Component {
           IS_DELIVERED: 1,
           TIME_DELIVERED: createdDateTime.fulltime
         };
-        this.props.insertmsg(msg1);
-      }, 500)
 
-      setTimeout( () =>{
-        let createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);        
+        
+    
+
+      
+        createdDateTime = dateToYMD(currdate+500); 
+        idd++;
         let msg2 = {
+          _ID: idd,
           CHAT_ROOM_JID: '910000000000@jewelchat.net',
           IS_GROUP_MSG: 0,
           MSG_TEXT: 'Collect Jewels from received chat messages. Click on the green triangle beside this message to collect it.',
@@ -105,11 +114,12 @@ class EnterDetails extends React.Component {
           IS_DELIVERED: 1,
           TIME_DELIVERED: createdDateTime.fulltime
         };
-        this.props.insertmsg(msg2);
-      }, 1500)
+        //this.props.insertmsg(msg2);
+    
 
-      setTimeout( () =>{
-        let createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);        
+    
+        createdDateTime = dateToYMD(currdate+1000); 
+        idd++;       
         let msg3 = {
           CHAT_ROOM_JID: '910000000000@jewelchat.net',
           IS_GROUP_MSG: 0,
@@ -127,11 +137,12 @@ class EnterDetails extends React.Component {
           IS_DELIVERED: 1,
           TIME_DELIVERED: createdDateTime.fulltime
         };
-        this.props.insertmsg(msg3);
-      }, 2500)
+        //this.props.insertmsg(msg3);
+    
 
-      setTimeout( () =>{
-        let createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
+     
+        createdDateTime = dateToYMD(currdate+1500); 
+        idd++; 
         let msg4 = {
           CHAT_ROOM_JID: '910000000000@jewelchat.net',
           IS_GROUP_MSG: 0,
@@ -149,11 +160,12 @@ class EnterDetails extends React.Component {
           IS_DELIVERED: 1,
           TIME_DELIVERED: createdDateTime.fulltime
         };        
-        this.props.insertmsg(msg4);
-      }, 3500)
+        //this.props.insertmsg(msg4);
+      
 
-      setTimeout( () =>{
-        let createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
+      
+        createdDateTime = dateToYMD(currdate+2000); 
+        idd++; 
         let msg5 = {
           CHAT_ROOM_JID: '910000000000@jewelchat.net',
           IS_GROUP_MSG: 0,
@@ -171,11 +183,12 @@ class EnterDetails extends React.Component {
           IS_DELIVERED: 1,
           TIME_DELIVERED: createdDateTime.fulltime
         };        
-        this.props.insertmsg(msg5);
-      }, 4000)
+        //this.props.insertmsg(msg5);
+      
 
-      setTimeout( () =>{
-        let createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
+      
+        createdDateTime = dateToYMD(currdate+2500); 
+        idd++; 
         let msg6 = {
           CHAT_ROOM_JID: '910000000000@jewelchat.net',
           IS_GROUP_MSG: 0,
@@ -193,11 +206,12 @@ class EnterDetails extends React.Component {
           IS_DELIVERED: 1,
           TIME_DELIVERED: createdDateTime.fulltime
         };        
-        this.props.insertmsg(msg6);
-      }, 4500)
+        //this.props.insertmsg(msg6);
+      
 
-      setTimeout( () =>{
-        let createdDateTime = dateToYMD((new Date()).getTime() + global.TimeDelta);
+      
+        createdDateTime = dateToYMD(currdate+3000); 
+        idd++; 
         let msg7 = {
           CHAT_ROOM_JID: '910000000000@jewelchat.net',
           IS_GROUP_MSG: 0,
@@ -215,9 +229,38 @@ class EnterDetails extends React.Component {
           IS_DELIVERED: 1,
           TIME_DELIVERED: createdDateTime.fulltime
         };
-        this.props.insertmsg(msg7);
-      }, 5000)
+        //this.props.insertmsg(msg7);
       
+        
+        db.insertStropheChatData(msg1)
+        .then(id => {
+          console.log(id)
+          return db.insertStropheChatData(msg2)
+        })
+        .then(id => {
+          console.log(id)
+          return db.insertStropheChatData(msg3)
+        })
+        .then(id => {
+          console.log(id)
+          return db.insertStropheChatData(msg4)
+        })
+        .then(id => {
+          console.log(id)
+          return db.insertStropheChatData(msg5)
+        })
+        .then(id => {
+          console.log(id)
+          return db.insertStropheChatData(msg6)
+        })
+        .then(id => {
+          console.log(id)
+          return db.insertStropheChatData(msg7)
+        })
+        .then( id => {
+          console.log(id)
+        })
+        .catch(err =>{})
       
 
     }).catch(err => {})
@@ -427,7 +470,8 @@ class EnterDetails extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    mytoken: state.mytoken
+    mytoken: state.mytoken,
+    network: state.network    
   }
 }
 
@@ -438,7 +482,8 @@ function mapDispatchToProps(dispatch) {
     tokenLoad: (myTokens) => dispatch({ type: 'USER_TOKEN_LOADED', myTokens }),
     loadGameData: () => dispatch(actions.loadGameState()),
     setChatListData: (chatList) => dispatch(actions.setChatListData(chatList)),
-    insertmsg: (msg) => dispatch(insertIncomingMessage(msg))
+    insertmsg: (msg) => dispatch(insertIncomingMessage(msg)),
+    openRealtimeConnect: () => dispatch(realtimeConnect())
   }
 }
 

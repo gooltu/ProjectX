@@ -146,7 +146,7 @@ class MainChatBar extends React.Component {
 
 
   sendMessage(eventnative) {
-
+    console.log('Keyboard',eventnative);
     let msgtype, msgtext, media_cloud, outgoingmsg;
     if (eventnative) {
       console.log(eventnative)

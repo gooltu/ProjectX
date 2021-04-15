@@ -155,7 +155,7 @@ class TaskDetail extends React.Component {
                 
                 if( completedtask.taskusers && completedtask.taskusers.done == 1 ){
                     console.log('TASK COMPLETED')
-                    this.props.loadGameState()
+                    
                     return NetworkManager.callAPI(rest.getNewTaskOnTaskCompletion, 'GET', null)
                     
                 }else{                    
@@ -168,10 +168,11 @@ class TaskDetail extends React.Component {
                 this.setState({  isLaoding: false  });
                 AsyncStorage.removeItem('ActiveGameTask').then(()=>{}).catch(err=>{})
                 this.getTasks()
-
+                
                 let newlevel=false;
                 if(this.props.game.scores.points + this.task.points  > this.props.game.scores.max_level_points)
                     newlevel = true
+                this.props.loadGameState()    
                 this.props.navigation.navigate('SuccessFullGiftRedeem', {tasktype: 'gametask', newlevel })
             })
             .catch(err =>{

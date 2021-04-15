@@ -34,30 +34,36 @@ export const handleReadAndDeliveryMessagesViaHistoryDownload = (processedMessage
 export const sendBulkReadReceipts = (CHAT_ROOM_JID, myjid) => {
 
 	return (dispatch, getState) => {
-		console.log('SEND BULK RECEIPTS', CHAT_ROOM_JID, myjid);
-		let createdDateTime = new Date().getTime() + global.TimeDelta;
 
-		db.getHighestNotReadMsgID(CHAT_ROOM_JID, myjid).then(results => {		
-			console.log('HIGHEST MSG ID', results);
-			if(results[0].MAX_ID){		
+		if (getState().activechat.JID){
+			
+			console.log('SEND BULK RECEIPTS', CHAT_ROOM_JID, myjid);
+			let createdDateTime = new Date().getTime() + global.TimeDelta;
 
-				let read = $msg({ to: CHAT_ROOM_JID, from: myjid }).c('displayed', { xmlns: 'urn:xmpp:chat-markers:0', id: results[0].MAX_ID });
-				console.log(read);
-				try{	
-					getConnectionObj().send(read.tree(), () => {
-						console.log('Displayed Message sent');
-						db.updateBulkReadReceipt(CHAT_ROOM_JID, results[0].MAX_ID, createdDateTime).then(val=>{
-							dispatch(updateChatlistRedux());
-						}).catch(err=>{});
-					});	
-				}catch(err){
-					console.log('XMPP error')
+
+			db.getHighestNotReadMsgID(CHAT_ROOM_JID, myjid).then(results => {		
+				console.log('HIGHEST MSG ID', results);
+				if(results[0].MAX_ID){		
+
+					let read = $msg({ to: CHAT_ROOM_JID, from: myjid }).c('displayed', { xmlns: 'urn:xmpp:chat-markers:0', id: results[0].MAX_ID });
+					console.log(read);
+					try{	
+						getConnectionObj().send(read.tree(), () => {
+							console.log('Displayed Message sent');
+							db.updateBulkReadReceipt(CHAT_ROOM_JID, results[0].MAX_ID, createdDateTime).then(val=>{
+								dispatch(updateChatlistRedux());
+							}).catch(err=>{});
+						});	
+					}catch(err){
+						console.log('XMPP error')
+					}
+				
 				}
-			
-			}
-			
+				
 
-		}).catch(err => {})
+			}).catch(err => {})
+
+		}	
 
 	}		
 	
