@@ -336,10 +336,11 @@ let AppContainer = createAppContainer(
 
 
 class JewelChat extends React.Component {
-    componentDidUpdate(prevProps, prevState) {
-        console.log('CURRENT STATE');
-        console.log(this.props)
-    }
+
+    // componentDidUpdate(prevProps, prevState) {
+    //     console.log('CURRENT STATE');
+    //     console.log(this.props)
+    // }
 
 
 
@@ -475,15 +476,15 @@ function mapStateToProps(state) {
         mytoken: state.mytoken,
         appstate: state.appstate,
         network: state.network,
-        activeChat: state.activechat,
-        chatslist: state.chatslist,
-        tasks: state.tasks,
-        taskdetails: state.taskdetails,
-        gifttasks: state.gifttasks,
-        gifttaskdetails: state.gifttaskdetails,
-        usergifttasks: state.usergifttasks,
-        game: state.game,
-        presence: state.presence
+        // activeChat: state.activechat,
+        // chatslist: state.chatslist,
+        // tasks: state.tasks,
+        // taskdetails: state.taskdetails,
+        // gifttasks: state.gifttasks,
+        // gifttaskdetails: state.gifttaskdetails,
+        // usergifttasks: state.usergifttasks,
+        // game: state.game,
+        // presence: state.presence
     }
 }
 
@@ -494,7 +495,7 @@ function mapDispatchToProps(dispatch) {
         appstateChange: (appstate) => dispatch({ type: 'APP_STATE_CHANGE', payload: appstate }),
         networkstateChange: (network) => dispatch({ type: 'NETWORK_STATE_CHANGE', payload: network }),
         openRealtimeConnect: () => dispatch(realtimeConnect()),
-        closeRealtimeDisconnect: () => dispatch(realtimeDisconnect()),
+        //closeRealtimeDisconnect: () => dispatch(realtimeDisconnect()),
         setChatListData: (chatList) => dispatch(actions.setChatListData(chatList)),
         setChatData: (chatData) => dispatch(actions.setChatData(chatData)),
         setActiveChat: (activeChat) => dispatch(actions.setActiveChat(activeChat))
