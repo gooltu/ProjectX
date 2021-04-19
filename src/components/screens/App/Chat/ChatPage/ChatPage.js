@@ -117,9 +117,10 @@ class ChatPage extends React.Component {
                   .then(result => {
                     this.props.updateChatPageRedux();
                     this.setState({ collectingJewel: false, collectionId: null });
-                    this.props.navigation.setParam({ 'JEWEL_TYPE' : item.JEWEL_TYPE, 'ANIMATE': true })
+                    //this.props.navigation.setParam({ 'JEWEL_TYPE' : item.JEWEL_TYPE, 'ANIMATE': true })
                     this.props.game.jewels[item.JEWEL_TYPE].count = this.props.game.jewels[item.JEWEL_TYPE].count + 1
-                    this.props.loadGameState(this.props.game)
+                    this.props.game.jewels[item.JEWEL_TYPE].total_count = this.props.game.jewels[item.JEWEL_TYPE].total_count + 1
+                    this.props.jewelpick(this.props.game)
                   })
                   .catch(error => {
                     this.setState({ collectingJewel: false, collectionId: null })
@@ -238,6 +239,7 @@ function mapDispatchToProps(dispatch) {
     setChatListData: (chatlistData) => dispatch(actions.setChatListData(chatlistData)),
     sendSubscriptionRequest: (JID) => dispatch(sendSubscriptionRequest(JID)),
     loadGameState: (gamestate) => dispatch(actions.loadGameState(gamestate)),
+    jewelpick: (gamestate) => dispatch({ type: 'JEWEL_PICK', payload: gamestate } ),
     updateChatPageRedux: () => dispatch(updateChatPageRedux()),
     updateChatlistRedux: () => dispatch(updateChatlistRedux()),
     sendBulkReadReceipts: (CHAT_ROOM_JID, myjid) => dispatch(sendBulkReadReceipts(CHAT_ROOM_JID, myjid))

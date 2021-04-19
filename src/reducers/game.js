@@ -14,6 +14,11 @@ const game = (state = initialState, action) => {
                     scores: action.payload.scores[0],
                     jewels: action.payload.jewels
             }
+
+        case 'JEWEL_PICK': {
+            console.log('JEWEL PICK', action.payload)
+            return Object.assign({}, state, action.payload)
+        }    
         /*
                 case 'GAMEDATA_LOAD_DONE':            
                     action.payload.isDatabaseLoading = false

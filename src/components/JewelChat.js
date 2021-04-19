@@ -337,10 +337,10 @@ let AppContainer = createAppContainer(
 
 class JewelChat extends React.Component {
 
-    // componentDidUpdate(prevProps, prevState) {
-    //     console.log('CURRENT STATE');
-    //     console.log(this.props)
-    // }
+    componentDidUpdate(prevProps, prevState) {
+        console.log('CURRENT STATE', this.props);
+        //console.log(this.props)
+    }
 
 
 
@@ -483,7 +483,7 @@ function mapStateToProps(state) {
         // gifttasks: state.gifttasks,
         // gifttaskdetails: state.gifttaskdetails,
         // usergifttasks: state.usergifttasks,
-        // game: state.game,
+        game: state.game,
         // presence: state.presence
     }
 }
