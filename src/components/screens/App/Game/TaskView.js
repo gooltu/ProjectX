@@ -10,13 +10,14 @@ const TaskView = (props) => {
             <TouchableOpacity style={styles.scrollBarItem} onPress={() => {
                 props.navigation.navigate("TaskDetail", { task: props.task })
             }}>
+                
                 <View style={styles.itemOne}>
-                    <Coin height="30" width="30" />
-                    <Text style={styles.itemText}>{props.task.coins}</Text>
+                    <XP height="35" width="35" />
+                    <Text style={styles.itemText}>{props.task.points}</Text>
                 </View>
                 <View style={styles.itemOne}>
-                    <XP height="30" width="30" />
-                    <Text style={styles.itemText}>{props.task.points}</Text>
+                    <Coin height="25" width="25" />
+                    <Text style={styles.itemText}>{props.task.coins}</Text>
                 </View>
             </TouchableOpacity>
         </View>

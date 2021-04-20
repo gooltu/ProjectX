@@ -189,7 +189,7 @@ class Game extends React.Component {
         style={{height: PixelRatio.roundToNearestPixel(105 * global.scaleFactor), borderBottomWidth:1, borderBottomColor: colors.darkcolor2,}}>
           {
             this.props.tasks.map((task, key ) => (
-              <TaskView navigation={this.props.navigation} task={task} key={task.task_id}/>
+              <TaskView navigation={this.props.navigation} task={task} key={task.id}/>
             ))
           }
         </ScrollView>

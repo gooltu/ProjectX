@@ -61,7 +61,7 @@ class TaskDetail extends React.Component {
 
         console.log('GET TASKS')
         NetworkManager.callAPI(rest.getTasks, 'POST', null).then(result => {
-            console.log('Tasks')
+            console.log('Tasks downloaded after completion')
             console.log(result.tasks)            
             this.props.setTaskData(result.tasks)
         }).catch(error => {})  
@@ -219,13 +219,14 @@ class TaskDetail extends React.Component {
                         <View style={{ alignItems: 'center', justifyContent: 'center', padding: 50 }}>
                             <View style={styles.scrollBarItem}>
                                 <View style={styles.itemOne}>
-                                    <Coin height="30" width="30" />
-                                    <Text style={styles.itemText}>{this.task.coins}</Text>
-                                </View>
-                                <View style={styles.itemOne}>
-                                    <XP height="30" width="30" />
+                                    <XP height="35" width="35" />
                                     <Text style={styles.itemText}>{this.task.points}</Text>
                                 </View>
+                                <View style={styles.itemOne}>
+                                    <Coin height="25" width="25" />
+                                    <Text style={styles.itemText}>{this.task.coins}</Text>
+                                </View>
+                                
                             </View>
                         </View>
                         <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>

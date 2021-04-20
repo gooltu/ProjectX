@@ -208,7 +208,7 @@ class Profile extends React.Component {
   redeemAchievements = (item) => {
     
       this.setState({
-        networkloading: true
+        isLoading: true
       })
 
       let data = {
@@ -219,7 +219,7 @@ class Profile extends React.Component {
         this.getAchievements()
         this.props.loadGameState()
         this.setState({
-          networkloading: false
+          isLoading: false
         })
         //this.props.navigation.navigate('SuccessFullGiftRedeem', {tasktype: 'gifttask', cash })
       }).catch(error => {})
