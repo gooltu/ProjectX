@@ -22,7 +22,7 @@ class LevelPointsBar extends React.PureComponent {
                 <View style={styles.levelProgressContainer}>
                     <View style={styles.levelCount}>
                         <ImageBackground source={require('../../../assets/ColorGrad.jpg')} style={styles.imageBackground}>
-                            <Text style={styles.count}>{this.props.scores.level < 9 ? '00' + this.props.scores.level : this.props.scores.level}</Text>
+                            <Text style={styles.count}>{this.props.scores.level < 9 ? 'Level ' + this.props.scores.level : this.props.scores.level}</Text>
                         </ImageBackground>
                     </View>
                     <View style={styles.barContainer}>

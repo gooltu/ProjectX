@@ -3,7 +3,8 @@ import {
   View,  
   TextInput,  
   Platform,  
-  TouchableOpacity
+  TouchableOpacity,
+  Text
 } from 'react-native';
 
 import styles from './ChatPage.styles'
@@ -26,6 +27,12 @@ class MainChatBar extends React.Component {
 
   componentDidMount() {    
     console.log('MAINBAR', this.props);
+
+    setTimeout(() =>{
+      this.setState({
+        keyboardmsg:false
+      })
+    }, 2000)
 
     if(this.props.activeChat.IS_GROUP_MSG == 0){
           this.lastTick_textlength = 0;
@@ -97,6 +104,7 @@ class MainChatBar extends React.Component {
   }
 
   state = {
+    keyboardmsg: true,
     chatboxtext: '',
     chatboxempty: true,
     chatbarstyle: { width: '100%', height: 36, backgroundColor: colors.darkcolor3 },
@@ -223,6 +231,9 @@ class MainChatBar extends React.Component {
 
     return (
       <View style={this.state.chatbarstyle}>
+        { this.props.game.scores.level == 1 && this.state.keyboardmsg && <View style={{width:'100%', height:16, marginBottom:2,backgroundColor:colors.jcgray}}>
+          <Text style={{fontSize:12, paddingLeft:8 }}>Use Google Keyboard to send Gifs and Stickers</Text>
+        </View>}
         <View style={styles.mainBarConatiner}>          
           {Platform.OS === 'ios' && <TextInput
             placeholder="Type here"

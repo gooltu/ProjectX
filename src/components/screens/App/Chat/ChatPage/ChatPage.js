@@ -92,6 +92,7 @@ class ChatPage extends React.Component {
 
 
   onJewelPress(item) {
+    console.log('JSTATE', this.state)
     if (!this.state.collectingJewel) {
       if (this.jewelCount() >= 25) {
         this.setState({

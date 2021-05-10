@@ -1,5 +1,6 @@
 import { StyleSheet, PixelRatio } from 'react-native'
 
+
 import colors from '../../../shared_styles/colors'
 
 export default styles = StyleSheet.create({
@@ -39,11 +40,11 @@ export default styles = StyleSheet.create({
         width: 48,
         alignItems: 'center',
         justifyContent: 'center',
-        borderColor: 'white',
+        borderColor: colors.jcgray,
         borderRadius: 24,
         marginTop: 8,
         marginRight: 8,
-        borderWidth: StyleSheet.hairlineWidth,
+        borderWidth: 1,
         overflow: 'hidden'
     },
     jewelStyle: {

@@ -38,7 +38,8 @@ class ProfilePhotoSection extends React.Component {
             diamondLoading: false,
             coinLoading: false,            
             name: 'defaultJCUname',            
-            profileimageerror: false
+            profileimageerror: false,
+            picreload: false
         }
     }
     componentDidMount() {
@@ -73,9 +74,12 @@ class ProfilePhotoSection extends React.Component {
             this.setState({'name': val})
         })
 
-        // this.focusListener = this.props.navigation.addListener('didFocus', () => {
-        //     this.loadProfilePicture()
-        // })
+        this.focusListener = this.props.navigation.addListener('didFocus', () => {
+            
+            if(this.state.picreload)
+                this.setState({ picreload : true })
+            setTimeout(() => {this.state.picreload = false}, 300)
+        })
     }
 
     // loadProfile = () => {
@@ -108,7 +112,7 @@ class ProfilePhotoSection extends React.Component {
 
 
     componentWillUnmount() {
-        //this.focusListener.remove()
+        this.focusListener.remove()
     }
 
 
@@ -128,6 +132,7 @@ class ProfilePhotoSection extends React.Component {
     }
 
     render() {
+        console.log('Profile section reload', this.state.picreload )
         return (
             <SafeAreaView style={styles.mainContainer}>
                 <View style={{ paddingTop: 40 }}>
@@ -145,10 +150,10 @@ class ProfilePhotoSection extends React.Component {
                                 <Text style={{ color: 'white' }}>{this.props.game.jewels[0].count}</Text>
                             </View>
                         </View>
-                        <TouchableOpacity style={styles.profilePictureBorder} onPress={() => this.props.navigation.navigate('UserProfile')}>
+                        <TouchableOpacity style={styles.profilePictureBorder} onPress={() => { this.state.picreload = true; this.props.navigation.navigate('UserProfile')} }>
                             { !this.state.profileimageerror &&
                                 <Image
-                                    source={{ headers: { Pragma: 'no-cache' }, uri: rest.imageBaseURL + this.props.mytoken.myphone + '?' + global.randstr }}
+                                    source={{ headers: { Pragma: 'no-cache' }, uri: rest.imageBaseURL + this.props.mytoken.myphone + '?' + ( this.state.picreload ? (Math.floor(Math.random()*10000)) : global.randstr ) }}
                                     style={{ position:'absolute', top:0, left:0, width: '100%',height: '100%', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}
                                     onLoad={()=>{
                                         //this.setState( { profileimageerror: false } ) 

@@ -8,6 +8,7 @@ import {
   View,
   Text,
   ImageBackground,
+  Image,
   SafeAreaView
 } from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -22,6 +23,58 @@ import db from "../../../../db/localdatabase";
 import actions from '../../../../actions/index'
 import { getContacts } from '../../../JCUtils/CommonUtils'
 import CustomLoader from '../../../shared_components/CustomLoader'
+
+
+class Item extends React.Component{
+
+  constructor(props) {
+    super(props);        
+  }
+
+  state = {
+    profileimageerror: false
+  }
+  
+  render(){
+    //console.log('ITEM:', this.props)
+    return ( <TouchableOpacity onPress={() => this.props.onpressitem(this.props.item)}  style={styles.mainConatiner} >
+      <View style={styles.subContainer}>
+        <View style={styles.marginstyle} />
+        <View style={styles.chatBox}>
+          { this.props.item.IS_REGIS == 1 && !this.state.profileimageerror &&
+                <Image
+                  source={{ headers: { Pragma: 'no-cache' }, uri:rest.imageBaseURL + this.props.item.CONTACT_NUMBER + '?' + global.randstr }}
+                  style={[{ position:'absolute', top:0, left:0 },styles.imgBackground]}                  
+                  onError={(error) => { 
+                    this.setState( { profileimageerror: true } )                     
+                    } 
+                  }
+                  ></Image>
+          } 
+          {
+            this.props.item.IS_REGIS == 1 && this.state.profileimageerror && <Icon  name='user' color={colors.jcgray} size={24} solid />
+          }                           
+          {
+            this.props.item.IS_REGIS == 0 && <Icon  name='user' color={colors.jcgray} size={24} solid />
+          }
+        </View>      
+        <View style={styles.chatboxLeftContainer} >
+          <Text style={styles.name}>{this.props.item.PHONEBOOK_CONTACT_NAME ? this.props.item.PHONEBOOK_CONTACT_NAME : 'NA'}</Text>
+          <Text style={styles.msgText}>{this.props.item.CONTACT_NUMBER}</Text>          
+        </View>
+      </View>
+      <View style={styles.itemLeftConatiner} >
+        <View style={styles.itemLeftSubContainer}>
+          {this.props.item.IS_REGIS == 0 && this.props.item.IS_INVITED == 0 && <Text style={styles.inviteText}>INVITE</Text>}
+          {this.props.item.IS_REGIS == 0 && this.props.item.IS_INVITED == 1 && <Text style={styles.invitedText}>INVITED</Text>}
+        </View>
+        <View style={styles.marginStyleLeft} />
+      </View>
+    </TouchableOpacity> ) 
+
+  }
+
+}
 
 class Contacts extends React.Component {
   /*static navigationOptions = ({ navigation }) => {
@@ -88,7 +141,7 @@ class Contacts extends React.Component {
 
 
   inviteUser(item) {
-    console.log('INVITE USER',item)
+    console.log('INVITE USER',this.state)
     if( item.IS_REGIS == 0 ){
   
         let data = {
@@ -144,36 +197,7 @@ class Contacts extends React.Component {
   }
 
 
-  Item = ({item}) =>  (
-
-    <TouchableOpacity onPress={() => this.inviteUser(item)}  style={styles.mainConatiner} >
-      <View style={styles.subContainer}>
-        <View style={styles.marginstyle} />
-        <View style={styles.chatBox}>
-          {/* {item.IS_REGIS == 1 &&
-            <ImageBackground
-              source={{ uri: item.SMALL_IMAGE }}
-              style={styles.imgBackground}></ImageBackground> */
-          }                  
-          {
-            item.IS_REGIS == 0 && <Icon  name='user' color={colors.jcgray} size={24} solid />
-          }
-        </View>      
-        <View style={styles.chatboxLeftContainer} >
-          <Text style={styles.name}>{item.PHONEBOOK_CONTACT_NAME ? item.PHONEBOOK_CONTACT_NAME : 'NA'}</Text>
-          <Text style={styles.msgText}>{item.CONTACT_NUMBER}</Text>
-          <Text style={styles.msgText}>{item.STATUS_MSG != null ? item.STATUS_MSG.substring(0, 25) + (item.STATUS_MSG.length > 25 ? '...' : '') : ''}</Text>
-        </View>
-      </View>
-      <View style={styles.itemLeftConatiner} >
-        <View style={styles.itemLeftSubContainer}>
-          {item.IS_REGIS == 0 && item.IS_INVITED == 0 && <Text style={styles.inviteText}>INVITE</Text>}
-          {item.IS_REGIS == 0 && item.IS_INVITED == 1 && <Text style={styles.invitedText}>INVITED</Text>}
-        </View>
-        <View style={styles.marginStyleLeft} />
-      </View>
-    </TouchableOpacity>
-  );
+  
   
 
   render() {
@@ -192,14 +216,19 @@ class Contacts extends React.Component {
           theme='dark'
         />
         <FlatList
-          data={this.state.contactData}
-          renderItem={(item) => this.Item(item)}           
-          keyExtractor={item => item._ID + ''}
+          data={this.state.contactData}              
+          renderItem={ ( { item, index } ) => (
+            <Item  index={index} item={item} 
+              onpressitem={(item) => {
+                this.inviteUser(item)
+              }}  />) }   
+          keyExtractor={ item => item._ID + '' }
         />
         <StatusBar barStyle="light-content" hidden={false} translucent={true} />
       </SafeAreaView>
     );
   }
+
 }
 
 
