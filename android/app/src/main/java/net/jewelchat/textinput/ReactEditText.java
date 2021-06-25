@@ -20,6 +20,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.KeyListener;
 import android.text.method.QwertyKeyListener;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -222,12 +223,13 @@ public class ReactEditText extends EditText {
               public boolean onCommitContent(InputContentInfoCompat inputContentInfo,
                                              int flags, Bundle opts) {
                 // read and display inputContentInfo asynchronously
-
+                Log.d("INPUTCONTENTINFO", inputContentInfo.toString());
                 if ((flags &  InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION) != 0) {
                   try {
                     inputContentInfo.requestPermission();
                   }
                   catch (Exception e) {
+                    Log.d("ERROR", "Catch");
                     return false; // return false if failed
                   }
                 }

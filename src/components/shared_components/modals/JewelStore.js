@@ -148,7 +148,7 @@ class JewelStore extends React.Component {
                     <View style={{ flex: 1, justifyContent: 'flex-end' }}>
                         <View >
                             <BannerAd
-                                unitId={TestIds.BANNER}
+                                unitId="ca-app-pub-9160946093285023/6427793859"
                                 size={BannerAdSize.SMART_BANNER}
                                 requestOptions={{
                                     requestNonPersonalizedAdsOnly: true,

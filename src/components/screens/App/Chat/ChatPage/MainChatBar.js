@@ -32,7 +32,7 @@ class MainChatBar extends React.Component {
       this.setState({
         keyboardmsg:false
       })
-    }, 2000)
+    }, 5000)
 
     if(this.props.activeChat.IS_GROUP_MSG == 0){
           this.lastTick_textlength = 0;
@@ -189,7 +189,7 @@ class MainChatBar extends React.Component {
       MEDIA_CLOUD: media_cloud
     }
 
-    console.log('NEW MESSAGE', outgoingMessage.SENDER_MSG_ID);
+    //console.log('NEW MESSAGE', outgoingMessage);
 
     db.insertStropheChatData(outgoingMessage).then((_id) => {
       this.props.updateChatPageRedux();

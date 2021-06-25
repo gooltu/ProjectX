@@ -29,17 +29,77 @@ class TaskDetail extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            isLaoding: false
+            isLaoding: false,
+            locktimer: 1,
+            locktimertext: '0h 0m 0s'
         }
-        this.task = this.props.navigation.state.params.task
+        this.task = this.props.navigation.state.params.task;
+        this.locktimerid = null;
+        this.taskcreated_at = new Date(this.task.created_at+' UTC')
+        console.log('>>>>',this.taskcreated_at);
+        //this.taskcreated_at = new Date(t.getFullYear(), t.getMonth()+1, t.getDate(), t.getHours(), t.getMinutes(), t.getSeconds()).getTime();        
     }
 
     componentDidMount() {
-        console.log('TASK DETAILS', this.props);
-        console.log('TASK', this.task.task_id);
+        //console.log('TASK DETAILS', this.props);
+        //console.log('TASK', this.task);
+        //console.log( (now + global.TimeDelta) , taskcreated_at )
+
+        let now = new Date().getTime();
+
+        let distance = this.taskcreated_at.getTime() - now - global.TimeDelta; 
+
+        let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        this.setState({
+            locktimer: distance,
+            locktimertext: hours + "h " + minutes + "m " + seconds + "s "
+        })
+
+        this.locktimerid = setInterval( () => {
+
+            // Get todays date and time            
+            now = new Date().getTime();
+    
+            console.log( (now + global.TimeDelta) , this.taskcreated_at )
+            
+            // Find the distance between now an the count down date
+            distance = this.taskcreated_at - now - global.TimeDelta;       
+    
+            // If the count down is over, write some text 
+            if (distance < 0) {
+                clearInterval(this.locktimerid);  
+                console.log('Timer stopped')   
+                this.setState({
+                    locktimer: distance                    
+                })           
+            }else{
+                
+                // Time calculations for days, hours, minutes and seconds
+                hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    
+                console.log(hours + "h " + minutes + "m " + seconds + "s ")
+                this.setState({
+                    locktimer: distance,
+                    locktimertext: hours + "h " + minutes + "m " + seconds + "s "
+                })
+            }
+    
+        }, 1000);       
+
         console.log('TASK', this.props.taskdetails.hasOwnProperty(this.task.task_id));
         if (!this.props.taskdetails.hasOwnProperty(this.task.task_id))
             this.getTaskDetails()
+
+
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.locktimerid); 
     }
 
     getTaskDetails() {
@@ -52,9 +112,7 @@ class TaskDetail extends React.Component {
             data[this.task.task_id] = result.taskdetails
             this.props.setTaskDetails(data)
             console.log('TASK DETAILS', this.props);
-        }).catch(error => {
-
-        })
+        }).catch(error => {})
     }
 
     getTasks() {
@@ -67,6 +125,9 @@ class TaskDetail extends React.Component {
         }).catch(error => {})  
         
     }
+
+
+    
 
     
 
@@ -210,7 +271,7 @@ class TaskDetail extends React.Component {
                 <View style={{flex:1, flexDirection: 'column-reverse', justifyContent: 'flex-end',}}>
                         
                         <BannerAd
-                            unitId={TestIds.BANNER}
+                            unitId="ca-app-pub-9160946093285023/4986897283"
                             size={BannerAdSize.SMART_BANNER}
                             requestOptions={{
                                 requestNonPersonalizedAdsOnly: true,
@@ -256,7 +317,8 @@ class TaskDetail extends React.Component {
 
                     
                         <View style={{ backgroundColor: color.darkcolor3, height: 0.5, width: '100%' }}></View>
-                        {this.props.taskdetails.hasOwnProperty(this.task.task_id) ?
+                        {this.state.locktimer<= 0 ? 
+                        this.props.taskdetails.hasOwnProperty(this.task.task_id) ?
                         this.CheckAvailablityForAllJewels()?
                         <TouchableOpacity disabled={!this.CheckAvailablityForAllJewels()} style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30, marginBottom:30 }} onPress = { ()=> this.handleTaskCompletion()}>
 
@@ -274,11 +336,19 @@ class TaskDetail extends React.Component {
                         </TouchableOpacity>
                         :
                         <View style={{ alignItems: 'center', paddingTop: 10, marginBottom:30 }}>
-                        <View style={{ justifyContent: 'center', width: 220, alignItems: 'center', backgroundColor: color.darkcolor2, borderRadius: 5, borderWidth: 1, borderColor: color.lightcolor1, paddingHorizontal: 25, paddingVertical: 10 }}>
-                        <Text style={{ color: color.jcgray }}>COLLECT ALL JEWELS</Text>
+                            <View style={{ justifyContent: 'center', width: 220, alignItems: 'center', backgroundColor: color.darkcolor2, borderRadius: 5, borderWidth: 1, borderColor: color.lightcolor1, paddingHorizontal: 25, paddingVertical: 10 }}>
+                            <Text style={{ color: color.jcgray }}>COLLECT ALL JEWELS</Text>
+                            </View>
                         </View>
-                    </View>
-                        :null}
+                        :null
+                        :
+                        <View style={{ alignItems: 'center', paddingTop: 10, marginBottom:30 }}>
+                            <View style={{ flexDirection:'row', justifyContent: 'space-evenly', width: 220,  backgroundColor: color.darkcolor2, borderRadius: 5, borderWidth: 1, borderColor: color.lightcolor1, paddingHorizontal: 25, paddingVertical: 10 }}>
+                            <Icon name='clock-o' size={20} color={color.jcgray}  />
+                            <Text style={{ color: color.jcgray, fontSize:16 }}>{this.state.locktimertext}</Text>
+                            </View>
+                        </View>
+                        }
 
                     </ScrollView> 
                 </View>

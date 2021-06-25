@@ -208,7 +208,7 @@ export const sendOutgoingMessage = (outgoingMessage) => {
 
 
         try{
-
+            //console.log('SendMessage', reply.tree())    
             getConnectionObj().send(reply.tree(), () => {
                 resolve('Success')
             })

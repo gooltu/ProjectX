@@ -200,7 +200,7 @@ function getFromattedReceipt(msg, type, time = (new Date()).getTime() + global.T
 }
 
 function getFormattedMessages(msg, createdDateTime, IS_GROUP_MSG ) {
-	//console.log(msg.toString())
+	//console.log('ReceivedMsg',msg.toString())
 	var jewel = msg.getElementsByTagName('jewel');
 	var jewelType = (jewel[0] ? jewel[0].getAttribute('number') : null);
 	var subtype = msg.getAttribute('subtype');
@@ -209,7 +209,9 @@ function getFormattedMessages(msg, createdDateTime, IS_GROUP_MSG ) {
 	var forward = ( subtype === 'forward' ) ? 1 : 0;
 	var parent = msg.getAttribute('parent');
 	var body = msg.getElementsByTagName('body');
-	var message = (body[0] ? Strophe.getText(body[0]): null);
+	var message = (body[0] ? Strophe.xmlunescape( Strophe.getText(body[0]) ) : null);
+	//console.log('ReceivedMsg',body.toString())
+	//console.log('ReceivedMsg',message.toString())
 	var media = msg.getElementsByTagName('media');
 	var msgtype = ( media[0] ? ( parseInt(media[0].getAttribute('number')) ) : 0 );
 	var media_cloud = ( media[0] ? ( media[0].getAttribute('link') ) : null );
