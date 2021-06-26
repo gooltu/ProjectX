@@ -142,7 +142,7 @@ export const realtimeConnect = () => {
 						if( lastlogouttime ){		
 								
 							let current_servertime = new Date().getTime() + global.TimeDelta
-							lastlogouttime = current_servertime - parseInt(lastlogouttime) > 604800000 ? (current_servertime - 604800000) : parseInt(lastlogouttime);
+							lastlogouttime = current_servertime - parseInt(lastlogouttime) > 604800000 ? (current_servertime - 604800000) : (parseInt(lastlogouttime) - 1200000);
 							dispatch(downloadMessages(lastlogouttime));
 						}
 					});
