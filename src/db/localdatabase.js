@@ -541,7 +541,7 @@ function getHighestNotReadMsgID(CHAT_ROOM_JID, myjid) {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
 					let sql;		
-					sql = "select max(_ID) AS MAX_ID from ChatMessage WHERE CHAT_ROOM_JID LIKE ? AND CREATOR_JID NOT LIKE ? AND IS_READ=0 AND SENDER_MSG_ID IS NOT NULL"
+					sql = "select _ID AS MAX_ID, SENDER_MSG_ID from ChatMessage WHERE CHAT_ROOM_JID LIKE ? AND CREATOR_JID NOT LIKE ? AND IS_READ=0 AND SENDER_MSG_ID IS NOT NULL ORDER BY _ID DESC"
 					txn.executeSql(sql, [ CHAT_ROOM_JID, myjid ]).then((results) => {
 						console.log('getHighestNotReadMsgID....', results[1].rows.raw())
 						resolve(results[1].rows.raw())

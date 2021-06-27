@@ -45,7 +45,7 @@ export const sendBulkReadReceipts = (CHAT_ROOM_JID, myjid) => {
 				console.log('HIGHEST MSG ID', results);
 				if(results[0].MAX_ID){		
 
-					let read = $msg({ to: CHAT_ROOM_JID, from: myjid }).c('displayed', { xmlns: 'urn:xmpp:chat-markers:0', id: results[0].MAX_ID });
+					let read = $msg({ to: CHAT_ROOM_JID, from: myjid }).c('displayed', { xmlns: 'urn:xmpp:chat-markers:0', id: results[0].SENDER_MSG_ID });
 					console.log(read);
 					try{	
 						getConnectionObj().send(read.tree(), () => {
