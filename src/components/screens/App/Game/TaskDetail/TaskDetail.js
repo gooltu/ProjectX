@@ -35,8 +35,11 @@ class TaskDetail extends React.Component {
         }
         this.task = this.props.navigation.state.params.task;
         this.locktimerid = null;
-        this.taskcreated_at = new Date(this.task.created_at+' UTC')
-        console.log('>>>>',this.taskcreated_at);
+
+        let dateParams = this.task.created_at.split(/[\s-:]/);
+        dateParams[1] = (parseInt(dateParams[1], 10) - 1).toString();
+        this.taskcreated_at = new Date(Date.UTC(...dateParams))
+        console.log('>>>>',this.taskcreated_at);        
         //this.taskcreated_at = new Date(t.getFullYear(), t.getMonth()+1, t.getDate(), t.getHours(), t.getMinutes(), t.getSeconds()).getTime();        
     }
 
@@ -56,6 +59,7 @@ class TaskDetail extends React.Component {
         this.setState({
             locktimer: distance,
             locktimertext: hours + "h " + minutes + "m " + seconds + "s "
+            //locktimertext:this.task.created_at  //this.taskcreated_at.toString()
         })
 
         this.locktimerid = setInterval( () => {
@@ -86,6 +90,7 @@ class TaskDetail extends React.Component {
                 this.setState({
                     locktimer: distance,
                     locktimertext: hours + "h " + minutes + "m " + seconds + "s "
+                    //locktimertext: distance
                 })
             }
     
@@ -273,9 +278,8 @@ class TaskDetail extends React.Component {
                         <BannerAd
                             unitId="ca-app-pub-9160946093285023/4986897283"
                             size={BannerAdSize.SMART_BANNER}
-                            requestOptions={{
-                                requestNonPersonalizedAdsOnly: true,
-                        }} />
+                            onAdFailedToLoad={error =>console.log('Ad error',error)}                            
+                        />
                     <ScrollView style={{width: '100%', flexGrow: 1}}>        
                         <View style={{ alignItems: 'center', justifyContent: 'center', padding: 50 }}>
                             <View style={styles.scrollBarItem}>

@@ -150,9 +150,11 @@ class JewelStore extends React.Component {
                             <BannerAd
                                 unitId="ca-app-pub-9160946093285023/6427793859"
                                 size={BannerAdSize.SMART_BANNER}
-                                requestOptions={{
-                                    requestNonPersonalizedAdsOnly: true,
-                                }} />
+                                onAdFailedToLoad={error =>console.log('Ad error',error)}
+                                // requestOptions={{
+                                //     requestNonPersonalizedAdsOnly: true,
+                                // }} 
+                                />
                         </View>
                     </View>
                     {/* <Button
