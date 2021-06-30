@@ -22,18 +22,50 @@ class factoryRunningview extends React.Component {
     }
 
     componentDidMount() {
+
+        let dateParams = this.props.userFactory[this.props.index].start_time.split(/[\s-:]/);
+        dateParams[1] = (parseInt(dateParams[1], 10) - 1).toString();
+        let startTime = new Date(Date.UTC(...dateParams)).getTime();
+        let now = new Date().getTime();
+        let secondsLeft = this.props.factory[this.props.index].duration - ((now - startTime + global.TimeDelta)/1000);
+
+        this.setState({
+            curTime: secondsLeft
+        }, () => {
+            if (this.state.curTime < 0) {
+                this.props.makeJewelReady()
+            }
+        })
+
         Animated.loop(
             Animated.timing(this.animation, { toValue: 1, duration: 4000, easing: Easing.linear, useNativeDriver: true })
         ).start();
-        setInterval(() => {
+
+        this.timer = setInterval(() => {      
+            
+            
+            now = new Date().getTime();
+            secondsLeft = this.props.factory[this.props.index].duration - ((now - startTime + global.TimeDelta)/1000);
+
+            console.log(secondsLeft)
+
             this.setState({
-                curTime: this.props.factory[this.props.index].duration - (parseInt(new Date().getTime() - new Date(this.props.userFactory[this.props.index].start_time).getTime()) / 1000)
+                curTime: secondsLeft
             }, () => {
                 if (this.state.curTime < 0) {
+                    clearInterval(this.timer);  
                     this.props.makeJewelReady()
                 }
             })
+
+
+
         }, 1000)
+
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.timer); 
     }
 
     msToTime = (secs) => {
@@ -47,6 +79,7 @@ class factoryRunningview extends React.Component {
             .filter((v, i) => v !== "00" || i > 0)
             .join(":")
     }
+
     stopFactory = (factory) => {
         if (this.props.game.jewels[0].count >= this.props.factory[this.props.index].diamond) {
             this.setState({

@@ -33,13 +33,27 @@ class JewelFactory extends React.Component {
   }
   componentDidMount() {
     this.props.getFactory()
-    this.props.getUserFactory()
+    this.props.getUserFactory()    
   }
 
   makeJewelReady = () =>{
     this.setState({
-      jewelReady: true
+      jewelReady: !this.state.jewelReady
     })
+  }
+
+
+  isFactoryRunning(index){
+
+    
+    let dateParams = this.props.userFactory[index].start_time.split(/[\s-:]/);
+    dateParams[1] = (parseInt(dateParams[1], 10) - 1).toString();
+    let startTime = new Date(Date.UTC(...dateParams)).getTime();
+
+    let now = new Date().getTime();
+    let durationPassed = (now - startTime - global.TimeDelta)/1000
+
+    return durationPassed
   }
 
 
@@ -51,10 +65,10 @@ class JewelFactory extends React.Component {
           {this.props.userFactory.length > 0 ?
             this.props.factory.map((item, index) =>
               this.props.userFactory[index].is_on == 1 ?
-                (new Date() - new Date(this.props.userFactory[index].start_time)) / 1000 > item.duration ?
-                  <FactoryFinalView factory={item} index={index} />
-                  :
+                this.isFactoryRunning(index) <= item.duration ?                  
                   <FactoryRunningView factory={item} userfactory={this.state.userFactory[index]} index={index} makeJewelReady={this.makeJewelReady} />
+                  :
+                  <FactoryFinalView factory={item} index={index} />                  
                 :
                 <FactoryOutputView factory={item} index={index} />
             )
