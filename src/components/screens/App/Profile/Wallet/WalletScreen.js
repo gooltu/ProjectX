@@ -4,10 +4,14 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  Alert
+  Alert,
+  StyleSheet,
+  ImageBackground,
+  Image
 } from "react-native";
 
-import styles from './Wallet.styles'
+import styles from './Wallet.styles';
+import JCImages from '../../../../../assets/JCImages'
 import NetworkManager from "../../../../../network/NetworkManager";
 import rest from "../../../../../network/rest";
 import { connect } from "react-redux";
@@ -16,7 +20,8 @@ import { renderJewel } from "../../../../JCUtils/CommonUtils";
 import CustomLoader from "../../../../shared_components/CustomLoader";
 import { Snackbar } from 'react-native-paper';
 import colors from "../../../../shared_styles/colors";
-import { SafeAreaView } from 'react-navigation'
+import { SafeAreaView } from 'react-navigation';
+import AsyncStorage from '@react-native-community/async-storage';
 
 class WalletScreen extends React.Component {
 
@@ -25,20 +30,48 @@ class WalletScreen extends React.Component {
     this.state = {
       money: 0,
       isLoading: false,
-      visible: false
+      visible: false,
+      redeemOnceDaily: true
     }
   }
 
   componentDidMount() {
     //this.props.getWalletJewels()
     this.loadWallet()
+
+    AsyncStorage.getItem('lastmoneyredeemtime')
+    .then( (lastmoneyredeemtime) => {
+
+      if(lastmoneyredeemtime){
+        let now = (new Date().getTime()) + global.TimeDelta
+
+        if(now - lastmoneyredeemtime > (24 * 60 * 60 * 1000))
+          this.setState({ redeemOnceDaily : false })
+        else
+          this.setState({ redeemOnceDaily : true })  
+
+      }else{
+        this.setState({ redeemOnceDaily : false })
+      }    
+      
+    });
+
   }
+
   loadWallet = () => {
+    this.setState({
+      isLoading: true
+    })
     NetworkManager.callAPI(rest.getWallet, 'GET', null).then(result => {
       this.setState({
-        money: result.money
+        money: result.money,
+        isLoading: false
       })
-    }).catch(error => {    })
+    }).catch(error => {
+      this.setState({        
+        isLoading: false
+      })
+    })
   }
 
 
@@ -73,25 +106,32 @@ class WalletScreen extends React.Component {
 
   redeemWalletMoney = (channel) => {
     if (this.state.money > 0) {
-      this.setState({
-        isLoading: true
-      })
 
-      NetworkManager.callAPI(rest.redeemMoney, 'POST', { 'channel': channel }).then(result => {
-        console.log(result)
         this.setState({
-          money: 0,
-          isLoading: false
+          isLoading: true
         })
-        console.log(this.props)
-        this.props.navigation.navigate("GiftsWon")
-        
-      }).catch(error => {
-        console.log(error);
-        this.setState({        
-          isLoading: false
+
+        NetworkManager.callAPI(rest.redeemMoney, 'POST', { 'channel': channel }).then(result => {
+          console.log(result)
+          return AsyncStorage.setItem('lastmoneyredeemtime', 
+                              (new Date().getTime() + global.TimeDelta).toString()  //'1609707334068'
+                );        
+          
+        }).then(val => {
+            console.log('lastmoneyredeemtime');	
+            this.setState({
+              money: 0,
+              isLoading: false,
+              redeemOnceDaily: true
+            })
+            console.log(this.props)
+            this.props.navigation.navigate("GiftsWon")
+        }).catch(error => {
+          console.log(error);
+          this.setState({        
+            isLoading: false
+          })
         })
-      })
 
 
     }
@@ -101,6 +141,51 @@ class WalletScreen extends React.Component {
       })
     }
   }
+
+
+  emptyJewelStore(){
+
+    if (this.state.money > -10.00 ) {
+
+      Alert.alert(
+        "Empty Jewel Store",
+        "Are you sure you want to empty Jewel Store. One rupee will be deducted from your wallet.",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel")
+          },
+          { text: "OK", onPress: () => this.emptyJS() }
+        ],
+        {
+          cancelable: true          
+        }
+
+      );
+
+    }    
+
+  }
+
+
+  emptyJS(){
+
+      this.setState({
+        isLoading: true
+      })
+
+      NetworkManager.callAPI(rest.emptyJewelStore, 'GET').then(result => {
+        
+        this.loadWallet()
+        
+      }).catch(error => {        
+        this.setState({        
+          isLoading: false
+        })
+      })
+
+  }
+
 
   _onDismissSnackBar = () => this.setState({ visible: false });
 
@@ -162,20 +247,45 @@ class WalletScreen extends React.Component {
             <Text style={styles.transferText}>Transfer{"\n"} Money via</Text>
           </View>
 
-          <View style={styles.paymentOptionConatiner}>
-            <TouchableOpacity style={styles.transferOptionContainer} onPress={() => this.redeemWalletMoneyAlertbox('PAYTM')}>
-              <Text style={styles.optionText}>PAYTM</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.transferOptionContainer} onPress={() => this.redeemWalletMoneyAlertbox('PHONEPE')}>
-              <Text style={styles.optionText}>PHONEPE</Text>
-            </TouchableOpacity>
-            {/* <TouchableOpacity style={styles.transferOptionContainer} onPress={() => this.redeemWalletMoney('UPI')}>
-              <Text style={styles.optionText}>UPI</Text>
-            </TouchableOpacity> */}
-            <TouchableOpacity style={styles.transferOptionContainer} onPress={() => this.redeemWalletMoneyAlertbox('GPAY')}>
-              <Text style={styles.optionText}>GPAY</Text>
-            </TouchableOpacity>
-          </View>
+
+          {this.state.redeemOnceDaily ?
+              <View style={styles.paymentOptionConatiner}>
+                <TouchableOpacity disabled={this.state.redeemOnceDaily} style={styles.transferOptionContainerDisabled} onPress={() => this.redeemWalletMoneyAlertbox('PAYTM')}>
+                  <Text style={styles.optionText}>PAYTM</Text>
+                </TouchableOpacity>
+                <TouchableOpacity disabled={this.state.redeemOnceDaily} style={styles.transferOptionContainerDisabled} onPress={() => this.redeemWalletMoneyAlertbox('PHONEPE')}>
+                  <Text style={styles.optionText}>PHONEPE</Text>
+                </TouchableOpacity>
+                {/* <TouchableOpacity style={styles.transferOptionContainer} onPress={() => this.redeemWalletMoney('UPI')}>
+                  <Text style={styles.optionText}>UPI</Text>
+                </TouchableOpacity> */}
+                <TouchableOpacity disabled={this.state.redeemOnceDaily} style={styles.transferOptionContainerDisabled} onPress={() => this.redeemWalletMoneyAlertbox('GPAY')}>
+                  <Text style={styles.optionText}>GPAY</Text>
+                </TouchableOpacity>
+              </View>
+          :
+              <View style={styles.paymentOptionConatiner}>
+                <TouchableOpacity disabled={this.state.redeemOnceDaily} style={styles.transferOptionContainer} onPress={() => this.redeemWalletMoneyAlertbox('PAYTM')}>
+                  <Text style={styles.optionText}>PAYTM</Text>
+                </TouchableOpacity>
+                <TouchableOpacity disabled={this.state.redeemOnceDaily} style={styles.transferOptionContainer} onPress={() => this.redeemWalletMoneyAlertbox('PHONEPE')}>
+                  <Text style={styles.optionText}>PHONEPE</Text>
+                </TouchableOpacity>
+                {/* <TouchableOpacity style={styles.transferOptionContainer} onPress={() => this.redeemWalletMoney('UPI')}>
+                  <Text style={styles.optionText}>UPI</Text>
+                </TouchableOpacity> */}
+                <TouchableOpacity disabled={this.state.redeemOnceDaily} style={styles.transferOptionContainer} onPress={() => this.redeemWalletMoneyAlertbox('GPAY')}>
+                  <Text style={styles.optionText}>GPAY</Text>
+                </TouchableOpacity>
+              </View> 
+          }  
+
+        </View>
+
+        <View style={{ alignItems: 'center', paddingTop:5}}>
+          
+            <Text style={{fontSize: 10, fontWeight:'bold', color: 'white'}}>Note: Money can be transferred only once daily.</Text>
+                    
         </View>
 
         {/* {this.props.walletjewels.length > 0 ?
@@ -228,6 +338,21 @@ class WalletScreen extends React.Component {
             </View>
           </View>
           : null} */}
+
+           
+        
+        <TouchableOpacity
+            //add consition for store overflow
+            disabled={this.state.isLoading}
+            style={{ flexDirection:'row', alignSelf: 'center', justifyContent:'space-between', marginTop: 50, width:275, backgroundColor: colors.lightcolor2, paddingHorizontal:25, paddingVertical:10, borderRadius:5 }}
+            onPress={() => this.emptyJewelStore()} >     
+                                         
+                        <Image style={{ width: 25, height: 25 }} source={require('../../../../../assets/jewelbox.png')}/>
+                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}> Empty Jewel Store ( 1 rupee ) </Text>              
+          
+
+        </TouchableOpacity>
+
         <Snackbar
           duration={1000}
           style={{ backgroundColor: colors.darkcolor3, alignItems: 'center' }}

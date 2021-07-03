@@ -197,7 +197,7 @@ export const jewelInfo = (jewel) => {
     let id = jewel.jeweltype_id;
     let msg = ''
     if (id == 0)
-        msg = 'Collect this jewel from the Profile tab. This the most valuable jewel. Refer friends to JewelChat and win this jewel.'
+        msg = 'Collect this jewel from the Profile tab. This is the most valuable jewel. Refer friends to JewelChat and win this jewel.'
     else if (id == 1)
         msg = 'Collect Coins by completing tasks from the Gifts tab.'
     else if (id == 3)

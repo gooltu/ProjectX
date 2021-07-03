@@ -1,14 +1,26 @@
 import { StyleSheet, PixelRatio } from 'react-native'
+import colors from '../../../../shared_styles/colors'
 
-import color from '../../../../shared_styles/colors'
+//import color from '../../../../shared_styles/colors'
 
 export default styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        backgroundColor: color.darkcolor1
+        backgroundColor: colors.darkcolor1
     },
     transferOptionContainer: {
-        backgroundColor: '#5a98fb',
+        backgroundColor: colors.lightcolor2,
+        width: PixelRatio.roundToNearestPixel(60*global.scaleFactor),
+        height: PixelRatio.roundToNearestPixel(60*global.scaleFactor),
+        margin:PixelRatio.roundToNearestPixel(2*global.moderateScaleFactor),
+        borderRadius: 5,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    transferOptionContainerDisabled: {
+        backgroundColor: colors.darkcolor1,
+        borderColor: colors.jcgray,
+        borderWidth:1,
         width: PixelRatio.roundToNearestPixel(60*global.scaleFactor),
         height: PixelRatio.roundToNearestPixel(60*global.scaleFactor),
         margin:PixelRatio.roundToNearestPixel(2*global.moderateScaleFactor),
@@ -34,7 +46,7 @@ export default styles = StyleSheet.create({
         height: PixelRatio.roundToNearestPixel(110*global.scaleFactor),
         width: PixelRatio.roundToNearestPixel(110*global.scaleFactor),
         borderRadius: PixelRatio.roundToNearestPixel(5*global.scaleFactor),
-        backgroundColor: color.darkcolor3,
+        backgroundColor: colors.darkcolor3,
         padding: PixelRatio.roundToNearestPixel(8*global.moderateScaleFactor)
     },
     itemText: {
@@ -59,7 +71,7 @@ export default styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     transferMoneyContainer: {
-        backgroundColor: color.darkcolor3,
+        backgroundColor: colors.darkcolor3,
         padding: PixelRatio.roundToNearestPixel(10*global.moderateScaleFactor),
         flexDirection: 'row'
     },
@@ -77,7 +89,7 @@ export default styles = StyleSheet.create({
     },
     diamondContainer: {
         paddingVertical: 3,
-        backgroundColor: color.darkcolor3,
+        backgroundColor: colors.darkcolor3,
         width: '100%',
         alignItems: 'center'
     },

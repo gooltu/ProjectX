@@ -36,6 +36,7 @@ export default {
     getLeaderboard: '/getLeaderboard',
     getAllGiftsWon: '/getAllGiftsWon',
     getWallet: '/getWallet',
+    emptyJewelStore: '/emptyJewelStore',
     redeemMoney: '/redeemMoney',
     getFactories: '/getFactories',
     getUserFactory: '/getUserFactory',

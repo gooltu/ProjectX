@@ -35,7 +35,7 @@ export const sendBulkReadReceipts = (CHAT_ROOM_JID, myjid) => {
 
 	return (dispatch, getState) => {
 
-		if (getState().activechat.JID){
+		//if (getState().activechat.JID){
 			
 			console.log('SEND BULK RECEIPTS', CHAT_ROOM_JID, myjid);
 			let createdDateTime = new Date().getTime() + global.TimeDelta;
@@ -63,7 +63,7 @@ export const sendBulkReadReceipts = (CHAT_ROOM_JID, myjid) => {
 
 			}).catch(err => {})
 
-		}	
+		//}	
 
 	}		
 	
