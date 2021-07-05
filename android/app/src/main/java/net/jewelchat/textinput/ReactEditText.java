@@ -224,6 +224,9 @@ public class ReactEditText extends EditText {
                                              int flags, Bundle opts) {
                 // read and display inputContentInfo asynchronously
                 Log.d("INPUTCONTENTINFO", inputContentInfo.toString());
+                Log.d("INPUTCONTENTINFO", String.valueOf(inputContentInfo.getContentUri()));
+                Log.d("INPUTCONTENTINFO", String.valueOf(inputContentInfo.getDescription()));
+                Log.d("INPUTCONTENTINFO", String.valueOf(inputContentInfo.getLinkUri()));
                 if ((flags &  InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION) != 0) {
                   try {
                     inputContentInfo.requestPermission();
@@ -238,9 +241,9 @@ public class ReactEditText extends EditText {
                 // call inputContentInfo.releasePermission() as needed.
 
                 WritableMap event = Arguments.createMap();
-                event.putString("uri", inputContentInfo.getContentUri().toString());
-                event.putString("desc", inputContentInfo.getDescription().toString());
-                event.putString("link", inputContentInfo.getLinkUri().toString());
+                event.putString("uri", String.valueOf(inputContentInfo.getContentUri()));
+                event.putString("desc", String.valueOf(inputContentInfo.getDescription()));
+                event.putString("link", String.valueOf(inputContentInfo.getLinkUri()));
                 ReactContext reactContext = (ReactContext)getContext();
                 reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
                         getId(),

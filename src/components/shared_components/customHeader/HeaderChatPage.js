@@ -57,6 +57,11 @@ class HeaderChatPage extends React.Component {
 
     }    
 
+
+    componentWillUnmount() {
+        console.log('Header Chat Page Unmount');              
+    }
+
     displayLogo() {
         
         return (<TouchableOpacity style={styles.profilepic}>
@@ -70,7 +75,7 @@ class HeaderChatPage extends React.Component {
                     this.state.profileimageerror && this.props.activeChat.JEWELCHAT_ID != 1 && this.props.activeChat.IS_GROUP_MSG == 1 && <Icon  name='users' color={colors.jcgray} size={18} solid />
                     }
 
-                    { this.props.activeChat.JEWELCHAT_ID != 1 &&
+                    { this.props.activeChat.JEWELCHAT_ID != 1 && this.props.activeChat.CHAT_ROOM_JID &&
                         <Image
                             source={{ headers: { Pragma: 'no-cache' }, uri: rest.imageBaseURL + this.props.activeChat.CHAT_ROOM_JID.split('@')[0] + '?' + global.randstr}}
                             style={[{ position:'absolute', top:0, left:0 },{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', overflow: 'hidden'}]}
@@ -135,7 +140,7 @@ class HeaderChatPage extends React.Component {
                 <Text style={{ fontSize: 14, color: 'white', fontWeight: 'bold' }}>
                     {this.props.activeChat.PHONEBOOK_CONTACT_NAME ? this.props.activeChat.PHONEBOOK_CONTACT_NAME.substring(0, 35)
                     : (this.props.activeChat.JEWELCHAT_ID == 1 ? 'Team JewelChat' 
-                    : (this.props.activeChat.IS_GROUP_MSG == 0 || this.props.activeChat.IS_GROUP_MSG == null ? '+' + this.props.activeChat.CHAT_ROOM_JID.split('@')[0]
+                    : (this.props.activeChat.IS_GROUP_MSG == 0 || this.props.activeChat.IS_GROUP_MSG == null && this.props.activeChat.CHAT_ROOM_JID ? '+' + this.props.activeChat.CHAT_ROOM_JID.split('@')[0]
                     : (this.props.activeChat.CONTACT_NAME ? this.props.activeChat.CONTACT_NAME.substring(0, 35) : 'Group Chat') ) )}</Text>
                 { 
                     this.props.activeChat.IS_GROUP_MSG == 0 && this.props.presence[this.props.activeChat.JID]

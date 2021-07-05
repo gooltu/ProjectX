@@ -408,7 +408,7 @@ class JewelChat extends React.Component {
 
             }
             
-            this.props.setActiveChat({})
+            //this.props.setActiveChat({})
             //this.props.closeRealtimeDisconnect();
 
         }else if(nextAppState == 'active')  {
