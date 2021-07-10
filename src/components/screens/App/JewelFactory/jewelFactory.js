@@ -51,7 +51,7 @@ class JewelFactory extends React.Component {
     let startTime = new Date(Date.UTC(...dateParams)).getTime();
 
     let now = new Date().getTime();
-    let durationPassed = (now - startTime - global.TimeDelta)/1000
+    let durationPassed = (now - startTime + global.TimeDelta)/1000
 
     return durationPassed
   }

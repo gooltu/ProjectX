@@ -90,7 +90,8 @@ class Contacts extends React.Component {
       searchQuery: '',
       displayContactData: [],
       contactData: [],
-      isLoading: false
+      isLoading: false,
+      syncContact: true
     }
   }
 
@@ -99,7 +100,16 @@ class Contacts extends React.Component {
       isLoading: true
     })
     this.getContactsCallback()
-    getContacts(this.getContactsCallback, this.props.mytoken.myphone)
+    getContacts(this.syncContactCompleted, this.props.mytoken.myphone)
+  }
+
+  syncContactCompleted = () => {
+
+    this.setState({            
+      syncContact: false
+    })
+    this.getContactsCallback()
+
   }
 
   getContactsCallback = (query) => {
@@ -215,6 +225,11 @@ class Contacts extends React.Component {
           iconColor='white'
           theme='dark'
         />
+        {this.state.syncContact && 
+          <View style={{width:'100%', height:24, backgroundColor:colors.lightcolor2, justifyContent:'center', alignItems:'center'}}>
+            <Text>Syncing Contacts</Text>
+          </View>
+        }
         <FlatList
           data={this.state.contactData}              
           renderItem={ ( { item, index } ) => (

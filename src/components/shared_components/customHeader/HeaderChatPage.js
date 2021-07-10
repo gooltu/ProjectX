@@ -136,7 +136,7 @@ class HeaderChatPage extends React.Component {
 
     displayTitle() {     
         
-    return  <TouchableOpacity style={{ flexDirection: 'column', paddingLeft: 5, height: 32, justifyContent: 'center' }}>
+    return  <TouchableOpacity style={{ flexDirection: 'column', paddingLeft: 5, height: 32, justifyContent: 'center' }} onPress={() => this.props.navigation.navigate('ChatRoomDetails', this.props.activeChat)}>
                 <Text style={{ fontSize: 14, color: 'white', fontWeight: 'bold' }}>
                     {this.props.activeChat.PHONEBOOK_CONTACT_NAME ? this.props.activeChat.PHONEBOOK_CONTACT_NAME.substring(0, 35)
                     : (this.props.activeChat.JEWELCHAT_ID == 1 ? 'Team JewelChat' 

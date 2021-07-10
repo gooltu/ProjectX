@@ -43,8 +43,9 @@ import ImageEdit from './screens/App/Profile/UserProfile/ImageEdit'
 import GiftsWon from './screens/App/Profile/UserProfile/GiftsWon'
 
 import ChatPage from "./screens/App/Chat/ChatPage/ChatPage";
-import ChatMediaViewer from "./screens/App/Chat/ChatMediaViewer/ChatMediaViewer"
-import ForwardMessage from './screens/App/Chat/ForwardMessage/ForwardMessage'
+import ChatMediaViewer from "./screens/App/Chat/ChatMediaViewer/ChatMediaViewer";
+import ChatRoomDetails from './screens/App/Chat/ChatRoomDetails/ChatRoomDetails';
+import ForwardMessage from './screens/App/Chat/ForwardMessage/ForwardMessage';
 import NewGroup from "./screens/App/NewGroup";
 import JewelFactory from "./screens/App/JewelFactory/jewelFactory";
 
@@ -145,6 +146,14 @@ const AppMainStack = createStackNavigator({
     },
     ChatMediaViewer: {
         screen: ChatMediaViewer,
+        navigationOptions: ({ navigation }) => {
+            return {
+                header: <HeaderLevelOnePlus navigation={navigation} title='Media' />
+            };
+        }
+    },
+    ChatRoomDetails: {
+        screen: ChatRoomDetails,
         navigationOptions: ({ navigation }) => {
             return {
                 header: <HeaderLevelOnePlus navigation={navigation} title='Media' />

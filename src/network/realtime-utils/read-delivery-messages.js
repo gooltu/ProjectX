@@ -61,7 +61,9 @@ export const sendBulkReadReceipts = (CHAT_ROOM_JID, myjid) => {
 				}
 				
 
-			}).catch(err => {})
+			}).catch(err => {
+				console.log('Send bulk read receipt error', err)
+			})
 
 		//}	
 

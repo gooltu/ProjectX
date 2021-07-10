@@ -49,7 +49,7 @@ function getAllContactsAndroid(callback, myphone) {
         if (err === 'denied') {
             // Alert.alert("Error", err)
         } else {
-            console.log('contacts', contacts)            
+            console.log('contacts', contacts.length)            
             insertContacts(contacts, callback, myphone)
         }
     })
@@ -62,12 +62,17 @@ function getAllContactsIOS(callback, myphone) {
 
 function insertContacts(Contacts, callback, myphone) {
 
-    let p = [];
+    console.log('INSERT CONTACTS')
+
+    //let p = [];
     const regex1 = /\D/g;
     const regex2 = /^0+/g;
     const regex3 = /^91+/g;
 
     //return '91' + number.replaceAll(regex1,'').replace(regex2,'');
+
+    let allcontacts = {};
+    let contactpromises = {};
 
     for (let i = 0; i < Contacts.length; i++) {
         for( let j=0; j < Contacts[i].phoneNumbers.length; j++) {       
@@ -80,7 +85,7 @@ function insertContacts(Contacts, callback, myphone) {
                     ph = n;  
                 else 
                     break;      
-                console.log('CONTACT LIST', ph);
+                //console.log('CONTACT LIST', ph);
                 
                 if(ph === myphone)
                     break;
@@ -93,22 +98,54 @@ function insertContacts(Contacts, callback, myphone) {
                     IS_REGIS : 0,
                     IS_INVITED : 0
                 }
-                if (data.CONTACT_NUMBER.length == 12) {
-                    p.push(db.insertContactData(data))
-                }
+
+                allcontacts[ph] = data;
+                //contactpromises[ph] = db.insertContactData(data)
+
+                // if (data.CONTACT_NUMBER.length == 12) {
+                //     p.push(db.insertContactData(data))
+                // }
 
         }
-    }
+    }    
 
-    Promise.all(p)
+    
+
+    db.getContactList('Contact').then(results => {   
+
+
+        for(let i=0; i< results.length; i++){
+
+          if(allcontacts[results[i].CONTACT_NUMBER]){
+            
+            delete allcontacts[results[i].CONTACT_NUMBER]
+          }  
+
+        }
+
+        //console.log('Contact Promise array length', Object.values(allcontacts) )
+
+        let cp = []; let ca = Object.values(allcontacts);
+        console.log('Contacts to insert', ca.length)
+        for(let i=0; i< ca.length; i++){
+
+           cp.push(db.insertContactData(ca[i]))
+
+        }
+
+        return Promise.all(cp);
+
+    })
     .then((val) => {
-        console.log('CONTACT INSERT SUCCESS', val )
-        callback()
+      console.log('CONTACT INSERT SUCCESS', val )
+      callback()
     })
     .catch(err => {
-        console.log('CONTACT INSERT ERR', err )
-        callback()
-    })
+      console.log('CONTACT INSERT ERR', err )
+      callback()
+    })  
+
+
 }
 
 

@@ -649,17 +649,21 @@ function insertContactData(data) {
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
+
+				let q = ',?';
 				let sql = "INSERT INTO Contact " +
-					" (JID, CONTACT_NUMBER, CONTACT_NAME, IS_PHONEBOOK_CONTACT, PHONEBOOK_CONTACT_NAME, IS_REGIS) " +
-					" VALUES (" + _handleString(data.JID) + "," + _handleString(data.CONTACT_NUMBER) + ", " + _handleString(data.CONTACT_NAME) + ", " + data.IS_PHONEBOOK_CONTACT + "," + _handleString(data.PHONEBOOK_CONTACT_NAME) + "," + data.IS_REGIS + ") "
-				txn.executeSql(sql).then(val => {
+					" ( "+Object.keys(data).join(",") + " ) " + 
+					//" (JID, CONTACT_NUMBER, CONTACT_NAME, IS_PHONEBOOK_CONTACT, PHONEBOOK_CONTACT_NAME, IS_REGIS) " +
+					" VALUES ( ? " + q.repeat(Object.keys(data).length - 1) + " ) ";
+					//" VALUES (" + _handleString(data.JID) + "," + _handleString(data.CONTACT_NUMBER) + ", " + _handleString(data.CONTACT_NAME) + ", " + data.IS_PHONEBOOK_CONTACT + "," + _handleString(data.PHONEBOOK_CONTACT_NAME) + "," + data.IS_REGIS + ") "
+				txn.executeSql(sql, Object.values(data) ).then(val => {
 					resolve('Success')
 				}).catch(err => {
 					console.log('reject')
 					reject(err)
 				})
 			}).catch(err => {
-				console.log('reject1')
+				//console.log('reject1')
 				reject(err)
 			})
 		})
