@@ -40,6 +40,10 @@ export const downloadMessages = (lastlogouttime, last=null ) => {
                         if (lastElement.toString()) {
                             var last = Strophe.getText(lastElement[0])
                             dispatch(downloadMessages(lastlogouttime, last));
+                        }else{
+                            
+                            global.dowloadMessagesComplete = true;
+                            console.log('DOWNLOAD MESSAGES COMPLETE', global.dowloadMessagesComplete)
                         }
                         
                     });       

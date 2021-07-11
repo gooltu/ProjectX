@@ -158,6 +158,9 @@ class MainChatBar extends React.Component {
     let msgtype, msgtext, media_cloud, outgoingmsg;
     if (eventnative) {
       console.log(eventnative)
+      if(eventnative.link === '##Not_Supported##')
+        return;
+        
       if (eventnative.link.search('stickers') != -1) {
         msgtype = 4; msgtext = 'Stickers'; media_cloud = eventnative.link;
       } else {

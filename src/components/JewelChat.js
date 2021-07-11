@@ -402,7 +402,9 @@ class JewelChat extends React.Component {
         this.props.appstateChange(nextAppState);
         if (nextAppState == 'inactive' || nextAppState == 'background') {
 
-            if (global.TimeDelta) {
+            console.log('LOGOUT TIME/ DOWNLOAD COMPLETE', global.dowloadMessagesComplete, global.TimeDelta);
+
+            if (global.TimeDelta && global.dowloadMessagesComplete) {
 
                 try {
                     AsyncStorage.setItem(
@@ -434,6 +436,8 @@ class JewelChat extends React.Component {
                 console.log(error)
             });
 
+            global.dowloadMessagesComplete = false;
+
             global.randstr = 'time=' + new Date().getTime();
             console.log('RANDSTR ', global.randstr);
 
@@ -447,9 +451,10 @@ class JewelChat extends React.Component {
 											
 										let current_servertime = new Date().getTime() + global.TimeDelta
 										lastlogouttime = current_servertime - parseInt(lastlogouttime) > 604800000 ? (current_servertime - 604800000) : ( parseInt(lastlogouttime) - 1200000 );
-										downloadMessages(lastlogouttime);
+										this.props.downloadMessages(lastlogouttime);
 
-									}
+									}else
+                                        global.dowloadMessagesComplete = true;
 
 								});
 
@@ -507,7 +512,8 @@ function mapDispatchToProps(dispatch) {
         //closeRealtimeDisconnect: () => dispatch(realtimeDisconnect()),
         setChatListData: (chatList) => dispatch(actions.setChatListData(chatList)),
         setChatData: (chatData) => dispatch(actions.setChatData(chatData)),
-        setActiveChat: (activeChat) => dispatch(actions.setActiveChat(activeChat))
+        setActiveChat: (activeChat) => dispatch(actions.setActiveChat(activeChat)),
+        downloadMessages: (lastlogouttime) => dispatch(downloadMessages(lastlogouttime))
     }
 }
 

@@ -24,6 +24,7 @@ export default {
 
 
 global.xmppconnection_inprocess = false;
+global.dowloadMessagesComplete = false;
 
 
 
@@ -144,7 +145,8 @@ export const realtimeConnect = () => {
 							let current_servertime = new Date().getTime() + global.TimeDelta
 							lastlogouttime = current_servertime - parseInt(lastlogouttime) > 604800000 ? (current_servertime - 604800000) : (parseInt(lastlogouttime) - 1200000);
 							dispatch(downloadMessages(lastlogouttime));
-						}
+						}else
+							global.dowloadMessagesComplete = true;
 					});
 
 				})

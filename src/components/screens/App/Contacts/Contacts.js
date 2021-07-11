@@ -153,6 +153,10 @@ class Contacts extends React.Component {
   inviteUser(item) {
     console.log('INVITE USER',this.state)
     if( item.IS_REGIS == 0 ){
+
+        this.setState({
+          isLoading: true
+        })
   
         let data = {
           phone: item.CONTACT_NUMBER

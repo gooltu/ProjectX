@@ -45,18 +45,21 @@ export default class ChatRoomDetails extends React.Component {
           }
 
           { this.props.navigation.getParam('JEWELCHAT_ID') != 1 && this.props.navigation.getParam('CHAT_ROOM_JID') &&
+            <View style={{ width:'100%', height:'100%' }}>
               <Image
                   source={{ headers: { Pragma: 'no-cache' }, uri: rest.imageBaseURL + this.props.navigation.getParam('CHAT_ROOM_JID').split('@')[0] + '?' + global.randstr}}
-                  style={[{ position:'absolute', top:0, left:0 },{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', overflow: 'hidden'}]}
+                  style={{flex:1}}
+                  resizeMode="contain"
                   onLoad={()=>{
                       //this.setState( { profileimageerror: false } ) 
                   }}
                   onError={(error) => { 
                       //console.log('Image')
                       this.setState( { profileimageerror: true } ) 
-                  } 
-                  }
-                  ></Image>
+                    }}
+              >
+              </Image>
+            </View>      
           }   
       </View>
     );
