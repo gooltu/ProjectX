@@ -16,9 +16,7 @@ export default class ChatItem extends React.PureComponent {
     constructor(props) {
       super(props);      
          
-    }
-
-     
+    }    
 
     state = {    
       mychat: false
@@ -31,38 +29,54 @@ export default class ChatItem extends React.PureComponent {
       this.setState({mychat});       
     }
 
+    // pickJewel(){
+    //   this.props.onjewelpress()
+    // }
+
     renderJewel(){
       //console.log('Jewel');
 
-        if( this.props.item.IS_JEWEL_PICKED == 0 ){
+        if( !this.props.collectingJewel && !this.props.collectionId && this.props.item.IS_JEWEL_PICKED == 0 ){
 
-            return(
-              !this.state.mychat &&  
-                <TouchableOpacity style={styles.jewelContainer} onPress={this.props.onjewelpress}>
-                  {
-                    (this.props.item.MAX_SEQUENCE - this.props.item.SEQUENCE < 25 || this.props.item.SEQUENCE == -1)               
-                    ? renderJewel(this.props.item.JEWEL_TYPE, "75%", "75%", styles.jewelStyle)
-                    : null
+          if(this.props.item.MAX_SEQUENCE - this.props.item.SEQUENCE < 25 || this.props.item.SEQUENCE == -1){
+              return(              
+                  <TouchableOpacity style={styles.jewelContainer} onPress={this.props.onjewelpress}>
+                    {
+                      renderJewel(this.props.item.JEWEL_TYPE, "75%", "75%", styles.jewelStyle)                  
+                    }
+                  </TouchableOpacity> 
+              )
+          }  
+
+        }else if( this.props.collectionId && this.props.collectionId!==this.props.item._ID && this.props.collectingJewel && this.props.item.IS_JEWEL_PICKED == 0){
+          
+          if(this.props.item.MAX_SEQUENCE - this.props.item.SEQUENCE < 25 || this.props.item.SEQUENCE == -1){
+            return(              
+                <TouchableOpacity style={styles.jewelContainer} disabled={true}>
+                  {                               
+                    renderJewel(this.props.item.JEWEL_TYPE, "75%", "75%", styles.jewelStyle)                  
                   }
                 </TouchableOpacity> 
             )
+          }
 
-        }else if( this.props.item.IS_JEWEL_PICKED == 2 ){      
-            return(
-              !this.state.mychat &&  
-                <TouchableOpacity style={styles.jewelContainer} onPress={this.props.onjewelpress}>
+        }else if( this.props.collectionId && this.props.collectionId===this.props.item._ID && this.props.collectingJewel && this.props.item.IS_JEWEL_PICKED == 0 ){      
+          
+          if(this.props.item.MAX_SEQUENCE - this.props.item.SEQUENCE < 25 || this.props.item.SEQUENCE == -1){
+            return(              
+                <TouchableOpacity disabled={true} style={styles.jewelContainer}>
                   {
-                    (this.props.item.MAX_SEQUENCE - this.props.item.SEQUENCE < 25 || this.props.item.SEQUENCE == -1)               
-                    ? renderJewel(this.props.item.JEWEL_TYPE, "25%", "25%", styles.jewelStyle)
-                    : null
+                    renderJewel(this.props.item.JEWEL_TYPE, "25%", "25%", styles.jewelStyle)                  
                   }
                 </TouchableOpacity> 
-            )    
-        }else 
-          return(
-            !this.state.mychat &&  
-              <TouchableOpacity style={styles.jewelContainer} onPress={this.props.onjewelpress}></TouchableOpacity> 
-          );      
+            )
+          }
+
+        }else{
+          return(            
+              <TouchableOpacity disabled={true} style={styles.jewelContainer} ></TouchableOpacity> 
+          );  
+        }            
       
     }
 
@@ -252,7 +266,7 @@ export default class ChatItem extends React.PureComponent {
             }         
           
             <View style= {styles.MsgRow}>
-              {this.renderJewel()}           
+              {!this.state.mychat && this.renderJewel()}           
               <View style={styles.MsgContainer}>
                 {
 

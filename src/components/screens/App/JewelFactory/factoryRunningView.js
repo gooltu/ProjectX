@@ -96,6 +96,7 @@ class factoryRunningview extends React.Component {
                 this.setState({
                     isLoading: false
                 })
+                console.log('Factory Stop error', error);
             })
         }
     }

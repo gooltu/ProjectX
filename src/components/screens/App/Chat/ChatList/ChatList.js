@@ -55,7 +55,7 @@ class Item extends React.Component {
     return (
       <TouchableOpacity
         onPress={() => this.props.onpressitem(this.props.item)}
-        onLongPress={() => this.props.onlongpressitem(item._ID)}
+        //onLongPress={() => this.props.onlongpressitem(item._ID)}
         style={styles.mainConatiner}
       >
         <View style={styles.subContainer}>
