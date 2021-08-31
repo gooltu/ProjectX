@@ -46,7 +46,13 @@ export default class ChatItem extends React.PureComponent {
                     }
                   </TouchableOpacity> 
               )
-          }  
+          }else{
+              return(              
+                  <TouchableOpacity style={styles.jewelContainer}>
+                    
+                  </TouchableOpacity> 
+              )
+          }
 
         }else if( this.props.collectionId && this.props.collectionId!==this.props.item._ID && this.props.collectingJewel && this.props.item.IS_JEWEL_PICKED == 0){
           
@@ -58,6 +64,12 @@ export default class ChatItem extends React.PureComponent {
                   }
                 </TouchableOpacity> 
             )
+          }else{
+              return(              
+                  <TouchableOpacity style={styles.jewelContainer}>
+                    
+                  </TouchableOpacity> 
+              )
           }
 
         }else if( this.props.collectionId && this.props.collectionId===this.props.item._ID && this.props.collectingJewel && this.props.item.IS_JEWEL_PICKED == 0 ){      
@@ -70,6 +82,12 @@ export default class ChatItem extends React.PureComponent {
                   }
                 </TouchableOpacity> 
             )
+          }else{
+            return(              
+                    <TouchableOpacity style={styles.jewelContainer}>
+                      
+                    </TouchableOpacity> 
+                )
           }
 
         }else{
