@@ -19,6 +19,8 @@ import actions from '../../../../actions';
 import GiftTaskView from './GiftTaskView'
 import TaskView from './TaskView';
 import colors from '../../../shared_styles/colors';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 class Game extends React.Component {
 
@@ -66,6 +68,8 @@ class Game extends React.Component {
   
 
   getTasks() {
+
+          this.setState({ isLoading: true });  
 
           console.log('GET TASKS');
 
@@ -132,11 +136,21 @@ class Game extends React.Component {
 
   }
 
-  getGiftTask() {
-      
-      NetworkManager.callAPI(rest.getGiftTasks, 'POST', { page: this.state.page }).then(result => {
+  getGiftTask(refresh) {
+
+      let p;
+
+      if(refresh){     
+        p=0;
+        this.state.page = 0;
+      }  
+      else
+        p=this.state.page;
+
+      this.setState({  giftTaskLoading: true  });      
+      NetworkManager.callAPI(rest.getGiftTasks, 'POST', { page: p }).then(result => {
           
-          if(this.state.page == 0) 
+          if(p == 0) 
             this.props.emptyGiftTaskData();
           
           this.lastpagelength = result.gifttasks.length;
@@ -193,7 +207,7 @@ class Game extends React.Component {
             ))
           }
         </ScrollView>
-        <View style={{ flexDirection:'row', paddingHorizontal: 15, paddingTop: 10}}>
+        <View style={{ flexDirection:'row', paddingHorizontal: 15, paddingTop: 10}}>          
           <Text style={{ color: color.jcgray, fontSize: 11, fontWeight: "bold" }}>WIN CASH AND GIFTS</Text>
           {this.state.giftTaskLoading && <ActivityIndicator size="small" color="white" animating={true} style={{ width:14, height:14, marginLeft:10 }} />}
         </View>
@@ -227,6 +241,8 @@ class Game extends React.Component {
             bounces={false}
             data={this.props.gifttasks}
             numColumns={2}
+            onRefresh = { () => this.getGiftTask(true) }
+            refreshing = {this.state.giftTaskLoading}
             onEndReached = { () => this.loadMoreRandomData() }
             onEndReachedThreshold = {0.75}
             renderItem={({ item, index }) =>
