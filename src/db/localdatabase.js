@@ -782,9 +782,9 @@ function deleteAllData(){
 		_initDb().then(instance => {
 			jcdb = instance;
 			jcdb.transaction((txn) => {
-				let sql1 = "Delete from Contact";
+				//let sql1 = "Delete from Contact";
 				let sql2 = "Delete from ChatMessage";
-				txn.executeSql(sql1);				
+				//txn.executeSql(sql1);				
 				txn.executeSql(sql2);				
 			})
 			.then( val => {

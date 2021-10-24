@@ -55,6 +55,8 @@ import HeaderLevelOnePlus from "./shared_components/customHeader/HeaderLevelOneP
 import HeaderChatPage from "./shared_components/customHeader/HeaderChatPage";
 import JCModal from "./shared_components/JCModal";
 
+import AdminStuff from "./screens/App/AdminStuff/AdminStuff";
+
 import colors from "./shared_styles/colors";
 import TabIcon from "./svg_components/TabIcons";
 import db from "../db/localdatabase";
@@ -285,6 +287,14 @@ const AppMainStack = createStackNavigator({
         navigationOptions: ({ navigation }) => {
             return {
                 header: <HeaderLevelOnePlus navigation={navigation} title='New Group' />
+            };
+        }
+    },
+    AdminStuff: {
+        screen: AdminStuff,
+        navigationOptions: ({ navigation }) => {
+            return {
+                header: <HeaderLevelOnePlus navigation={navigation} title='Admin Stuff' />
             };
         }
     },
