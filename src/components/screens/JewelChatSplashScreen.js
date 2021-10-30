@@ -92,7 +92,7 @@ class JewelChatSplashScreen extends React.Component {
         <Logo height="300" width="300" />
         
         <ActivityIndicator />
-        <Text style={{color: colors.jcgray, fontSize:12, marginTop:50 }}>v1.1.1</Text>
+        <Text style={{color: colors.jcgray, fontSize:12, marginTop:50 }}>v1.1.2</Text>
         <StatusBar barStyle="default" />
       </View>
     );
