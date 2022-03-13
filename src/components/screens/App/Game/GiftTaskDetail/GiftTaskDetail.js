@@ -286,7 +286,7 @@ class GiftTaskDetail extends React.Component {
               {
                 this.props.gifttaskdetails[this.giftTask.id].map((jewel) =>
 
-                  <View style={{ flexDirection: 'row', padding: 5 }}  key={jewel.id} >
+                  <View style={{ flexDirection: 'row', padding: 5 }}  key={jewel.id+this.giftTask.id} >
 
                     <View style={{ flexDirection: 'row', width: '85%', paddingLeft: '20%', justifyContent: 'center', alignItems: 'center' }}>
                       {this.jewelView(jewel)}

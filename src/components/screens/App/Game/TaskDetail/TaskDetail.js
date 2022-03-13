@@ -302,7 +302,7 @@ class TaskDetail extends React.Component {
                             <View style={{ paddingBottom: 20, flexDirection: 'column' }}>
                                 {
                                     this.props.taskdetails[this.task.task_id].map((jewel) => 
-                                        <View style={{ flexDirection: 'row', padding: 5 }} key={jewel.id}>
+                                        <View style={{ flexDirection: 'row', padding: 5 }} key={jewel.id + this.task.task_id}>
                                             <View style={{ flexDirection: 'row', width: '85%', paddingLeft: '15%', alignItems: 'center', justifyContent: 'center' }}>
                                                 {this.jewelView(jewel)}
                                             </View>
